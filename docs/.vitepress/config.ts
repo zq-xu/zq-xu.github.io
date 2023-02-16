@@ -38,6 +38,7 @@ export default defineConfig({
   themeConfig: {
     ...blogTheme,
     logo: '/logo.png',
+    outline: [2,6],
     nav: navbarZh,
     lastUpdatedText: '上次更新于',
     footer: {
@@ -53,7 +54,7 @@ export default defineConfig({
     socialLinks: [
       {
         icon: 'github',
-        link: 'https://github.com/ATQQ/sugar-blog/tree/master/packages/theme'
+        link: 'https://github.com/zq-xu'
       }
     ]
   }
