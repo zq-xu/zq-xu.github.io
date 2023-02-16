@@ -225,7 +225,7 @@ http://$hostname/
 
 #### 配置Docker
 
-参考 [配置Docker](/zh/reference/docker/installation.md#配置docker).
+参考 [配置Docker](/zh/tools/docker.md#配置docker).
 
 #### 登录Harbor
 

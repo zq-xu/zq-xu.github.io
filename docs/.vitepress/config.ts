@@ -26,6 +26,7 @@ const blogTheme = getThemeConfig({
 })
 
 export default defineConfig({
+  base: '/',
   lang: 'zh-cmn-Hans',
   title: 'ZQ-XU',
   description: 'ZQ-XU的个人博客',
