@@ -1,8 +1,12 @@
 import { getThemeConfig, defineConfig } from '@sugarat/theme/node'
+import packageJSON from '../../package.json'
+import {
+  navbarZh,
+} from './navbar'
 
 const blogTheme = getThemeConfig({
   // 文章默认作者
-  author: '粥里有勺糖',
+  author: '鸢涯',
   friend: [
     {
       nickname: '粥里有勺糖',
@@ -23,8 +27,8 @@ const blogTheme = getThemeConfig({
 
 export default defineConfig({
   lang: 'zh-cmn-Hans',
-  title: '@sugarat/theme',
-  description: '粥里有勺糖的博客主题，基于 vitepress 实现',
+  title: 'ZQ-XU',
+  description: 'ZQ-XU的个人博客',
   vite: {
     optimizeDeps: {
       include: ['element-plus'],
@@ -33,13 +37,14 @@ export default defineConfig({
   },
   themeConfig: {
     ...blogTheme,
+    logo: '/logo.png',
+    nav: navbarZh,
     lastUpdatedText: '上次更新于',
     footer: {
       message: '自定义底部内容',
       copyright:
         'MIT Licensed | <a target="_blank" href="https://theme.sugarat.top/"> @sugarat/theme </a>'
     },
-    logo: '/logo.png',
     // editLink: {
     //   pattern:
     //     'https://github.com/ATQQ/sugar-blog/tree/master/packages/blogpress/:path',

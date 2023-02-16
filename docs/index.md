@@ -2,8 +2,8 @@
 layout: home
 # 首页部分元素定制
 blog:
- name: '@sugarat/theme'
- motto: 简约风的 Vitepress 博客主题
- inspiring: 基于 Vitepress 定制的主题🎨
- pageSize: 6
+ name: '鸢涯'
+ motto: ZQ-XU的个人博客
+ inspiring: 愿你出走半生，归来仍是少年
+ pageSize: 5
 ---
