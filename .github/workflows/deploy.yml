@@ -33,9 +33,10 @@ jobs:
         env:
           NODE_OPTIONS: --max_old_space_size=8192
         run: pnpm build
-
+        
       - name: Deploy
-        uses: crazy-max/ghaction-github-pages@v2
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
-          target_branch: gh-pages
-          build_dir: docs/.vitepress/dist
+          # 这是文档部署到的分支名称
+          branch: gh-pages
+          folder: docs/.vitepress/dist
