@@ -1,6 +1,7 @@
 import { DefaultTheme } from 'vitepress'
 
 export const navbarZh: DefaultTheme.NavItem[] = [
+    { text: '个人简介', link: '/aboutme' },
     {
         text: 'DevOps',
         items: [
