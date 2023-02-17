@@ -1,5 +1,4 @@
 ---
-sticky: 1
 description: 常用工具安装及使用
 cover: /images/tools/tools-logo.png
 title: 常用工具

@@ -1,5 +1,4 @@
 ---
-sticky: 999
 description: Kubernetes笔记
 cover: /images/kubernetes/kubernetes-stacked-all-blue-color.svg
 title: Kubernetes笔记

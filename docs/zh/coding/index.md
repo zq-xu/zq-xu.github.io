@@ -1,5 +1,4 @@
 ---
-sticky: 1
 description: 代码规范、设计模式及相关技术栈
 cover: /images/coding/coding-logo.png
 title: 手撕代码
