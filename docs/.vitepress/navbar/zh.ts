@@ -29,6 +29,10 @@ export const navbarZh: DefaultTheme.NavItem[] = [
             {
                 text: 'CRD && Operator',
                 link: '/zh/kubernetes/crd-operator'
+            },
+            {
+                text: 'Kubernetes实践笔记',
+                link: '/zh/kubernetes/practice'
             }
         ]
     },
