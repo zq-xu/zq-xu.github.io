@@ -38,7 +38,7 @@ export default defineConfig({
   },
   themeConfig: {
     ...blogTheme,
-    logo: '/logo.png',
+    logo: '/images/logo.png',
     outline: [2,6],
     nav: navbarZh,
     lastUpdatedText: '上次更新于',
