@@ -3,6 +3,19 @@ import { DefaultTheme } from 'vitepress'
 export const navbarZh: DefaultTheme.NavItem[] = [
     { text: '个人简介', link: '/aboutme' },
     {
+        text: '手撕代码',
+        items: [
+            {
+                text: 'Golang笔记',
+                link: '/zh/coding/golang'
+            },
+            {
+                text: 'Vue笔记',
+                link: '/zh/coding/vue'
+            }
+        ]
+    },
+    {
         text: 'DevOps',
         items: [
             {
@@ -39,6 +52,10 @@ export const navbarZh: DefaultTheme.NavItem[] = [
     {
         text: '常用工具',
         items: [
+            {
+                text: 'Git工具',
+                link: '/zh/tools/git'
+            },
             {
                 text: 'Docker环境',
                 link: '/zh/tools/docker'
