@@ -43,9 +43,9 @@ export default defineConfig({
     nav: navbarZh,
     lastUpdatedText: '上次更新于',
     footer: {
-      message: '自定义底部内容',
+      message: '~~~我是有底线的~~~',
       copyright:
-        'MIT Licensed | <a target="_blank" href="https://theme.sugarat.top/"> @sugarat/theme </a>'
+        'MIT Licensed | <a target="_blank" href="https://theme.sugarat.top/"> ZQ-XU </a>'
     },
     // editLink: {
     //   pattern:
