@@ -3,7 +3,7 @@
   "version": "v1.0.0",
   "private": true,
   "scripts": {
-    "dev": "vitepress dev docs",
+    "dev": "vitepress dev docs --clean-cache",
     "build": "vitepress build docs",
     "serve": "vitepress serve docs"
   },

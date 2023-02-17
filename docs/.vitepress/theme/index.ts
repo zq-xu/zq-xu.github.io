@@ -1,8 +1,9 @@
-import BlogTheme from '@sugarat/theme'
+import BlogTheme, { Theme } from '@sugarat/theme'
+import './styles/index.scss'
 
 export default BlogTheme
 
-// import BlogTheme, { Theme } from '@sugarat/theme'
+
 // import { ElMessage } from 'element-plus'
 // import { h } from 'vue'
 
@@ -26,3 +27,6 @@ export default BlogTheme
 //   ...BlogTheme,
 //   Layout: h(BlogTheme.Layout, homeProps)
 // }
+
+// import BlogTheme from '@sugarat/theme'
+// export default BlogTheme

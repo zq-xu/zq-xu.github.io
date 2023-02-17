@@ -1,8 +1,7 @@
 import { getThemeConfig, defineConfig } from '@sugarat/theme/node'
 import packageJSON from '../../package.json'
-import {
-  navbarZh,
-} from './navbar'
+import { navbarZh } from './navbar'
+import { head } from './head'
 
 const blogTheme = getThemeConfig({
   // 文章默认作者
@@ -27,6 +26,7 @@ const blogTheme = getThemeConfig({
 
 export default defineConfig({
   base: '/',
+  head,
   lang: 'zh-cmn-Hans',
   title: 'ZQ-XU',
   description: 'ZQ-XU的个人博客',
