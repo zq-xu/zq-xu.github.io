@@ -59,14 +59,14 @@ https://storage.googleapis.com/tekton-releases/triggers/previous/v0.17.0/release
 ## 执行安装脚本
 
 执行以下脚本选择性安装需要的组件：
-```
+``` sh
 kubectl apply -f $fileName
 ```
 
 ## 验证安装
 
 按照以上安装过程操作完毕，Tekton相关组件会被安装在名为”tekton-pipelines”的namespace中，查看该namespace中的关键资源：
-```
+``` sh
 kubectl get po,svc -ntekton-pipelines
 
 NAME                                              READY   STATUS      RESTARTS   AGE
@@ -86,5 +86,5 @@ http://$hostIP:31805
 ```
 
 界面展示如下：
-![](https://dolphindb1.atlassian.net/wiki/download/attachments/366608516/image-20220311-082507.png?api=v2)
+![tekton-dashboard](/images/devops/tekton/tekton-dashboard.png)
 

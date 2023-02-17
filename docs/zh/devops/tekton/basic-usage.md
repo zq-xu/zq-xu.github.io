@@ -44,7 +44,7 @@ PipelineResources资源在v0.30.0版本已启用，此处不做介绍。
 
 ### 准备资源文件
 
-[tekton-cicd.zip](/wiki/spaces/CC/pages/366543067?preview=%2F366543067%2F366903743%2Ftekton-cicd.zip)
+[tekton-cicd.zip](/downloads/devops/tekton/tekton-cicd.zip)
 
 以上zip包中包含以下文件：
 - git-clone-task.yaml：用于拉取Gitlab代码的Task资源文件，为通用模板文件，将Gitlab仓库地址、分支等参数暴露出来；
@@ -60,7 +60,7 @@ PipelineResources资源在v0.30.0版本已启用，此处不做介绍。
 ### 部署资源文件
 
 1. 执行以下指令,部署基础资源文件：
-    ```
+    ``` sh
     kubectl -ntekton-pipelines apply -f git-clone-task.yaml
     kubectl -ntekton-pipelines apply -f kaniko-task.yaml
     kubectl -ntekton-pipelines apply -f harbor-auth.yaml
@@ -68,14 +68,14 @@ PipelineResources资源在v0.30.0版本已启用，此处不做介绍。
     ```
 
 2. 执行以下指令，触发该CI流程：
-    ```
+    ``` sh
     kubectl -ntekton-pipelines apply -f pipelinerun.yaml
     ```
 
 ### 查看相关资源
 
 执行以下指令，查看流水线相关资源：
-```
+``` sh
 kubectl -ntekton-pipelines get task,pipeline,pipelinerun,secret,taskrun
 NAME                        AGE
 task.tekton.dev/git-clone   2m12s
