@@ -72,7 +72,7 @@ Master和Backup会定时确定对方状态，当Master不可用的时候，Backu
 
 ### Keepalived配置文件
 
-在每个节点上配置相应的keepalived.conf，见附件[Keepalived配置](/downloads/kubernetes/installation/Keepalived配置.zip)。
+在每个节点上配置相应的keepalived.conf，见附件[Keepalived配置](/downloads/kubernetes/installation/keepalived-config.zip)。
 
 配置文件中需要修改的有如下部分：
 ```

@@ -47,3 +47,7 @@ Kubernetes也可以部署在单台节点上([Minikube](./installation/minikube.m
 - [CNI](https://kubernetes.io/zh-cn/docs/concepts/cluster-administration/networking/):容器网络接口，负责集群网络，默认使用`Flannel`，常用的还有`Calico`、`Cilium/EBPF`；
 - [CSI](https://kubernetes-csi.github.io/docs/): 容器存储接口，主要负责文件系统的容器挂载，常用`LocalPath`、`NFS`、`Ceph`等；
 - [Ingress Controller](https://kubernetes.io/zh-cn/docs/concepts/services-networking/ingress-controllers/): 为服务提供内部自定义域名和外网入口，常用`Nginx`等。
+
+## 学习干货
+
+- [32深入剖析Kubernetes.zip](/downloads/kubernetes/32-dinglei-study-kubernetes.zip)
