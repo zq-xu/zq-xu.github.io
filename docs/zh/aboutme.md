@@ -24,11 +24,11 @@ date: 2023-02-17
 
 ***云原生***
 
-- [Kubernetes笔记](/zh/kubernetes/index)：记录Kubernetes的学习、实践和感悟。
+- [Kubernetes笔记](/zh/cloud-native/kubernetes/index)：记录Kubernetes的学习、实践和感悟。
 
 ***DevOps***
 
-- [Tekton笔记](/zh/devops/tekton/index)：记录Tekton项目的部署、使用和感悟。
+- [Tekton笔记](/zh/open-source/tekton/index)：记录Tekton项目的部署、使用和感悟。
 
 ***常用工具***
 

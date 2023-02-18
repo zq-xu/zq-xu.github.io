@@ -3,7 +3,7 @@ hidden: true
 date: 2022-12-30
 ---
 
-# Kubernetes安装教程
+# Kubernetes安装
 
 ## Kubernetes安装
 

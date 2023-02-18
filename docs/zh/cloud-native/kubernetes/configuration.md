@@ -97,7 +97,7 @@ kubectl taint nodes $NodeName node-role.kubernetes.io/master-
 
 ## 配置Kubeconfig
 
-从`Master`节点的`/etc/kubernetes/admin.conf`复制到目的节点上的$kubeconfigPath，然后参考以下脚本：
+从`Master`节点的`/etc/cloud-native/kubernetes/admin.conf`复制到目的节点上的$kubeconfigPath，然后参考以下脚本：
 ```bash
 mkdir -p $HOME/.kube
 sudo cp -i $kubeconfigPath $HOME/.kube/config
@@ -134,7 +134,7 @@ systemctl restart kubelet
 ps aux|grep kubelet|grep --  --root-dir
 
 # 控制台打印如下信息，其中--root-dir对应值即为Kubelet的工作目录
-root      58574  8.2  0.0 5980920 118788 ?      Ssl  00:03   2:29 /usr/bin/kubelet --bootstrap-kubeconfig=/etc/kubernetes/bootstrap-kubelet.conf --kubeconfig=/etc/kubernetes/kubelet.conf --config=/var/lib/kubelet/config.yaml --root-dir=/home/k8s/kubelet --network-plugin=cni --pod-infra-container-image=registry.cn-hangzhou.aliyuncs.com/google_containers/pause:3.6
+root      58574  8.2  0.0 5980920 118788 ?      Ssl  00:03   2:29 /usr/bin/kubelet --bootstrap-kubeconfig=/etc/cloud-native/kubernetes/bootstrap-kubelet.conf --kubeconfig=/etc/cloud-native/kubernetes/kubelet.conf --config=/var/lib/kubelet/config.yaml --root-dir=/home/k8s/kubelet --network-plugin=cni --pod-infra-container-image=registry.cn-hangzhou.aliyuncs.com/google_containers/pause:3.6
 ```
 
 现在，当前节点的`Kubelet`工作路径已更改为`/home/k8s/kubelet`.

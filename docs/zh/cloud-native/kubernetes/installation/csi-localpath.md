@@ -100,7 +100,7 @@ Kubernetes官方提供了[sig-storage-local-static-provisioner](https://github.c
 
 ### 获取安装文件
 
-配置好的安装文件如[LocalPath安装文件](/downloads/kubernetes/installation/local-path-storage.yaml)
+配置好的安装文件如[LocalPath安装文件](/downloads/cloud-native/kubernetes/installation/local-path-storage.yaml)
 
 该安装文件中配置StorageClass名称为默认值“local-path”，本机路径为“/localpv/local-path-provisioner”.  
 以下将介绍该安装文件的获取方法和相关配置：

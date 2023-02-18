@@ -3,7 +3,7 @@ description: 常用工具安装及使用
 cover: /images/tools/tools-logo.png
 title: 常用工具
 readingTime: false
-date: 2023-01-01
+date: 2023-01-02
 tag:
  - 常用工具
 categories:

@@ -15,7 +15,7 @@ K8S环境中的DNS通常使用CoreDNS，其存在30s缓存。
 
 [Stable Network ID](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#stable-network-id)，整体可参考下图：
 
-![statefulset-stable-network-id](/images/kubernetes/statefulset-stable-network-id.png)
+![statefulset-stable-network-id](/images/cloud-native/kubernetes/statefulset-stable-network-id.png)
 
 ## 操作体验
 

@@ -26,14 +26,14 @@ Tekton常用的基本概念如下，他们的关系如图所示：
 - Pipeline：管道。管道按顺序排列的Task的集合，可以在Pipeline中定义Task的执行顺序和执行条件；
 - PipelineRun：PipelineRun是Pipeline的特定执行。可以通过PipelineRun资源执行指定Pipeline并查看执行情况。  
 
-![Tekton常用概念](/images/devops/tekton/tekton-concept.png)
+![Tekton常用概念](/images/open-source/tekton/tekton-concept.png)
 
 其中，Task，TaskRun, Pipeline和PipelineRun为自定义资源。
 PipelineResources资源在v0.30.0版本已启用，此处不做介绍。
 
 ## Tekton使用示例
 
-当前在Gitlab上有一个名为tekton项目，项目内容为[tekton-master.zip](/downloads/devops/tektontekton-master.zip)
+当前在Gitlab上有一个名为tekton项目，项目内容为[tekton-master.zip](/downloads/open-source/tektontekton-master.zip)
 
 这个项目的CI/CD流程如下：
 ```
@@ -44,7 +44,7 @@ PipelineResources资源在v0.30.0版本已启用，此处不做介绍。
 
 ### 准备资源文件
 
-[tekton-cicd.zip](/downloads/devops/tekton/tekton-cicd.zip)
+[tekton-cicd.zip](/downloads/open-source/tekton/tekton-cicd.zip)
 
 以上zip包中包含以下文件：
 - git-clone-task.yaml：用于拉取Gitlab代码的Task资源文件，为通用模板文件，将Gitlab仓库地址、分支等参数暴露出来；

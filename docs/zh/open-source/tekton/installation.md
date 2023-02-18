@@ -40,7 +40,7 @@ Tekton相关资料如下：
 ## 获取安装文件
 
 - ***方式1***
-使用[tekton.zip](/downloads/devops/tekton/tekton.zip)中文件，该包中所用镜像已调整为内网环境镜像.
+使用[tekton.zip](/downloads/open-source/tekton/tekton.zip)中文件，该包中所用镜像已调整为内网环境镜像.
 
 - ***方式2***
 从以下链接获取安装文件，该文件中所用镜像需联通外网环境方能拉取：
@@ -86,5 +86,5 @@ http://$hostIP:31805
 ```
 
 界面展示如下：
-![tekton-dashboard](/images/devops/tekton/tekton-dashboard.png)
+![tekton-dashboard](/images/open-source/tekton/tekton-dashboard.png)
 

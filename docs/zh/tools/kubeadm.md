@@ -5,7 +5,7 @@ date: 2022-11-29
 
 # Kubeadm工具
 
-[Kubeadm工具](https://kubernetes.io/zh-cn/docs/reference/setup-tools/kubeadm/)本质上是一个二进制文件，主要用于[安装Kubernetes集群](/zh/kubernetes/installation.md)。
+[Kubeadm工具](https://kubernetes.io/zh-cn/docs/reference/setup-tools/kubeadm/)本质上是一个二进制文件，主要用于[安装Kubernetes集群](/zh/cloud-native/kubernetes/installation.md)。
 
 ## 参数
 

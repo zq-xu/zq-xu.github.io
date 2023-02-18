@@ -9,7 +9,7 @@ date: 2022-12-29
 
 
 ## 整体架构
-![Kubernetes高可用集群整体架构](/images/kubernetes/architecture-ha-k8s-cluster.png)
+![Kubernetes高可用集群整体架构](/images/cloud-native/kubernetes/architecture-ha-k8s-cluster.png)
 
 ## 环境信息
 - Master节点：
@@ -72,7 +72,7 @@ Master和Backup会定时确定对方状态，当Master不可用的时候，Backu
 
 ### Keepalived配置文件
 
-在每个节点上配置相应的keepalived.conf，见附件[Keepalived配置](/downloads/kubernetes/installation/keepalived-config.zip)。
+在每个节点上配置相应的keepalived.conf，见附件[Keepalived配置](/downloads/cloud-native/kubernetes/installation/keepalived-config.zip)。
 
 配置文件中需要修改的有如下部分：
 ```
@@ -131,7 +131,7 @@ HAProxy作为负载均衡时，可以按照指定策略（比如轮询）将流�
 
 
 ### HAProxy配置文件
-在每个节点上配置`haproxy.cfg`，见附件[HAProxy配置](/downloads/kubernetes/installation/haproxy.cfg)。
+在每个节点上配置`haproxy.cfg`，见附件[HAProxy配置](/downloads/cloud-native/kubernetes/installation/haproxy.cfg)。
 
 其中，主要的负载相关配置如下：
 ```
@@ -250,12 +250,12 @@ Your Kubernetes control-plane has initialized successfully!
 To start using your cluster, you need to run the following as a regular user:
 
   mkdir -p $HOME/.kube
-  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo cp -i /etc/cloud-native/kubernetes/admin.conf $HOME/.kube/config
   sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 Alternatively, if you are the root user, you can run:
 
-  export KUBECONFIG=/etc/kubernetes/admin.conf
+  export KUBECONFIG=/etc/cloud-native/kubernetes/admin.conf
 
 You should now deploy a pod network to the cluster.
 Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:

@@ -15,4 +15,4 @@ Pod是否准备就绪，通常通过Pod的业务探针(ReadinessProbe)来进行�
 
 对于某些业务场景而言，需要在初始化过程中使用到Pod的地址信息，并不需要等待Pod的业务服务就绪。因此需要Pod在创建时就分配Endpoints，这种情况下就需要跳过业务探针的健康检查。此处就需要设置service的“`spec.publishNotReadyAddresses`”字段，将该字段设置为true即可。
 
-![publishNotReadyAddresses](/images/kubernetes/publish-not-ready-addresses.png)
+![publishNotReadyAddresses](/images/cloud-native/kubernetes/publish-not-ready-addresses.png)
