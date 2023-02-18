@@ -7,8 +7,10 @@ tag:
  - Tekton
 tags:
  - Kubernetes
-categories:
+ - CNCF
  - DevOps
+categories:
+ - Open Source
 ---
 
 # Tekton

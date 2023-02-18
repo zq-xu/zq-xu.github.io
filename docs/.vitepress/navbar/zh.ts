@@ -4,7 +4,8 @@ export const navbarZh: DefaultTheme.NavItem[] = [
     {
         text: '开源杂记',
         items: [
-            { text: 'Tekton', link: '/zh/open-source/tekton/index' }
+            { text: 'Tekton -- 云原生CI工具', link: '/zh/open-source/tekton/index' },
+            { text: 'Vitess -- 数据库分库分表解决方案。', link: '/zh/open-source/vitess/index' }
         ]
     },
     {
