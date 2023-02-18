@@ -59,7 +59,8 @@ export const navbarZh: DefaultTheme.NavItem[] = [
     {
         text: '了解更多',
         items: [
-            { text: '个人简介', link: '/zh/aboutme' }
+            { text: '个人简介', link: '/zh/more/aboutme' },
+            { text: '资源分享', link: '/zh/more/resource-share' },
         ]
     }
 ]
