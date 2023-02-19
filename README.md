@@ -1,29 +1,16 @@
-# vitepress @sugarat/theme
-简约风的 [Vitepress 博客主题](https://theme.sugarat.top)
+<h1 align="center"> 鸢涯 </h1>
+<p align="center">愿你出走半生，归来仍是少年</p>
+<p align="center"><a href="https://zq-xu.github.io/" target="_blank">ZQ-XU的个人博客</a></p>
 
-## Usage
-先安装 `pnpm`
+## 个人简介
 
-```sh
-npm i -g pnpm
-```
+![图片](docs/public/images/favicon.png)
 
-安装依赖
-```sh
-pnpm install
-```
+93年，计算机相关专业，本硕毕业于[厦门大学](https://www.xmu.edu.cn/)。  
 
-开发启动
-```sh
-pnpm dev
-```
+从业五年，曾就职于华为云、沃趣科技、智臾科技等公司，主要从事云原生相关工作。  
 
-构建
-```sh
-pnpm build
-```
+主要技术栈：Kubernetes/Docker/Golang.
 
-预览产物
-```sh
-pnpm serve
-```
+:house: 常驻欧洲，不定期回国。
+
