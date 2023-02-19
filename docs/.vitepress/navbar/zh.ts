@@ -5,7 +5,7 @@ export const navbarZh: DefaultTheme.NavItem[] = [
         text: '开源杂记',
         items: [
             { text: 'Tekton -- 云原生CI工具', link: '/zh/open-source/tekton/index' },
-            { text: 'Vitess -- 数据库分库分表解决方案。', link: '/zh/open-source/vitess/index' }
+            { text: 'Vitess -- 数据库分库分表解决方案', link: '/zh/open-source/vitess/index' }
         ]
     },
     {
@@ -39,8 +39,6 @@ export const navbarZh: DefaultTheme.NavItem[] = [
             },
         ]
     },
-    
-
     {
         text: '常用工具',
         items: [
@@ -61,6 +59,7 @@ export const navbarZh: DefaultTheme.NavItem[] = [
         items: [
             { text: '个人简介', link: '/zh/more/aboutme' },
             { text: '资源分享', link: '/zh/more/resource-share' },
+            { text: 'DockerHub', link: 'https://hub.docker.com/u/zqxu1993' }
         ]
     }
 ]
