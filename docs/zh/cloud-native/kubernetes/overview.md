@@ -1,6 +1,5 @@
 ---
 sticky: 999
-hidden: true
 date: 2022-12-31
 ---
 

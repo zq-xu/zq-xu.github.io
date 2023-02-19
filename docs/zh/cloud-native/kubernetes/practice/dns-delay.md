@@ -1,5 +1,4 @@
 ---
-hidden: true
 date: 2022-10-31
 ---
 
