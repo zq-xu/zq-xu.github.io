@@ -55,7 +55,7 @@ export default defineConfig({
     socialLinks: [
       {
         icon: 'github',
-        link: 'https://github.com/zq-xu'
+        link: 'https://github.com/zq-xu/zq-xu.github.io'
       }
     ]
   }
