@@ -1,4 +1,5 @@
 ---
+sticky: 997
 description: Vue编程相关笔记
 cover: /images/coding/vue/vue-logo.svg
 title: Vue
