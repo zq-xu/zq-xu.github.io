@@ -18,7 +18,8 @@ export const navbarZh: DefaultTheme.NavItem[] = [
                     { text: 'Kubernetes安装', link: '/zh/cloud-native/kubernetes/installation' },
                     { text: 'Kubernetes配置', link: '/zh/cloud-native/kubernetes/configuration' },
                     { text: 'CRD && Operator', link: '/zh/cloud-native/kubernetes/crd-operator' },
-                    { text: 'Kubernetes实践', link: '/zh/cloud-native/kubernetes/practice' }
+                    { text: 'Kubernetes实践', link: '/zh/cloud-native/kubernetes/practice' },
+                    { text: 'Kubernetes参考', link: '/zh/cloud-native/kubernetes/reference' }
                 ]
             },
         ]
@@ -27,15 +28,17 @@ export const navbarZh: DefaultTheme.NavItem[] = [
         text: '手撕代码',
         items: [
             {
-                text: 'Golang编程',
+                text: 'Golang',
                 items: [
                     { text: 'Golang编码规范', link: '/zh/coding/golang/standards' },
                     { text: 'Golang设计模式', link: '/zh/coding/golang/design-patterns' }
                 ]
             },
             {
-                text: 'Vue笔记',
-                items: []
+                text: 'Vue',
+                items: [
+                    { text: 'Vue编程', link: '/zh/coding/vue/index' }
+                ]
             },
         ]
     },

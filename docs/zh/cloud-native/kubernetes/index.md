@@ -19,3 +19,4 @@ categories:
 * [Kubernetes配置](./configuration.md)
 * [CRD && Operator](./crd-operator.md)
 * [Kubernetes实践](./practice.md)
+* [Kubernetes参考](./reference.md)
