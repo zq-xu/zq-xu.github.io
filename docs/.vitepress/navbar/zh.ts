@@ -37,7 +37,7 @@ export const navbarZh: DefaultTheme.NavItem[] = [
             {
                 text: 'Vue',
                 items: [
-                    { text: 'Vue编程', link: '/zh/coding/vue/index' }
+                    { text: 'Vue参考', link: '/zh/coding/vue/index' }
                 ]
             },
         ]
