@@ -46,7 +46,7 @@ export const navbarZh: DefaultTheme.NavItem[] = [
         text: '常用工具',
         items: [
             { text: 'Git工具', link: '/zh/tools/git' },
-            { text: 'Docker环境', link: '/zh/tools/docker' },
+            { text: 'Docker', link: '/zh/tools/docker' },
             { text: 'Harbor镜像仓库', link: '/zh/tools/harbor' },
             { text: 'Kubeadm工具', link: '/zh/tools/kubeadm' },
             { text: 'Kubectl工具', link: '/zh/tools/kubectl' },

@@ -2,7 +2,7 @@
 date: 2022-11-31
 ---
 
-# Docker环境
+# Docker
 
 - [Docker官方文档](https://docs.docker.com/)
 - Docker实践可参考[Docker-从入门到实践](https://github.com/yeasy/docker_practice)
@@ -49,4 +49,50 @@ Docker的配置文件通常为`/etc/docker/daemon.json`(不存在的话可以创
 ```bash
 sudo systemctl daemon-reload
 sudo systemctl restart docker
+```
+
+## Docker常用指令
+
+### 特权模式下以entrypoint命令运行镜像
+
+```sh
+docker run --privileged=true -d --entrypoint sh $image -c "sleep 9999" 
+```
+
+### 指定端口和volume挂载运行镜像
+
+```sh
+docker run --name $name -p $hostPort:$containerPort  -v $hostPath:/$containerPath -d $image /bin/sh  "sleep 999"
+```
+
+### 删除所有tage为none的容器
+
+```sh
+docker images|grep none|awk '{print $3}'|xargs docker rmi -f
+```
+
+### 容器转储为tgz文件
+
+```sh
+docker save $image1 $image2 | gzip > $name.tgz
+```
+
+### 登录docker仓库
+
+```sh
+docker login $hostname -u $name -p $password
+```
+
+### 查看Docker服务日志
+
+```sh
+journalctl -u docker --no-pager
+```
+
+### 为当前用户赋予Docker权限
+
+```sh
+sudo groupadd docker
+sudo usermod -aG docker $USER
+newgrp docker 
 ```
