@@ -1,25 +1,18 @@
 ---
 sticky: 997
-description: Vue编程相关笔记
-cover: /images/coding/vue/vue-logo.svg
-title: Vue
-readingTime: false
-date: 2023-01-29
-tag:
+date: 2022-08-31
+tags:
  - Vue
+ - Vite
 categories:
- - Vue
+ - Web
 ---
 
-# Vue参考
+# Vue & Vite参考资源
 
-个人在开发过程中有时候也需要一些前端的Demo,所以略微学习了一些前端的内容。
+如果是新手入门，建议大概了解`Vue`的基础之后，从一款开箱即用的[Vue框架](#vue框架)开始实践。
 
-Vue是我个人觉得比较好上手的一种前端框架，其生态和发展也非常的不错。
-
-鉴于本人对Vue框架并没有深入探究，就不水文了，此处分享一些个人搜藏的资源。
-
-如果是新手入门，可以大概了解`Vue`的基础之后，从一款开箱即用的[Vue框架](#vue框架)开始实践，在实践的过程中学习，比较容易找到感觉和成就感，继而再深入学习相应的原理,效率或许会高很多。
+在实践中学习，比较容易找到感觉和成就感，继而再深入学习相应的原理，效率或许会高很多。
 
 ## Vue基础
 
@@ -60,8 +53,6 @@ Vue是我个人觉得比较好上手的一种前端框架，其生态和发展�
 - [vue-qrcode-reader](https://github.com/gruhn/vue-qrcode-reader)：一组 Vue.js 组件，允许您在不离开浏览器的情况下检测和解码二维码。
 - [使用html5-qrcode 扫描二维码(vue3)](https://blog.csdn.net/m0_50864962/article/details/125600533):扫描条形码/二维码的实践,我有参考这个实践过条形码的扫描(代码尚未公开到Github)；
 
-## 其他资源
-- [Icones](https://icones.js.org/)：图标库，适合找寻心仪的图标。
-- [emoji-cheat-sheet](https://github.com/ikatyang/emoji-cheat-sheet)：表情库，非常适合写文档使用；
-- [Html5-QRCode](https://github.com/mebjas/html5-qrcode)：轻量级和跨平台的二维码和条形码扫描库；
+## 更多资源
 
+更多前端资源参考[资源分享](/zh/more/resource-share)。
