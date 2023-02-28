@@ -10,13 +10,15 @@ categories:
  - Web
 ---
 
-# Web示例/文档构建
+# Web示例/文档/博客构建
 
-以`Vue`或`Vite`为基础，可以构建Web项目示例或项目文档(个人博客)，并部署到[Github Pages](https://docs.github.com/en/pages)等多种平台。
+以`Vue`或`Vite`为基础，可以构建Web示例/项目文档，并部署到[Github Pages](https://docs.github.com/en/pages)等多种平台。
 
-打包好的Web项目可以以静态文件(后端可以`mock`代替)的形式作为Web项目的示例；
+Web项目可以打包好的静态文件（接口以`mock`代替）作为Web示例。
 
-个人博客或者项目文档如果是以`Markdown`格式撰写，则可以借助框架[VuePress](https://v2.vuepress.vuejs.org/zh/)或[VitePress](https://vitepress.vuejs.org/)来进行构建。
+文档/博客如果是以`Markdown`格式撰写，则可以借助框架[VuePress](https://v2.vuepress.vuejs.org/zh/)或[VitePress](https://vitepress.vuejs.org/)来进行构建。
+
+部署到`Github Pages`的方式可参考[Github Pages部署](./gh-pages.md)。
 
 ## Web示例构建
 
@@ -56,32 +58,5 @@ categories:
 - [@sugarat/theme](https://theme.sugarat.top/)：基于`VitePress`定制的博客主题，个人觉得用起来非常丝滑;
 - [Chodocs](https://chodocs.cn/)：基于`VitePress`构建的一站式前端内容网站，内容丰富；
 - [Vue3 入门指南与实战案例](https://vue3.chengpeiquan.com/)：基于`VitePress`构建的学习`Vue3`的网站，风格简约。
-
-## 发布相关
-
-### Github Page
-
-基于`Vite`构建的项目发布到`Github Pages`可以参考：
-- [Github Pages](https://cn.vitejs.dev/guide/static-deploy.html#github-pages)：此处是基于`Github Action`触发流水线自动构建的；
-- [v3.GitHub Pages](https://v3.vitejs.dev/guide/static-deploy.html#github-pages)：此处是通过执行脚本进行本地打包，并推送打包好的静态文件至公开的`Github`仓库的指定分支。比较适合私有项目，可以只对外暴露打包好的文件，而不暴露私有项目的源代码。
-
-此处记一次个人踩坑经历：
-
-我基于`Vite`打包好了Web示例，本地执行`vite preview`指令，Web示例本地运行正常。
-
-使用脚本将其推送到`Github Pages`，示例网页加载失败，查看`console`显示类似以下错误：
-- `Failed to load resource: the server responded with a status of 404`
-- `net::ERR_ABORTED 404`
-
-反复检查之后，最终发现是问题是因为移除了脚本中的如下内容：
-```sh
-# place .nojekyll to bypass Jekyll processing
-echo > .nojekyll
-```
-上述脚本作用及原因如下(摘自[.nojekyll 文件是什么](https://www.jianshu.com/p/ac9b54176dbe))：
-
-`Github Pages`默认是基于`Jekyll`构建，`Jekyll`是一个将纯文本转换为静态网站的工具，它构建的网站下各种目录都是特定的以下划线开头命名的文件夹，例如 _layouts、_posts ，它会忽略掉其它的以下划线开头的文件夹和文件。
-
-`.nojekyll`就是告诉`Github Pages`当前网站不是基于`Jekyll`构建的，不要忽略掉下划线开头的文件和文件夹。
 
 
