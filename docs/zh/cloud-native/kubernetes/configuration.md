@@ -1,5 +1,6 @@
 ---
 date: 2022-12-29
+recommend: 4
 ---
 
 # Kubernetes常用配置

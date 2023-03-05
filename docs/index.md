@@ -5,5 +5,5 @@ blog:
  name: '鸢涯'
  motto: ZQ-XU的个人博客
  inspiring: 愿你出走半生，归来仍是少年
- pageSize: 5
+ pageSize: 10
 ---

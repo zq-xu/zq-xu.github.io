@@ -10,6 +10,8 @@ tags:
  - 容器编排
 categories:
  - 云原生
+top: 3
+recommend: 1
 ---
 
 # Kubernetes笔记

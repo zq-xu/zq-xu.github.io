@@ -1,5 +1,6 @@
 ---
 date: 2022-12-30
+recommend: 3
 ---
 
 # Kubernetes安装

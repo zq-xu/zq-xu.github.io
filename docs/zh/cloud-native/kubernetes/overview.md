@@ -1,6 +1,7 @@
 ---
 sticky: 999
 date: 2022-12-31
+recommend: 2
 ---
 
 # Kubernetes基础
