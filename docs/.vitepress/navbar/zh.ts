@@ -31,7 +31,8 @@ export const navbarZh: DefaultTheme.NavItem[] = [
                 text: 'Golang',
                 items: [
                     { text: 'Golang编码规范', link: '/zh/coding/golang/standards' },
-                    { text: 'Golang设计模式', link: '/zh/coding/golang/design-patterns' }
+                    { text: 'Golang设计模式', link: '/zh/coding/golang/design-patterns' },
+                    { text: 'Golang实践', link: '/zh/coding/golang/practice' }
                 ]
             },
             {

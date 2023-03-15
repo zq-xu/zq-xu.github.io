@@ -8,7 +8,7 @@ tags:
  - Vite
 categories:
  - Web
-recommend: 3
+recommend: 4
 ---
 
 # Github Pages部署

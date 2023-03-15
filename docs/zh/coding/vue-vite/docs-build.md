@@ -8,7 +8,7 @@ tags:
  - Vite
 categories:
  - Web
-recommend: 2
+recommend: 3
 ---
 
 # Web示例/文档/博客构建

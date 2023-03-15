@@ -1,6 +1,10 @@
 ---
 sticky: 998
-date: 2022-09-30
+tag:
+ - Golang
+categories:
+ - Golang
+recommend: 3
 ---
 
 # Golang设计模式

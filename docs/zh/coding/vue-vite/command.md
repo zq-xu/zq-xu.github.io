@@ -4,7 +4,7 @@ tags:
  - Vite
 categories:
  - Web
-recommend: 4
+recommend: 5
 ---
 
 # Vite/Vue常用指令
