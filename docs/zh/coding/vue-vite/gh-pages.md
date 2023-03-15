@@ -8,6 +8,7 @@ tags:
  - Vite
 categories:
  - Web
+recommend: 3
 ---
 
 # Github Pages部署
@@ -15,6 +16,8 @@ categories:
 要将项目的Web示例/文档部署到[Github Pages](https://docs.github.com/en/pages)，主要需要完成以下两步：
 - [项目打包配置](#项目打包配置)：项目内部配置，实现本地手动/`Github Action`自动的打包推送；
 - [Github配置](#github配置)：在`Github`上进行配置，主要配置用于展示的分支/路径以及权限。
+
+示例项目：[Warehouse Page](https://zq-xu.github.io/warehouse-page)
 
 ## 项目打包配置
 

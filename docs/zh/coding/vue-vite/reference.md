@@ -6,6 +6,7 @@ tags:
  - Vite
 categories:
  - Web
+recommend: 2
 ---
 
 # Vue & Vite参考资源

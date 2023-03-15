@@ -11,6 +11,7 @@ tags:
 categories:
  - Web
 top: 5
+recommend: 1
 ---
 
 # Vue & Vite
@@ -26,3 +27,4 @@ top: 5
 * [Vue & Vite参考资源](./reference.md)
 * [Web示例/文档构建](./docs-build.md)
 * [Github Pages部署](./gh-pages.md)
+* [Vite/Vue常用指令](./command.md)
