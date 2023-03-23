@@ -21,7 +21,21 @@ const blogTheme = getThemeConfig({
         'https://img.cdn.sugarat.top/mdImg/MTY3NDk5NTI2NzY1Ng==674995267656',
       url: 'https://vitepress.vuejs.org/'
     }
-  ]
+  ],
+  popover: {
+    title: '公告',
+    duration: -1,
+    body: [
+      {
+        type: 'text',
+        content: '👇 微信 👇 欢迎大家私信交流'
+      },
+      {
+        type: 'image',
+        src: '/images/more/wechat-qrcode.png'
+      }
+    ]
+  }
 })
 
 export default defineConfig({
@@ -39,7 +53,7 @@ export default defineConfig({
   themeConfig: {
     ...blogTheme,
     logo: '/images/logo.png',
-    outline: [2,6],
+    outline: [2, 6],
     nav: navbarZh,
     lastUpdatedText: '上次更新于',
     footer: {
