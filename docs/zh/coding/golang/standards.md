@@ -3,7 +3,7 @@ tag:
  - Golang
 categories:
  - Golang
-recommend: 2
+recommend: 3
 ---
 
 # Golang编码规范

@@ -30,6 +30,7 @@ export const navbarZh: DefaultTheme.NavItem[] = [
             {
                 text: 'Golang',
                 items: [
+                    { text: 'Golang参考资源', link: '/zh/coding/golang/reference' },
                     { text: 'Golang编码规范', link: '/zh/coding/golang/standards' },
                     { text: 'Golang设计模式', link: '/zh/coding/golang/design-patterns' },
                     { text: 'Golang实践', link: '/zh/coding/golang/practice' }
@@ -38,10 +39,10 @@ export const navbarZh: DefaultTheme.NavItem[] = [
             {
                 text: 'Vue & Vite',
                 items: [
-                    { text: '参考资源', link: '/zh/coding/vue-vite/reference' },
+                    { text: 'Vue/Vite参考资源', link: '/zh/coding/vue-vite/reference' },
                     { text: 'Web示例/文档/博客构建', link: '/zh/coding/vue-vite/docs-build' },
                     { text: 'Github Pages部署', link: '/zh/coding/vue-vite/gh-pages' },
-                    { text: 'Vite/Vue常用指令', link: '/zh/coding/vue-vite/command' }
+                    { text: 'Vue/Vite常用指令', link: '/zh/coding/vue-vite/command' }
                 ]
             },
         ]

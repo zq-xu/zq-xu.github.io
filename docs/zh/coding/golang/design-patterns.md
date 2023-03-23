@@ -4,7 +4,7 @@ tag:
  - Golang
 categories:
  - Golang
-recommend: 3
+recommend: 4
 ---
 
 # Golang设计模式

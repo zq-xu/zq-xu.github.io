@@ -13,6 +13,7 @@ recommend: 1
 
 # Golang
 
+* [Golang参考资源](./reference.md)
 * [Golang编码规范](./standards.md)
 * [Golang设计模式](./design-patterns.md)
 * [Golang实践](./practice.md)

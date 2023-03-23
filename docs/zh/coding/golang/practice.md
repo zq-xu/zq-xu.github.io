@@ -1,6 +1,6 @@
 ---
 date: 2022-12-27
-recommend: 4
+recommend: 5
 ---
 
 # Golang实践
