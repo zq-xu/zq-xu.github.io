@@ -1,5 +1,4 @@
 ---
-date: 2022-08-31
 tag:
  - Golang
 categories:
@@ -29,3 +28,9 @@ recommend: 2
 
 - [Go语言中文网](https://studygolang.com/)：Go语言华人聚集地，资讯及论坛；
 - [Go 资源整理](https://studygolang.com/articles/24359)：一些Go语言相关的资源整理；
+
+## Golang开发以太坊
+
+- [以太坊开发文档](https://ethereum.org/zh/developers/docs/)：介绍了以太坊概念，解释了以太坊技术堆栈；
+- [面向GO开发者的以太坊](https://ethereum.org/zh/developers/docs/programming-languages/golang/)：学习如何使用基于Go的项目和工具参与以太坊的开发；
+- [用Go来做以太坊开发](https://goethereumbook.org/zh/)：概括介绍用Go进行以太坊开发；
