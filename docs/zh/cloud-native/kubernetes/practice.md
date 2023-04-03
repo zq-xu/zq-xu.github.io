@@ -1,6 +1,5 @@
 ---
-date: 2022-12-27
-recommend: 6
+recommend: 7
 ---
 
 # Kubernetes实践笔记

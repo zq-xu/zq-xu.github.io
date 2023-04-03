@@ -16,7 +16,8 @@ export const navbarZh: DefaultTheme.NavItem[] = [
                 items: [
                     { text: 'Kubernetes基础', link: '/zh/cloud-native/kubernetes/overview' },
                     { text: 'Kubernetes安装', link: '/zh/cloud-native/kubernetes/installation' },
-                    { text: 'Kubernetes配置', link: '/zh/cloud-native/kubernetes/configuration' },
+                    { text: 'Kubernetes常用配置', link: '/zh/cloud-native/kubernetes/configuration' },
+                    { text: 'Kubernetes常用操作', link: '/zh/cloud-native/kubernetes/operation' },
                     { text: 'CRD && Operator', link: '/zh/cloud-native/kubernetes/crd-operator' },
                     { text: 'Kubernetes实践', link: '/zh/cloud-native/kubernetes/practice' },
                     { text: 'Kubernetes参考', link: '/zh/cloud-native/kubernetes/reference' }

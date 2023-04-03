@@ -1,6 +1,5 @@
 ---
-date: 2022-12-26
-recommend: 7
+recommend: 8
 ---
 
 # Kubernetes参考

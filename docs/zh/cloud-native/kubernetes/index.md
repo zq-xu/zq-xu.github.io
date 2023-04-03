@@ -18,7 +18,8 @@ recommend: 1
 
 * [Kubernetes介绍](./overview.md)
 * [Kubernetes安装](./installation.md)
-* [Kubernetes配置](./configuration.md)
+* [Kubernetes常用配置](./configuration.md)
+* [Kubernetes常用操作](./operation.md)
 * [CRD && Operator](./crd-operator.md)
 * [Kubernetes实践](./practice.md)
 * [Kubernetes参考](./reference.md)
