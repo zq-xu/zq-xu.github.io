@@ -2,6 +2,7 @@ import { getThemeConfig, defineConfig } from '@sugarat/theme/node'
 import packageJSON from '../../package.json'
 import { navbarZh } from './navbar'
 import { head } from './head'
+import { chineseSearchOptimize, pagefindPlugin } from 'vitepress-plugin-pagefind'
 
 const blogTheme = getThemeConfig({
   // 文章默认作者
@@ -35,7 +36,8 @@ const blogTheme = getThemeConfig({
         src: '/images/more/wechat-qrcode.png'
       }
     ]
-  }
+  },
+  search: 'pagefind'
 })
 
 export default defineConfig({
@@ -48,7 +50,14 @@ export default defineConfig({
     optimizeDeps: {
       include: ['element-plus'],
       exclude: ['@sugarat/theme']
-    }
+    },
+    plugins: [pagefindPlugin({
+      customSearchQuery: chineseSearchOptimize,
+      btnPlaceholder: '搜索',
+      placeholder: '搜索文档',
+      emptyText: '空空如也',
+      heading: '共: {{searchResult}} 条结果'
+    })],
   },
   themeConfig: {
     ...blogTheme,
