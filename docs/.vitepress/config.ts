@@ -7,6 +7,9 @@ import { chineseSearchOptimize, pagefindPlugin } from 'vitepress-plugin-pagefind
 const blogTheme = getThemeConfig({
   // 文章默认作者
   author: '鸢涯',
+  recommend: {
+    showSelf: true
+  },
   friend: [
     {
       nickname: '粥里有勺糖',
