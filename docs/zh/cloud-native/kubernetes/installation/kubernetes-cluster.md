@@ -75,11 +75,11 @@ sudo yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/cen
 cat <<EOF > /etc/yum.repos.d/kubernetes.repo
 [kubernetes]
 name=Kubernetes
-baseurl=https://mirrors.aliyun.com/cloud-native/kubernetes/yum/repos/kubernetes-el7-x86_64/
+baseurl=https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/
 enabled=1
 gpgcheck=1
 repo_gpgcheck=1
-gpgkey=https://mirrors.aliyun.com/cloud-native/kubernetes/yum/doc/yum-key.gpg https://mirrors.aliyun.com/cloud-native/kubernetes/yum/doc/rpm-package-key.gpg
+gpgkey=https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg
 EOF
 
 # Cache the packages of added yum source.
@@ -157,12 +157,12 @@ Your Kubernetes control-plane has initialized successfully!
 To start using your cluster, you need to run the following as a regular user:
 
   mkdir -p $HOME/.kube
-  sudo cp -i /etc/cloud-native/kubernetes/admin.conf $HOME/.kube/config
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
   sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 Alternatively, if you are the root user, you can run:
 
-  export KUBECONFIG=/etc/cloud-native/kubernetes/admin.conf
+  export KUBECONFIG=/etc/kubernetes/admin.conf
 
 You should now deploy a pod network to the cluster.
 Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
@@ -181,11 +181,11 @@ kubeadm join 192.168.1.241:6443 --token 8kfjbo.fhitoq5xe0oc69x3 \
 
 # 非root用户
 mkdir -p $HOME/.kube
-sudo cp -i /etc/cloud-native/kubernetes/admin.conf $HOME/.kube/config
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 # root用户
-export KUBECONFIG=/etc/cloud-native/kubernetes/admin.conf
+export KUBECONFIG=/etc/kubernetes/admin.conf
 ```
 
 ### 安装Kubernetes网络组件
@@ -252,7 +252,7 @@ kubeadm reset -f
 modprobe -r ipip
 lsmod
 rm -rf ~/.kube/
-rm -rf /etc/cloud-native/kubernetes/
+rm -rf /etc/kubernetes/
 rm -rf /etc/systemd/system/kubelet.service.d
 rm -rf /etc/systemd/system/kubelet.service
 rm -rf /usr/bin/kube*

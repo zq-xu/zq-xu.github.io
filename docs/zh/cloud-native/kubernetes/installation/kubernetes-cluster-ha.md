@@ -249,12 +249,12 @@ Your Kubernetes control-plane has initialized successfully!
 To start using your cluster, you need to run the following as a regular user:
 
   mkdir -p $HOME/.kube
-  sudo cp -i /etc/cloud-native/kubernetes/admin.conf $HOME/.kube/config
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
   sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 Alternatively, if you are the root user, you can run:
 
-  export KUBECONFIG=/etc/cloud-native/kubernetes/admin.conf
+  export KUBECONFIG=/etc/kubernetes/admin.conf
 
 You should now deploy a pod network to the cluster.
 Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
