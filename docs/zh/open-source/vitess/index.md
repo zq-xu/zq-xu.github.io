@@ -1,6 +1,7 @@
 ---
 description: Vitess是一个用于部署，扩展和管理大型开源数据库实例集群的数据库解决方案。通俗点说，就是在云环境下对大型数据库及数据库集群进行分库分表并提供可靠性处理的方案。
 cover: /images/open-source/vitess/vitess-horizontal-color.svg
+hiddenCover: true 
 date: 2021-11-10
 tag:
  - Vitess

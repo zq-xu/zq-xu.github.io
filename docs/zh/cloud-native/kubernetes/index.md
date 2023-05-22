@@ -1,6 +1,7 @@
 ---
 description: Kubernetes学习、安装和实践
 cover: /images/cloud-native/kubernetes/kubernetes-stacked-all-blue-color.svg
+hiddenCover: true 
 title: Kubernetes
 readingTime: false
 date: 2023-01-31

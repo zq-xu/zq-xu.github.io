@@ -2,6 +2,7 @@
 title: 个人简介
 description: 个人基本信息
 cover: /images/avatar.png
+hiddenCover: true 
 readingTime: false
 date: 2023-02-17
 top: 1

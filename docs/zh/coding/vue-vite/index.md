@@ -1,6 +1,7 @@
 ---
 description: Vue编程相关笔记
 cover: /images/coding/vue/vue-logo.svg
+hiddenCover: true 
 title: Vue & Vite
 readingTime: false
 date: 2023-01-29

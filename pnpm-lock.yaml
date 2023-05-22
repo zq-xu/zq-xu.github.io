@@ -2,7 +2,7 @@ lockfileVersion: 5.4
 
 specifiers:
   '@element-plus/icons-vue': ^2.0.10
-  '@sugarat/theme': ^0.1.25
+  '@sugarat/theme': ^0.1.29
   element-plus: ^2.2.28
   pagefind: ^0.12.0
   sass: ^1.56.1
@@ -13,7 +13,7 @@ specifiers:
 
 dependencies:
   '@element-plus/icons-vue': 2.0.10_vue@3.2.47
-  '@sugarat/theme': 0.1.25_vue@3.2.47
+  '@sugarat/theme': 0.1.29_vue@3.2.47
   element-plus: 2.2.30_vue@3.2.47
   pagefind: 0.12.0
   vitepress-plugin-pagefind: 0.2.3_mzi5piyyzevl7wmlywttuprm6m
@@ -400,8 +400,8 @@ packages:
       fastq: 1.15.0
     dev: false
 
-  /@sugarat/theme/0.1.25_vue@3.2.47:
-    resolution: {integrity: sha512-OvtnO+Z4QrN4X/D7Cx69HQwRIfOdtSQl83hVNE6zDaZeJrfbjfJG+23DUJ/6BDR+NFTWBvNRaLhkZj5LGl42eA==}
+  /@sugarat/theme/0.1.29_vue@3.2.47:
+    resolution: {integrity: sha512-6WFnoD9M6x3U9KVNW5/pIic3E2dKOzzAVScdbYq5Pw5JeUK8bK1zpmkmLeiVQRA44Wrz5WGDONTZMJ+hL21RlQ==}
     dependencies:
       '@vue/shared': 3.2.47
       '@vueuse/core': 9.12.0_vue@3.2.47
