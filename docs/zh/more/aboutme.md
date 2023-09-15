@@ -25,7 +25,7 @@ top: 1
 
 - [Kubernetes](/zh/cloud-native/kubernetes/index)：容器编排框架，云原生基石；
 - [Tekton](/zh/open-source/tekton/index)：云原生DevOps/CI工具；
-- [Golang](/zh/cloud-native/kubernetes/index)：Go语言开发相关学习、实践及感悟；
+- [Golang](/zh/coding/golang/index)：Go语言开发相关学习、实践及感悟；
 - [常用工具](/zh/tools/index)：记录常用工具的安装、配置和使用方式。
 
 ## :sparkles: 个人作品
