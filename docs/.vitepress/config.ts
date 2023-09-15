@@ -62,7 +62,7 @@ export default defineConfig({
       heading: '共: {{searchResult}} 条结果'
     })],
   },
-  themeConfig: {
+  extends: {
     ...blogTheme,
     logo: '/images/logo.png',
     outline: [2, 6],
