@@ -36,7 +36,7 @@ kubeadm join kubernetes-vip:9443 --token grv9o6.75venx9x7sajjowp \
 
 - **步骤二**
 
-在集群中任意Master节点执行以下节点生成`certificate-key`:
+在集群中任意Master节点执行以下命令生成`certificate-key`:
 ```bash
 kubeadm init phase upload-certs --upload-certs
 # 控制台输出如下：
@@ -121,7 +121,6 @@ Environment="KUBELET_CONFIG_ARGS=--config=/var/lib/kubelet/config.yaml --root-di
 - **步骤二** 重新加载守护进程
 ```bash
 systemctl daemon-reload
-重新启动多维数据集
 ```
 
 - **步骤三** 重启`Kubelet`
