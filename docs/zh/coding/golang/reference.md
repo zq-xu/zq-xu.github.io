@@ -34,3 +34,9 @@ recommend: 2
 - [以太坊开发文档](https://ethereum.org/zh/developers/docs/)：介绍了以太坊概念，解释了以太坊技术堆栈；
 - [面向GO开发者的以太坊](https://ethereum.org/zh/developers/docs/programming-languages/golang/)：学习如何使用基于Go的项目和工具参与以太坊的开发；
 - [用Go来做以太坊开发](https://goethereumbook.org/zh/)：概括介绍用Go进行以太坊开发；
+
+## Golang开发游戏
+
+- [Ebiten](https://github.com/hajimehoshi/ebiten)：极简的2D游戏引擎,能够快速轻松地开发可跨多个平台部署的2D游戏;
+- [Nano](https://github.com/lonng/nano)：快速、轻量的Go游戏服务器网络库,专为实时、社交、手机游戏等服务器端应用设计；
+- [G3N](https://github.com/g3n/engine)：跨平台的OpenGL 3D游戏引擎，提供基本的集成GUI框架，并支持3D空间音频。
