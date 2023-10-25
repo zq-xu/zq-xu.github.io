@@ -62,7 +62,7 @@ docker run --privileged=true -d --entrypoint sh $image -c "sleep 9999"
 ### 指定端口和volume挂载运行镜像
 
 ```sh
-docker run --name $name -p $hostPort:$containerPort  -v $hostPath:/$containerPath -d $image /bin/sh  "sleep 999"
+docker run --name $name -p $hostPort:$containerPort -v $hostPath:$containerPath -d $image /bin/sh "sleep 999"
 ```
 
 ### 删除所有tage为none的容器
