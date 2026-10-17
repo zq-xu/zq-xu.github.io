@@ -2,8 +2,20 @@
 
 **Scenario:** Anna invites her friend Mark to dinner at her home.
 
+## Email Header
+
+**Lil (To):** mark.b@gmail.com
+**Mingħand (From):** anna.c@gmail.com
+**Data (Date):** 12 ta' Ottubru 2026
+**Suġġett (Subject):** Stedina għall-ikla ta' filgħaxija
+
 ## Full Email
 
+> **Lil:** mark.b@gmail.com
+> **Mingħand:** anna.c@gmail.com
+> **Data:** 12 ta' Ottubru 2026
+> **Suġġett:** Stedina għall-ikla ta' filgħaxija
+>
 > Għażiż Mark,
 >
 > Nispera li inti tajjeb.
@@ -20,9 +32,51 @@
 >
 > Nispera li tkun tista' tiġi.
 >
-> Tiegħek, Anna
+> Tislijiet,
+> Anna
 
 ## Sentence-by-Sentence Translation and Word Notes
+
+**Malti:** Lil: mark.b@gmail.com
+
+**Translation:** To: mark.b@gmail.com
+
+| Maltese | English meaning | Notes |
+|---|---|---|
+| Lil | to; recipient | Maltese label for the email "To" field |
+| mark.b@gmail.com | email address | Recipient's (Mark's) email |
+
+**Malti:** Mingħand: anna.c@gmail.com
+
+**Translation:** From: anna.c@gmail.com
+
+| Maltese | English meaning | Notes |
+|---|---|---|
+| Mingħand | from; sender | Maltese label for the email "From" field; literally "from ..." |
+| anna.c@gmail.com | email address | Sender's (Anna's) email |
+
+**Malti:** Data: 12 ta' Ottubru 2026
+
+**Translation:** Date: 12 October 2026
+
+| Maltese | English meaning | Notes |
+|---|---|---|
+| Data | date | Email "Date" field; Maltese date format is "day ta' month year" |
+| 12 | twelve | Day in the date |
+| ta' | of | Links the day and the month |
+| Ottubru | October | Month name |
+
+**Malti:** Suġġett: Stedina għall-ikla ta' filgħaxija
+
+**Translation:** Subject: Dinner Invitation
+
+| Maltese | English meaning | Notes |
+|---|---|---|
+| Suġġett | subject | Email "Subject" field |
+| Stedina | invitation | Feminine noun |
+| għall-ikla | to the meal | Contracted `għal` + `l-ikla` |
+| ta' | of; during | Links the noun and time expression |
+| filgħaxija | in the evening | Time expression |
 
 **Malti:** Għażiż Mark,
 
@@ -104,7 +158,7 @@
 |---|---|---|
 | Se | will | Future marker |
 | nipprepara | I prepare | First-person singular form |
-| platt | dish; plate | Masculine noun; means “dish” here |
+| platt | dish; plate | Masculine noun; means "dish" here |
 | Malti | Maltese-style | Masculine singular form agreeing with `platt` |
 | u | and | Conjunction |
 | deżerta | dessert | Feminine noun |
@@ -118,7 +172,7 @@
 | Maltese | English meaning | Notes |
 |---|---|---|
 | Jekk jogħġbok | please | Fixed polite expression |
-| għidli | tell me | `għid` “tell” + `-li` “me” |
+| għidli | tell me | `għid` "tell" + `-li` "me" |
 | jekk | whether; if | Introduces an indirect question here |
 | għandek | you have | Second-person singular form of `għand` |
 | xi | some; any | Indefinite determiner |
@@ -139,11 +193,11 @@
 | tista' | you can | Second-person singular form |
 | tiġi | you come | Second-person singular form |
 
-**Malti:** Tiegħek, Anna
+**Malti:** Tislijiet, Anna
 
-**Translation:** Yours, Anna.
+**Translation:** Regards, Anna (email closing).
 
 | Maltese | English meaning | Notes |
 |---|---|---|
-| Tiegħek | yours; sincerely | Email closing |
+| Tislijiet | regards; best wishes | Formal email/letter closing, literally "greetings/regards" |
 | Anna | Anna | Name |

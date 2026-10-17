@@ -2,8 +2,20 @@
 
 **场景：** 一对新人邀请亲友参加婚礼仪式和宴会。
 
+## 邮件头部
+
+**Lil（收件人 To）：** hbieb@gmail.com
+**Mingħand（发件人 From）：** anna.c@gmail.com
+**Data（日期）：** 20 ta' Ġunju 2026
+**Suġġett（主题）：** Stedina għat-tieġ
+
 ## 邮件全文
 
+> **Lil:** hbieb@gmail.com
+> **Mingħand:** anna.c@gmail.com
+> **Data:** 20 ta' Ġunju 2026
+> **Suġġett:** Stedina għat-tieġ
+>
 > Għeżież ħbieb,
 >
 > Għandna pjaċir nistednukom għat-tieġ tagħna.
@@ -18,9 +30,49 @@
 >
 > Nistennew bil-ħerqa li niċċelebraw dan il-jum speċjali magħkom.
 >
-> Dejjem tagħkom, Anna u Mark
+> Tislijiet,
+> Anna u Mark
 
 ## 逐句翻译与逐词拆解
+
+**Malti:** Lil: hbieb@gmail.com
+
+**整句：** 收件人（To）：hbieb@gmail.com
+
+| 词语 | 中文含义 | 说明 |
+|---|---|---|
+| Lil | 收件人；给…… | 邮件头部"To"的马耳他语标签 |
+| hbieb@gmail.com | 邮箱地址 | 收件人（受邀亲友们）的邮箱 |
+
+**Malti:** Mingħand: anna.c@gmail.com
+
+**整句：** 发件人（From）：anna.c@gmail.com
+
+| 词语 | 中文含义 | 说明 |
+|---|---|---|
+| Mingħand | 发件人；来自…… | 邮件头部"From"的马耳他语标签，本义"从……那里" |
+| anna.c@gmail.com | 邮箱地址 | 发件人（Anna）的邮箱 |
+
+**Malti:** Data: 20 ta' Ġunju 2026
+
+**整句：** 日期：2026 年 6 月 20 日
+
+| 词语 | 中文含义 | 说明 |
+|---|---|---|
+| Data | 日期 | 邮件头部"Date"；马耳他语日期格式为"日 ta' 月 年" |
+| 20 | 二十 | 日期中的日 |
+| ta' | ……的 | 连接日和月份 |
+| Ġunju | 六月 | 月份名 |
+
+**Malti:** Suġġett: Stedina għat-tieġ
+
+**整句：** 主题：婚礼邀请
+
+| 词语 | 中文含义 | 说明 |
+|---|---|---|
+| Suġġett | 主题 | 邮件头部"Subject" |
+| Stedina | 邀请 | 阴性名词 |
+| għat-tieġ | 参加婚礼 | `għal` + `it-tieġ` 的缩合形式 |
 
 **Malti:** Għeżież ħbieb,
 
@@ -131,14 +183,13 @@
 | speċjali | 特别的 | 形容词 |
 | magħkom | 和你们一起 | `ma'`“和” + `-kom`“你们” |
 
-**Malti:** Dejjem tagħkom, Anna u Mark
+**Malti:** Tislijiet, Anna u Mark
 
-**整句：** 永远属于你们的，安娜和马克（邮件落款）。
+**整句：** 此致敬意，安娜和马克（邮件落款）。
 
 | 词语 | 中文含义 | 说明 |
 |---|---|---|
-| Dejjem | 永远 | 副词 |
-| tagħkom | 你们的 | 第二人称复数所有格形式，落款用语 |
+| Tislijiet | 此致敬意；致以问候 | 正式邮件/信件落款用语，本义"问候/致意" |
 | Anna | 安娜 | 人名 |
 | u | 和 | 连词 |
 | Mark | 马克 | 人名 |

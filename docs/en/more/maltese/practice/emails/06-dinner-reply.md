@@ -2,8 +2,20 @@
 
 **Scenario:** Mark accepts Anna's dinner invitation and offers to bring dessert.
 
+## Email Header
+
+**Lil (To):** anna.c@gmail.com
+**Mingħand (From):** mark.b@gmail.com
+**Data (Date):** 14 ta' Ottubru 2026
+**Suġġett (Subject):** Risposta għall-ikla ta' filgħaxija
+
 ## Full Email
 
+> **Lil:** anna.c@gmail.com
+> **Mingħand:** mark.b@gmail.com
+> **Data:** 14 ta' Ottubru 2026
+> **Suġġett:** Risposta għall-ikla ta' filgħaxija
+>
 > Għażiża Anna,
 >
 > Grazzi tal-istedina għall-ikla ta' filgħaxija.
@@ -20,9 +32,51 @@
 >
 > Nistenna bil-ħerqa li niltaqa' mal-ħbieb tiegħek.
 >
-> Tiegħek, Mark
+> Tislijiet,
+> Mark
 
 ## Sentence-by-Sentence Translation and Word Notes
+
+**Malti:** Lil: anna.c@gmail.com
+
+**Translation:** To: anna.c@gmail.com
+
+| Maltese | English meaning | Notes |
+|---|---|---|
+| Lil | to; recipient | Maltese label for the email "To" field |
+| anna.c@gmail.com | email address | Recipient's (Anna's) email |
+
+**Malti:** Mingħand: mark.b@gmail.com
+
+**Translation:** From: mark.b@gmail.com
+
+| Maltese | English meaning | Notes |
+|---|---|---|
+| Mingħand | from; sender | Maltese label for the email "From" field; literally "from ..." |
+| mark.b@gmail.com | email address | Sender's (Mark's) email |
+
+**Malti:** Data: 14 ta' Ottubru 2026
+
+**Translation:** Date: 14 October 2026
+
+| Maltese | English meaning | Notes |
+|---|---|---|
+| Data | date | Email "Date" field; Maltese date format is "day ta' month year" |
+| 14 | fourteen | Day in the date |
+| ta' | of | Links the day and the month |
+| Ottubru | October | Month name |
+
+**Malti:** Suġġett: Risposta għall-ikla ta' filgħaxija
+
+**Translation:** Subject: Reply to the Dinner Invitation
+
+| Maltese | English meaning | Notes |
+|---|---|---|
+| Suġġett | subject | Email "Subject" field |
+| Risposta | reply; answer | Feminine noun |
+| għall-ikla | to the meal | Contracted `għal` + `l-ikla` |
+| ta' | of; during | Links the noun and time expression |
+| filgħaxija | in the evening | Time expression |
 
 **Malti:** Għażiża Anna,
 
@@ -128,11 +182,11 @@
 | mal-ħbieb | with the friends | `ma'` contracts with the definite article |
 | tiegħek | your; yours | Second-person singular possessive |
 
-**Malti:** Tiegħek, Mark
+**Malti:** Tislijiet, Mark
 
-**Translation:** Yours, Mark.
+**Translation:** Regards, Mark (email closing).
 
 | Maltese | English meaning | Notes |
 |---|---|---|
-| Tiegħek | yours; sincerely | Email closing |
+| Tislijiet | regards; best wishes | Formal email/letter closing, literally "greetings/regards" |
 | Mark | Mark | Name |

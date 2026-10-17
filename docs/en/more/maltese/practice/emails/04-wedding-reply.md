@@ -2,8 +2,20 @@
 
 **Scenario:** A guest replies to the couple and confirms that he and his wife will attend the wedding.
 
+## Email Header
+
+**Lil (To):** anna.c@gmail.com
+**Mingħand (From):** david.b@gmail.com
+**Data (Date):** 25 ta' Ġunju 2026
+**Suġġett (Subject):** Risposta għall-istedina tat-tieġ
+
 ## Full Email
 
+> **Lil:** anna.c@gmail.com
+> **Mingħand:** david.b@gmail.com
+> **Data:** 25 ta' Ġunju 2026
+> **Suġġett:** Risposta għall-istedina tat-tieġ
+>
 > Għeżież Anna u Mark,
 >
 > Grazzi tal-istedina għat-tieġ tagħkom.
@@ -20,9 +32,50 @@
 >
 > Nistennew bil-ħerqa li niċċelebraw magħkom.
 >
-> Grazzi mill-ġdid. Dejjem tagħkom, David
+> Grazzi mill-ġdid. Tislijiet,
+> David
 
 ## Sentence-by-Sentence Translation and Word Notes
+
+**Malti:** Lil: anna.c@gmail.com
+
+**Translation:** To: anna.c@gmail.com
+
+| Maltese | English meaning | Notes |
+|---|---|---|
+| Lil | to; recipient | Maltese label for the email "To" field |
+| anna.c@gmail.com | email address | Recipient's (Anna's) email |
+
+**Malti:** Mingħand: david.b@gmail.com
+
+**Translation:** From: david.b@gmail.com
+
+| Maltese | English meaning | Notes |
+|---|---|---|
+| Mingħand | from; sender | Maltese label for the email "From" field; literally "from ..." |
+| david.b@gmail.com | email address | Sender's (David's) email |
+
+**Malti:** Data: 25 ta' Ġunju 2026
+
+**Translation:** Date: 25 June 2026
+
+| Maltese | English meaning | Notes |
+|---|---|---|
+| Data | date | Email "Date" field; Maltese date format is "day ta' month year" |
+| 25 | twenty-five | Day in the date |
+| ta' | of | Links the day and the month |
+| Ġunju | June | Month name |
+
+**Malti:** Suġġett: Risposta għall-istedina tat-tieġ
+
+**Translation:** Subject: Reply to the Wedding Invitation
+
+| Maltese | English meaning | Notes |
+|---|---|---|
+| Suġġett | subject | Email "Subject" field |
+| Risposta | reply; answer | Feminine noun |
+| għall-istedina | to the invitation | Contracted `għal` + `l-istedina` |
+| tat-tieġ | of the wedding | Contracted `ta'` + `it-tieġ` |
 
 **Malti:** Għeżież Anna u Mark,
 
@@ -74,7 +127,7 @@
 |---|---|---|
 | Jien | I | Emphatic pronoun |
 | u | and | Conjunction |
-| marti | my wife | `mara` “woman/wife” with a first-person possessive form |
+| marti | my wife | `mara` "woman/wife" with a first-person possessive form |
 | se | will | Future marker |
 | niġu | we come | First-person plural form |
 | għaċ-ċerimonja | to the ceremony | Contracted `għal` + `iċ-ċerimonja` |
@@ -102,9 +155,9 @@
 |---|---|---|
 | Għandna | we have; should we | First-person plural form; with a following verb can express obligation/need |
 | nġibu | we bring | First-person plural form |
-| xi | some; anything | Means “anything” in this question |
+| xi | some; anything | Means "anything" in this question |
 | ħaġa | thing | Feminine noun |
-| għalikom | for you (plural) | `għal` “for” + `-kom` “you” |
+| għalikom | for you (plural) | `għal` "for" + `-kom` "you" |
 
 ### 6.
 
@@ -114,7 +167,7 @@
 
 | Maltese | English meaning | Notes |
 |---|---|---|
-| Nawguralkom | I wish you | `nawgura` “I wish” + `-lkom` “you (plural)” |
+| Nawguralkom | I wish you | `nawgura` "I wish" + `-lkom` "you (plural)" |
 | ħafna | much; a lot | Quantifier/adverb of degree |
 | hena | happiness; joy | Masculine noun |
 | u | and | Conjunction |
@@ -135,16 +188,15 @@
 | bil-ħerqa | eagerly; with anticipation | Fixed adverbial phrase |
 | li | to; introduces a clause | Conjunction |
 | niċċelebraw | we celebrate | First-person plural form |
-| magħkom | with you (plural) | `ma'` “with” + `-kom` “you” |
+| magħkom | with you (plural) | `ma'` "with" + `-kom` "you" |
 
-**Malti:** Grazzi mill-ġdid. Dejjem tagħkom, David
+**Malti:** Grazzi mill-ġdid. Tislijiet, David
 
-**Translation:** Thanks again. Yours always, David.
+**Translation:** Thanks again. Regards, David.
 
 | Maltese | English meaning | Notes |
 |---|---|---|
 | Grazzi | thank you; thanks | Polite expression |
 | mill-ġdid | again; once more | Fixed contracted expression from `minn` + `il-ġdid` |
-| Dejjem | always; forever | Adverb |
-| tagħkom | yours | Email closing |
+| Tislijiet | regards; best wishes | Formal email/letter closing, literally "greetings/regards" |
 | David | David | Name |

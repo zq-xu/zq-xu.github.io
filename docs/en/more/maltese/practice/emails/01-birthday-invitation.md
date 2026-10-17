@@ -2,8 +2,20 @@
 
 **Scenario:** Anna invites her friend Mark to her birthday party.
 
+## Email Header
+
+**Lil (To):** mark.b@gmail.com
+**Mingħand (From):** anna.c@gmail.com
+**Data (Date):** 10 ta' Ottubru 2026
+**Suġġett (Subject):** Stedina għall-festa ta' għeluq snini
+
 ## Full Email
 
+> **Lil:** mark.b@gmail.com
+> **Mingħand:** anna.c@gmail.com
+> **Data:** 10 ta' Ottubru 2026
+> **Suġġett:** Stedina għall-festa ta' għeluq snini
+>
 > Għażiż Mark,
 >
 > Nispera li inti tajjeb.
@@ -22,9 +34,52 @@
 >
 > Nistenna bil-ħerqa li niċċelebraw flimkien.
 >
-> Tiegħek, Anna
+> Tislijiet,
+> Anna
 
 ## Sentence-by-Sentence Translation and Word Notes
+
+**Malti:** Lil: mark.b@gmail.com
+
+**Translation:** To: mark.b@gmail.com
+
+| Maltese | English meaning | Notes |
+|---|---|---|
+| Lil | to; recipient | Maltese label for the email "To" field |
+| mark.b@gmail.com | email address | Recipient's (Mark's) email |
+
+**Malti:** Mingħand: anna.c@gmail.com
+
+**Translation:** From: anna.c@gmail.com
+
+| Maltese | English meaning | Notes |
+|---|---|---|
+| Mingħand | from; sender | Maltese label for the email "From" field; literally "from ..." |
+| anna.c@gmail.com | email address | Sender's (Anna's) email |
+
+**Malti:** Data: 10 ta' Ottubru 2026
+
+**Translation:** Date: 10 October 2026
+
+| Maltese | English meaning | Notes |
+|---|---|---|
+| Data | date | Email "Date" field; Maltese date format is "day ta' month year" |
+| 10 | ten | Day in the date |
+| ta' | of | Links the day and the month |
+| Ottubru | October | Month name |
+
+**Malti:** Suġġett: Stedina għall-festa ta' għeluq snini
+
+**Translation:** Subject: Birthday Party Invitation
+
+| Maltese | English meaning | Notes |
+|---|---|---|
+| Suġġett | subject | Email "Subject" field |
+| Stedina | invitation | Feminine noun |
+| għall-festa | to the party | Contracted `għal` + `il-festa` |
+| ta' | of | Possession linker |
+| għeluq | celebration; anniversary | In `għeluq snini`, it refers to a birthday |
+| snini | my years; my age | `snin` "years" + first-person possessive `-i` |
 
 **Malti:** Għażiż Mark,
 
@@ -57,11 +112,11 @@
 | Maltese | English meaning | Notes |
 |---|---|---|
 | Nixtieq | I would like; I wish | Polite expression of a wish |
-| nistedinkom | I invite you (plural) | `nistieden` “I invite” + `-kom` “you (plural)” |
+| nistedinkom | I invite you (plural) | `nistieden` "I invite" + `-kom` "you (plural)" |
 | għall-festa | to the party; for the party | Contracted `għal` + `il-festa` |
 | ta' | of | Possession/category linker |
 | għeluq | celebration; anniversary | In `għeluq snini`, it refers to a birthday |
-| snini | my years; my age | `snin` “years” + first-person possessive `-i` |
+| snini | my years; my age | `snin` "years" + first-person possessive `-i` |
 | nhar | on the day of | Introduces a weekday or date |
 | is-Sibt | Saturday | Weekday commonly used with the definite article |
 
@@ -103,7 +158,7 @@
 | Maltese | English meaning | Notes |
 |---|---|---|
 | Ikun | there will be; it will be | Third-person form commonly used for future existence |
-| hemm | there; there is | With `ikun`, means “there will be” |
+| hemm | there; there is | With `ikun`, means "there will be" |
 | ikel | food | Masculine collective noun |
 | mużika | music | Feminine noun |
 | u | and | Conjunction |
@@ -118,11 +173,11 @@
 | Maltese | English meaning | Notes |
 |---|---|---|
 | Tista' | you can | Second-person singular form |
-| ġġib | bring | Conjugated form of `ġib` “bring” |
+| ġġib | bring | Conjugated form of `ġib` "bring" |
 | lil | to; marks a person as an object | Personal object marker/preposition |
 | xi | some; a certain | Indefinite determiner |
-| ħadd | person; anyone | With `xi`, means “someone” |
-| miegħek | with you | `miegħ` “with” + `-ek` “you” |
+| ħadd | person; anyone | With `xi`, means "someone" |
+| miegħek | with you | `miegħ` "with" + `-ek` "you" |
 | jekk | if | Conjunction |
 | trid | you want; you like | Second-person singular form |
 
@@ -135,7 +190,7 @@
 | Maltese | English meaning | Notes |
 |---|---|---|
 | Jekk jogħġbok | please | Fixed polite expression |
-| għidli | tell me | `għid` “tell” + `-li` “me” |
+| għidli | tell me | `għid` "tell" + `-li` "me" |
 | jekk | whether; if | Introduces an indirect question here |
 | ġej | coming; you are coming | Masculine form; feminine form is `ġejja` |
 
@@ -153,11 +208,11 @@
 | niċċelebraw | we celebrate | First-person plural form |
 | flimkien | together | Adverb |
 
-**Malti:** Tiegħek, Anna
+**Malti:** Tislijiet, Anna
 
-**Translation:** Yours, Anna.
+**Translation:** Regards, Anna (email closing).
 
 | Maltese | English meaning | Notes |
 |---|---|---|
-| Tiegħek | yours; sincerely | Email closing |
+| Tislijiet | regards; best wishes | Formal email/letter closing, literally "greetings/regards" |
 | Anna | Anna | Name |

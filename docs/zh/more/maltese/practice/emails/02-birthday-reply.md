@@ -2,8 +2,20 @@
 
 **场景：** Mark 回复 Anna，接受生日派对邀请并询问是否需要帮忙。
 
+## 邮件头部
+
+**Lil（收件人 To）：** anna.c@gmail.com
+**Mingħand（发件人 From）：** mark.b@gmail.com
+**Data（日期）：** 12 ta' Ottubru 2026
+**Suġġett（主题）：** Risposta għall-istedina
+
 ## 邮件全文
 
+> **Lil:** anna.c@gmail.com
+> **Mingħand:** mark.b@gmail.com
+> **Data:** 12 ta' Ottubru 2026
+> **Suġġett:** Risposta għall-istedina
+>
 > Għażiża Anna,
 >
 > Grazzi ħafna tal-istedina.
@@ -20,9 +32,49 @@
 >
 > Nistenna bil-ħerqa li narak.
 >
-> Tiegħek, Mark
+> Tislijiet,
+> Mark
 
 ## 逐句翻译与逐词拆解
+
+**Malti:** Lil: anna.c@gmail.com
+
+**整句：** 收件人（To）：anna.c@gmail.com
+
+| 词语 | 中文含义 | 说明 |
+|---|---|---|
+| Lil | 收件人；给…… | 邮件头部"To"的马耳他语标签 |
+| anna.c@gmail.com | 邮箱地址 | 收件人（Anna）的邮箱 |
+
+**Malti:** Mingħand: mark.b@gmail.com
+
+**整句：** 发件人（From）：mark.b@gmail.com
+
+| 词语 | 中文含义 | 说明 |
+|---|---|---|
+| Mingħand | 发件人；来自…… | 邮件头部"From"的马耳他语标签，本义"从……那里" |
+| mark.b@gmail.com | 邮箱地址 | 发件人（Mark）的邮箱 |
+
+**Malti:** Data: 12 ta' Ottubru 2026
+
+**整句：** 日期：2026 年 10 月 12 日
+
+| 词语 | 中文含义 | 说明 |
+|---|---|---|
+| Data | 日期 | 邮件头部"Date"；马耳他语日期格式为"日 ta' 月 年" |
+| 12 | 十二 | 日期中的日 |
+| ta' | ……的 | 连接日和月份 |
+| Ottubru | 十月 | 月份名 |
+
+**Malti:** Suġġett: Risposta għall-istedina
+
+**整句：** 主题：回复邀请
+
+| 词语 | 中文含义 | 说明 |
+|---|---|---|
+| Suġġett | 主题 | 邮件头部"Subject" |
+| Risposta | 回复；答复 | 阴性名词 |
+| għall-istedina | 针对邀请；回应邀请 | `għal` + `l-istedina` 的缩合形式 |
 
 **Malti:** Għażiża Anna,
 
@@ -127,11 +179,11 @@
 | li | ……；引出从句 | 连词 |
 | narak | 我见到你 | `nara`“我看见” + `-k`“你” |
 
-**Malti:** Tiegħek, Mark
+**Malti:** Tislijiet, Mark
 
-**整句：** 你的，马克（邮件落款）。
+**整句：** 此致敬意，马克（邮件落款）。
 
 | 词语 | 中文含义 | 说明 |
 |---|---|---|
-| Tiegħek | 你的；谨上 | 邮件落款 |
+| Tislijiet | 此致敬意；致以问候 | 正式邮件/信件落款用语，本义"问候/致意" |
 | Mark | 马克 | 人名 |

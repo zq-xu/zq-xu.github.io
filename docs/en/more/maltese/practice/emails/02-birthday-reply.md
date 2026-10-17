@@ -1,9 +1,21 @@
 # Reply to a Birthday Party Invitation
 
-**Scenario:** Mark accepts Anna's birthday invitation and asks whether he can help.
+**Scenario:** Mark replies to Anna, accepting the birthday party invitation and asking whether help is needed.
+
+## Email Header
+
+**Lil (To):** anna.c@gmail.com
+**Mingħand (From):** mark.b@gmail.com
+**Data (Date):** 12 ta' Ottubru 2026
+**Suġġett (Subject):** Risposta għall-istedina
 
 ## Full Email
 
+> **Lil:** anna.c@gmail.com
+> **Mingħand:** mark.b@gmail.com
+> **Data:** 12 ta' Ottubru 2026
+> **Suġġett:** Risposta għall-istedina
+>
 > Għażiża Anna,
 >
 > Grazzi ħafna tal-istedina.
@@ -20,9 +32,49 @@
 >
 > Nistenna bil-ħerqa li narak.
 >
-> Tiegħek, Mark
+> Tislijiet,
+> Mark
 
 ## Sentence-by-Sentence Translation and Word Notes
+
+**Malti:** Lil: anna.c@gmail.com
+
+**Translation:** To: anna.c@gmail.com
+
+| Maltese | English meaning | Notes |
+|---|---|---|
+| Lil | to; recipient | Maltese label for the email "To" field |
+| anna.c@gmail.com | email address | Recipient's (Anna's) email |
+
+**Malti:** Mingħand: mark.b@gmail.com
+
+**Translation:** From: mark.b@gmail.com
+
+| Maltese | English meaning | Notes |
+|---|---|---|
+| Mingħand | from; sender | Maltese label for the email "From" field; literally "from ..." |
+| mark.b@gmail.com | email address | Sender's (Mark's) email |
+
+**Malti:** Data: 12 ta' Ottubru 2026
+
+**Translation:** Date: 12 October 2026
+
+| Maltese | English meaning | Notes |
+|---|---|---|
+| Data | date | Email "Date" field; Maltese date format is "day ta' month year" |
+| 12 | twelve | Day in the date |
+| ta' | of | Links the day and the month |
+| Ottubru | October | Month name |
+
+**Malti:** Suġġett: Risposta għall-istedina
+
+**Translation:** Subject: Reply to the Invitation
+
+| Maltese | English meaning | Notes |
+|---|---|---|
+| Suġġett | subject | Email "Subject" field |
+| Risposta | reply; answer | Feminine noun |
+| għall-istedina | to the invitation | Contracted `għal` + `l-istedina` |
 
 **Malti:** Għażiża Anna,
 
@@ -85,7 +137,7 @@
 | nġib | I bring | First-person singular form |
 | xi | some; a certain | Indefinite determiner |
 | ħaġa | thing | Feminine noun |
-| miegħi | with me; along with me | `miegħ` “with” + `-i` “me” |
+| miegħi | with me; along with me | `miegħ` "with" + `-i` "me" |
 
 ### 5.
 
@@ -108,10 +160,10 @@
 
 | Maltese | English meaning | Notes |
 |---|---|---|
-| Għidli | tell me | `għid` “tell” + `-li` “me” |
+| Għidli | tell me | `għid` "tell" + `-li` "me" |
 | jekk | if | Conjunction |
 | għandek | you have | Second-person singular form of `għand` |
-| bżonn | need | `għandek bżonn` means “you need” |
+| bżonn | need | `għandek bżonn` means "you need" |
 | l-għajnuna | the help; help | Feminine noun with the definite article |
 
 ### 7.
@@ -125,13 +177,13 @@
 | Nistenna | I wait; I look forward | First-person singular form |
 | bil-ħerqa | eagerly; with anticipation | Fixed adverbial phrase |
 | li | to; introduces a clause | Conjunction |
-| narak | I see you | `nara` “I see” + `-k` “you” |
+| narak | I see you | `nara` "I see" + `-k` "you" |
 
-**Malti:** Tiegħek, Mark
+**Malti:** Tislijiet, Mark
 
-**Translation:** Yours, Mark.
+**Translation:** Regards, Mark (email closing).
 
 | Maltese | English meaning | Notes |
 |---|---|---|
-| Tiegħek | yours; sincerely | Email closing |
+| Tislijiet | regards; best wishes | Formal email/letter closing, literally "greetings/regards" |
 | Mark | Mark | Name |
