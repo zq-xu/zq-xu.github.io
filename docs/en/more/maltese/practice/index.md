@@ -8,11 +8,11 @@ This folder contains the requirements and two categories of beginner reading mat
 
 ## Dialogues
 
-[Dialogue Index](dialogues/index.md): five dialogues, numbered from 01 within this category.
+[Dialogue Index](dialogues/index.md): eight dialogues, numbered from 01 within this category.
 
 ## Emails
 
-[Email Index](emails/index.md): six emails, numbered from 01 within this category.
+[Email Index](emails/index.md): seventeen emails, numbered from 01 within this category.
 
 ## Reading Tips
 
