@@ -1,4 +1,8 @@
 # 马耳他语学习材料解析
 
-[module3](module3-analysis.md)：包含module3的解析。
+本目录包含马耳他语教材模块的逐页解析。每个模块先列整体大纲，再按教材页脚的阿拉伯数字逐页提供逐句中文翻译和逐词拆解（封面不编号）。
 
+1. [Module 3： 当事情不如我们所愿时](maltese-module3-analysis.md)：涵盖遗失物品、迟到、事故及服务投诉等情景。
+2. [Module 4： 购物与食物](maltese-module4-analysis.md)：涵盖购物对话、果蔬肉类词汇、食谱、数字与双数。
+
+[返回马耳他语学习目录](../index.md)

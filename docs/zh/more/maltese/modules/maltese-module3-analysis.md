@@ -1,4 +1,4 @@
-# Maltese Module 3：逐页大纲与逐句逐词分析
+# Module 3: 当事情不如我们所愿时
 
 **模块标题：Meta l-affarijiet ma jmorrux kif nixtiequ**  
 **英文标题：When things go wrong**  
@@ -8,7 +8,7 @@
 
 | 马耳他语 | 中文 | 逐词拆解 |
 |---|---|---|
-| Meta l-affarijiet ma jmorrux kif nixtiequ | 当事情不如我们所愿时 | **Meta** 当……时<br>**l-affarijiet** 事情、事物（冠词 l- + affarijiet；单数为 ħaġa）<br>**ma jmorrux** 它们不按某种方式发展、不顺利（ma … -x 构成否定；肯定形式为 jmorru，字面是“它们走”）<br>**kif** 如同、按照……的方式<br>**nixtiequ** 我们希望、我们想要（第一人称复数）。 |
+| Meta l-affarijiet ma jmorrux kif nixtiequ | 当事情不如我们所愿时 | **Meta** 当……时<br>**l-affarijiet** 事情、事物（冠词 l- + affarijiet）<br>**ma jmorrux** 它们不按某种方式发展、不顺利（ma … -x 构成否定；肯定形式为 jmorru，字面是“它们走”）<br>**kif** 如同、按照……的方式<br>**nixtiequ** 我们希望、我们想要（第一人称复数）。 |
 
 英文标题 **When things go wrong** 可译为“当事情出岔子时”；马耳他语标题更贴近“当事情不如我们所愿时”。本模块通过遗失物品、迟到、事故及服务投诉等情景练习遇到问题时的表达。
 
@@ -30,11 +30,16 @@
 - **plural sħiħ** 规则/完整复数，常见加词尾。
 - **plural miksur** 破碎复数，词干内部也发生变化，不能只靠一个统一规则推出。
 
-## 第 1 页：两段对话
+## 1 两段对话
 
 ### 对话一：Brenda 找不到戒指
 
 **Qari — Aqra dawn id-djalogi.**（阅读——读一读这些对话。）
+
+- **qari** 阅读。
+- **aqra** 读（命令式）。
+- **dawn** 这些。
+- **id-djalogi** 对话（复数）。
 
 | 马耳他语 | 中文 | 逐词拆解 |
 |---|---|---|
@@ -44,9 +49,9 @@
 | Ilni ġurnata ndur il-ħwienet! | 我逛商店已经逛了一整天！ | **ilni** 我已经……这么久<br>**ġurnata** 一天<br>**ndur** 我四处转/逛<br>**il-ħwienet** 这些商店（复数）。 |
 | Ma nafx meta kien l-aħħar f’subgħi! | 我不知道它最后一次在我手指上是什么时候！ | **ma … x** 否定框架<br>**nafx** 我不知道<br>**meta** 什么时候<br>**kien** 是/在（过去）<br>**l-aħħar** 最后一次<br>**f’** 在……上/里<br>**subgħi** 我的手指。 |
 | Ikkalma. Prova aħseb ftit. | 冷静点，试着想一想。 | **ikkalma** 冷静下来（命令式）<br>**prova** 试试<br>**aħseb** 想<br>**ftit** 一点儿。 |
-| Iva! Sakemm xtrajt il-libsa kien għadu f’subgħajja għax jien u nipprovaha weħilli magħha. | 对！我买那条裙子时它还在我手指上，因为我试穿时它勾在裙子上了。 | **iva** 对<br>**sakemm** 到……时/当……时<br>**xtrajt** 我买了<br>**il-libsa** 这条裙子<br>**kien għadu** 仍然是/还在<br>**f’** 在<br>**subgħajja** 我的手指上<br>**għax** 因为<br>**jien u nipprovaha** 我在试穿它的时候<br>**weħilli** 它粘住/挂住了我<br>**magħha** 在它上面/和它一起（指裙子）。 |
+| Iva! Sakemm xtrajt il-libsa kien għadu f’subgħajja għax jien u nippruvaha weħilli magħha. | 对！我买那条裙子时它还在我手指上，因为我试穿时它勾在裙子上了。 | **iva** 对<br>**sakemm** 到……时/当……时<br>**xtrajt** 我买了<br>**il-libsa** 这条裙子<br>**kien għadu** 仍然是/还在<br>**f’** 在<br>**subgħajja** 我的手指上<br>**għax** 因为<br>**jien u nippruvaha** 我在试穿它的时候<br>**weħilli** 它粘住/挂住了我<br>**magħha** 在它上面/和它一起（指裙子）。 |
 | Mela ejja mmorru f’dak il-ħanut, forsi waqagħlek hemm. | 那我们去那家店吧，也许它在那里掉了。 | **mela** 那么<br>**ejja** 来吧<br>**mmorru** 我们去<br>**f’dak** 在那一个<br>**il-ħanut** 商店<br>**forsi** 也许<br>**waqagħlek** 它从你身上掉了<br>**hemm** 那里。 |
-| Nispera li jekk sabu xi ħadd, ma baqax sejjer bih! | 我希望如果有人捡到了，他没有把它带走！ | **nispera** 我希望<br>**li** ……<br>**jekk** 如果<br>**sabu** 他们/有人找到了<br>**xi ħadd** 某个人<br>**ma … x** 否定<br>**baqax** 没有继续/没有留下<br>**sejjer** 走<br>**bih** 带着它。 |
+| Nispera li jekk sabu xi ħadd, ma baqax sejjer bih! | 我希望如果有人捡到了，他没有把它带走！ | **nispera** 我希望<br>**li** ……<br>**jekk** 如果<br>**sabu** 他找到了它（sab + 宾语后缀 -u；主语是后面的 xi ħadd，不是“他们”）<br>**xi ħadd** 某个人<br>**ma … x** 否定<br>**baqax** 没有继续<br>**sejjer** 走<br>**bih** 带着它。 |
 
 ### 对话二：Emily 错过公交车
 
@@ -69,7 +74,7 @@
 
 ----------------
 
-## 第 2 页：对话理解题
+## 2 对话理解题
 
 **Wieġeb dawn il-mistoqsijiet dwar l-ewwel djalogu.**（回答关于第一段对话的问题。）
 
@@ -89,9 +94,30 @@
 | Lil min ċemplet Emily? | Emily 给谁打了电话？<br>**lil min** 给谁<br>**ċemplet** 她打电话了。<br>参考答案：Caruana 先生。 |
 | Fejn qed tistenna Emily? | Emily 在哪里等？<br>**fejn** 哪里<br>**qed tistenna** 正在等待<br>**Emily** 人名。<br>参考答案：Żurrieq 的广场。 |
 
+### 八题马耳他语完整参考答案
+
+| 题号 | 参考答案与逐词解析 |
+|---|---|
+| 1 | **Il-karattri huma Brenda u Anna.** 人物是 Brenda 和 Anna。<br>**il-karattri** 人物<br>**huma** 是<br>**Brenda** 人名<br>**u** 和<br>**Anna** 人名。 |
+| 2 | **Brenda tilfet iċ-ċurkett.** Brenda 弄丢了戒指。<br>**Brenda** 人名<br>**tilfet** 她丢失了<br>**iċ-ċurkett** 戒指。 |
+| 3 | **Brenda taħseb li tilfet iċ-ċurkett fil-ħanut fejn xtrat il-libsa.** Brenda 认为戒指丢在买裙子的商店。<br>**Brenda** 人名<br>**taħseb** 她认为<br>**li** 引导从句<br>**tilfet** 她丢了<br>**iċ-ċurkett** 戒指<br>**fil-ħanut** 在商店里<br>**fejn** ……的地方<br>**xtrat** 她买了<br>**il-libsa** 裙子。 |
+| 4 | **Brenda tispera li min sab iċ-ċurkett ma ħadux miegħu.** Brenda 希望捡到戒指的人没有把它带走。<br>**Brenda** 人名<br>**tispera** 她希望<br>**li** 引导从句<br>**min** ……的人<br>**sab** 他找到了<br>**iċ-ċurkett** 戒指<br>**ma ħadux** 他没有拿走它（否定与宾语后缀）<br>**miegħu** 随他、跟着他。 |
+| 5 | **Il-karattri huma Emily u s-Sur Caruana.** 人物是 Emily 和 Caruana 先生。<br>**il-karattri** 人物<br>**huma** 是<br>**Emily** 人名<br>**u** 和<br>**s-Sur Caruana** Caruana 先生。 |
+| 6 | **Emily tilfet tal-linja u se tasal tard għax-xogħol.** Emily 错过公交车，将迟到。<br>**Emily** 人名<br>**tilfet** 她错过了<br>**tal-linja** 公交车（省略 karozza）<br>**u** 和<br>**se** 将要<br>**tasal** 她到达<br>**tard** 迟<br>**għax-xogħol** 去上班。 |
+| 7 | **Emily ċemplet lis-Sur Caruana.** Emily 给 Caruana 先生打电话。<br>**Emily** 人名<br>**ċemplet** 她打了电话<br>**lis-Sur Caruana** 给 Caruana 先生。 |
+| 8 | **Emily qed tistenna fil-pjazza taż-Żurrieq.** Emily 在 Żurrieq 的广场等候。<br>**Emily** 人名<br>**qed** 正在<br>**tistenna** 她等待<br>**fil-pjazza** 在广场上<br>**taż-Żurrieq** Żurrieq 的。 |
+
+两组读题共用词语：
+
+- **wieġeb** 回答。
+- **dawn il-mistoqsijiet** 这些问题。
+- **dwar** 关于。
+- **l-ewwel djalogu** 第一段对话。
+- **it-tieni djalogu** 第二段对话。
+
 ----------------
 
-## 第 3 页：看图口语表达
+## 3 看图口语表达
 
 **It-Taħdit — X’ġara f’dawn l-istampi?**（口语——这些图片里发生了什么？）
 
@@ -103,7 +129,7 @@
 | Ma rajtekx… ma ndunajtx bik… kont aljenat/a. | 我没看见你……没注意到你……我刚才走神了。 | **ma … x** 没有<br>**rajtek** 我看见你<br>**ndunajtx** 我没注意到<br>**bik** 你<br>**kont** 我当时<br>**aljenat/a** 分心的（阳/阴性）。 |
 | Tort tiegħek! Suppost inti waqaft! | 是你的错！你本来应该停下来的！ | **tort** 过错<br>**tiegħek** 你的<br>**suppost** 本来应该<br>**inti** 你<br>**waqaft** 你停下了。 |
 | Għandek raġun, mhux apposta! | 你说得对，不是故意的！ | **għandek raġun** 你有道理<br>**mhux** 不<br>**apposta** 故意。 |
-| X’qatgħa ħadt! | 你吓了我一跳！ | **x’qatgħa** 多大的惊吓<br>**ħadt** 你受到了/经历了。 |
+| X’qatgħa ħadt! | 我吓了一大跳！ | **x’qatgħa** 多大的惊吓<br>**ħadt** 我受到了（此词形也可表示“你受到了”，须按说话情景区分）。 |
 | Weġġajt? | 你受伤了吗？ | **weġġajt** 你受伤了。 |
 | Ħa nċempel għall-ambulanza. | 我来打电话叫救护车。 | **ħa** 将要/我来<br>**nċempel** 我打电话<br>**għall-** 给/为了<br>**ambulanza** 救护车。 |
 | Ħa nċempel għall-warden. | 我来打电话叫道路交通管理员/警员。 | **ħa nċempel** 我来打电话<br>**għall-warden** 给 warden（原文借词，指现场管理/执勤人员）。 |
@@ -137,7 +163,7 @@
 
 ----------------
 
-## 第 4 页：情景对话与餐馆评论
+## 4 情景对话与餐馆评论
 
 **Agħżel xenarju minn dawn it-tlieta u pprepara djalogu li ser tippreżenta quddiem sħabek.**
 
@@ -154,6 +180,15 @@
 - **tippreżenta** 你展示
 - **quddiem** 在……面前
 - **sħabek** 你的同伴/同学。
+
+### 情景对话参考答案（餐馆）
+
+| 补写句子 | 中文与逐词解析 |
+|---|---|
+| Klijent: Skużani, dan l-ikel kiesaħ. | 顾客：对不起，这食物是冷的。<br>**klijent** 顾客<br>**skużani** 对不起<br>**dan** 这<br>**l-ikel** 食物<br>**kiesaħ** 冷的。 |
+| Wejter: Jiddispjaċini. Trid platt ieħor? | 服务员：抱歉。您要换一盘吗？<br>**wejter** 服务员<br>**jiddispjaċini** 我很抱歉<br>**trid** 你想要<br>**platt** 一盘菜<br>**ieħor** 另一个。 |
+| Klijent: Iva, jekk jogħġbok. | 顾客：好的，麻烦您。<br>**iva** 是的<br>**jekk jogħġbok** 请、麻烦您。 |
+| Wejter: Se nġiblek platt sħun minnufih. | 服务员：我马上给您拿一盘热的。<br>**se** 将要<br>**nġiblek** 我拿来给你<br>**platt** 一盘<br>**sħun** 热的<br>**minnufih** 立刻。 |
 
 **Il-Qari — Aqra dan l-ilment u l-kummenti daqslikieku rajthom fuq il-midja soċjali.**
 
@@ -228,7 +263,7 @@
 
 ----------------
 
-## 第 5 页：书面投诉
+## 5 书面投诉
 
 **Il-kitba ta’ lment** = 投诉写作。
 
@@ -266,6 +301,29 @@
 | Nispera li taċċetta. | 希望您能接受。 | **nispera** 我希望<br>**li** ……<br>**taċċetta** 您接受。 |
 | Saħħiet, Is-Sinjura Fenech | 此致，Fenech 女士 | **saħħiet** 祝好/再见<br>**is-Sinjura** 女士<br>**Fenech** 姓氏。 |
 
+### B. 完整续写参考答案
+
+> Sur Cachia,
+>
+> Ilbieraħ użajt is-servizz tal-kumpanija tiegħek “Ħassiela tad-djar”. Jiddispjaċini ngħidlek li ma kontx sodisfatta, dan għaliex l-art baqgħet maħmuġa u t-twieqi ma tnaddfux sew.
+>
+> Nixtieq li tibgħat lil xi ħadd biex jerġa’ jnaddaf id-dar.
+>
+> Nispera li taċċetta l-ilment tiegħi u li ssolvi din il-problema.
+>
+> Saħħiet,
+>
+> Is-Sinjura Fenech
+
+新增部分逐句解析：
+
+| 补写部分 | 中文与逐词解析 |
+|---|---|
+| li ma kontx sodisfatta | 我并不满意。<br>**li** 引导从句<br>**ma kontx** 我不是／我没有处于<br>**sodisfatta** 满意的（女性）。 |
+| l-art baqgħet maħmuġa u t-twieqi ma tnaddfux sew | 地板仍很脏，窗户也没擦干净。<br>**l-art** 地板<br>**baqgħet** 仍然、保持（阴性）<br>**maħmuġa** 脏的<br>**u** 并且<br>**t-twieqi** 窗户<br>**ma tnaddfux** 没有被清洁<br>**sew** 好好地。 |
+| tibgħat lil xi ħadd biex jerġa’ jnaddaf id-dar | 您派人重新打扫房子。<br>**tibgħat** 你派遣<br>**lil xi ħadd** 某个人（宾语）<br>**biex** 为了<br>**jerġa’** 他再次<br>**jnaddaf** 打扫<br>**id-dar** 房子。 |
+| l-ilment tiegħi u li ssolvi din il-problema | 我的投诉，并解决这个问题。<br>**l-ilment** 投诉<br>**tiegħi** 我的<br>**u** 并且<br>**li** 引导从句<br>**ssolvi** 你解决<br>**din** 这个（阴性）<br>**il-problema** 问题。 |
+
 ### C. 自由写作
 
 **Agħżel servizz jew prodott u ikteb ilment dwaru.** 选择一项服务或产品，写一封关于它的投诉。
@@ -279,9 +337,26 @@
 - **ilment** 投诉
 - **dwaru** 关于它。
 
+### C. 投诉范文及逐句解析
+
+> Għażiż Maniġer,
+>
+> Ilbieraħ xtrajt mowbajl mill-ħanut tiegħek. Meta wasalt id-dar, indunajt li l-iskrin ma kienx jaħdem. Nixtieq mowbajl ieħor jew il-flus lura. Nispera li ssolvi din il-problema malajr.
+>
+> Grazzi, Alex
+
+| 句子 | 中文与逐词解析 |
+|---|---|
+| Għażiż Maniġer | 尊敬的经理。<br>**għażiż** 亲爱的／尊敬的<br>**maniġer** 经理。 |
+| Ilbieraħ xtrajt mowbajl mill-ħanut tiegħek. | 昨天我从贵店买了一部手机。<br>**ilbieraħ** 昨天<br>**xtrajt** 我买了<br>**mowbajl** 手机<br>**mill-ħanut** 从商店<br>**tiegħek** 你的。 |
+| Meta wasalt id-dar, indunajt li l-iskrin ma kienx jaħdem. | 回家后，我发现屏幕不能工作。<br>**meta** 当……时<br>**wasalt** 我到达<br>**id-dar** 家<br>**indunajt** 我注意到<br>**li** 引导从句<br>**l-iskrin** 屏幕<br>**ma kienx** 当时不<br>**jaħdem** 工作、运行。 |
+| Nixtieq mowbajl ieħor jew il-flus lura. | 我希望换一部手机或退款。<br>**nixtieq** 我想要<br>**mowbajl** 手机<br>**ieħor** 另一个<br>**jew** 或者<br>**il-flus** 钱<br>**lura** 回来。 |
+| Nispera li ssolvi din il-problema malajr. | 希望您尽快解决这个问题。<br>**nispera** 我希望<br>**li** 引导从句<br>**ssolvi** 你解决<br>**din il-problema** 这个问题<br>**malajr** 尽快。 |
+| Grazzi, Alex | 谢谢，Alex。<br>**grazzi** 谢谢<br>**Alex** 署名。 |
+
 ----------------
 
-## 第 6 页：单数与复数词表
+## 6 单数与复数词表
 
 **Is-Singular u l-Plural. Kompli din it-tabella.**（单数与复数；完成表格。）词条和常用对应如下；空格处按本册其他页中的复数形式补全：
 
@@ -299,7 +374,7 @@
 | menu | menus | 菜单 |
 | ċurkett | ċrieket | 戒指 |
 | ħanut | ħwienet | 商店 |
-| subgħa | swaba’ | 手指 |
+| suba’ | swaba’ | 手指（所有格等词形中出现 subgħ-） |
 | libsa | ilbiesi | 连衣裙 |
 | pjazza | pjazez | 广场 |
 | xahar | xhur | 月份 |
@@ -313,7 +388,7 @@
 
 ----------------
 
-## 第 7 页：规则/完整复数
+## 7 规则/完整复数
 
 **Plural Sħiħ — Żieda ta’ suffiss mal-kelma. Adding a suffix to the word.**
 
@@ -327,13 +402,13 @@
 | Barri → barrin | 公牛 |
 | Qaddis → qaddisin | 圣人、圣徒 |
 | Ħalliel → ħallelin | 小偷 |
-| Għażżien → għażżienin | 懒惰的人 |
+| Għażżien → għażżenin | 懒惰的人 |
 | Għajjien → għajjenin | 疲倦的人 |
 | Għatu → għotjien | 盖子 |
-| Qiegħ → qiegħan | 底部 |
+| Qiegħ → qigħan | 底部 |
 | Triq → triqat | 道路（按教材拼写） |
 | Xemgħa → xemgħat | 蜡烛 |
-| Tebgħa → tbegħat | 污渍 |
+| Tebgħa → tebgħat | 污渍 |
 | Demgħa → demgħat | 眼泪 |
 | Ġimgħa → ġimgħat | 星期/周 |
 | Wied → widien | 山谷 |
@@ -369,7 +444,7 @@
 
 ----------------
 
-## 第 8 页：看图写复数（一）
+## 8 看图写复数（一）
 
 **Imla l-vojt billi tagħti l-kelma skont l-istampa u fil-ġenb ikteb jekk hux plural sħiħ jew miksur.**
 
@@ -398,7 +473,7 @@
 
 ----------------
 
-## 第 9 页：看图写复数（二）
+## 9 看图写复数（二）
 
 本页延续第 8 页的表格与指令，图片依次为摩托车、铅笔、小狗、小猫和水桶。
 
@@ -417,7 +492,7 @@
 
 ----------------
 
-## 第 10 页：看图写复数（三）
+## 10 看图写复数（三）
 
 本页图片依次为一个男孩/多个孩子、一部手机/多部手机、一张床/多张床、一把伞/多把伞。
 
@@ -430,7 +505,7 @@
 
 ----------------
 
-## 第 11 页：句子中的复数名词
+## 11 句子中的复数名词
 
 **It-taħriġ dwar in-nomi u l-għadd.**（关于名词和数的练习。）
 
@@ -457,9 +532,49 @@
 
 示例：**żeffiena → żeffien**，标 **s**。
 
+### A. 原句其余词语的完整解析
+
+| 原句编号 | 补充逐词／短语解析 |
+|---|---|
+| 1 | **tal-grupp** 团体的<br>**ħarġu** 他们表现出来／他们出来了<br>**tajjeb** 好<br>**ħafna** 很<br>**imma** 但是<br>**nistqarr** 我承认<br>**li** 引导从句<br>**s-saħħa** 实力、力量<br>**tal-grupp** 团体的<br>**tinsab** 位于、体现在<br>**fil-kantanti** 在歌手们身上。 |
+| 2 | **Maltin** 马耳他的（复数形容词）<br>**sbieħ** 美丽的（复数）<br>**imma** 但是<br>**tal-madwar** 周围的<br>**sfortunatament** 不幸地<br>**ma tantx** 不太、不怎么<br>**jinżammu** 被保持<br>**nodfa** 干净的（复数）。 |
+| 3 | **tas-sodod** 床的<br>**ġodda** 新的（复数，可结合语境看修饰床或弹簧）<br>**tajbin** 好的（复数）<br>**ħafna** 很。<br>译文中“床垫”是情景化理解，原词 sodod 直接指“床”。 |
+| 4 | **tagħhom** 他们的<br>**huma** 是<br>**kbar** 大的（复数）<br>**għandhom** 他们有<br>**ħafna** 很多<br>**u** 和<br>**kollha** 全部<br>**kbar** 大的。 |
+| 5 | **tassew** 确实<br>**rajt** 我看到了<br>**sbieħ** 美丽的（复数）<br>**fil-foresti** 在森林里<br>**li** ……的<br>**żort** 我游览过<br>**imma** 但是<br>**l-aktar** 最……的<br>**annimali** 动物<br>**li** ……的<br>**laqtuni** 它们打动了我<br>**kienu** 它们是（过去）<br>**l-iljunfanti** 大象。 |
+
+### B. 全部分类与单数答案
+
+按不重复词条列出，共 11 个；`annimali` 在第 5 句出现两次，但这里只录一项。
+
+| 复数名词 | s / m | 单数 | 中文 |
+|---|---|---|---|
+| żeffiena | s | żeffien | 舞者；教材已给例词 |
+| kantanti | s | kantant | 歌手 |
+| bajjiet | s | bajja | 海湾／海滩 |
+| ibħra | m | baħar | 海洋 |
+| molol | m | molla | 弹簧 |
+| sodod | m | sodda | 床 |
+| djar | m | dar | 房屋 |
+| garaxxijiet | s | garaxx | 车库 |
+| annimali | s | annimal | 动物 |
+| foresti | s | foresta | 森林 |
+| iljunfanti | s | iljunfant | 大象 |
+
+- **aqta’ linja taħt** 在……下面画线。
+- **in-nomi fis-sentenzi** 句子中的名词。
+- **li qegħdin fil-plural** 处于复数形式的。
+- **ikteb il-kliem** 写出词语。
+- **li qtajt linja taħtu** 你在其下方画线的。
+- **immarka** 标记。
+- **jekk huwiex** 它是否属于。
+- **fil-plural sħiħ** 完整复数。
+- **jew fil-plural miksur** 或破碎复数。
+- **u ikteb** 并写出。
+- **is-singular tiegħu** 它的单数形式。
+
 ----------------
 
-## 第 12 页：位置介词（一）
+## 12 位置介词（一）
 
 **Il-Prepożizzjonijiet: Fejn qiegħed dan it-tifel?**（介词：这个男孩在哪里？）
 
@@ -503,7 +618,7 @@
 
 ----------------
 
-## 第 13 页：苹果和箱子
+## 13 苹果和箱子
 
 **Fejn qiegħda t-tuffieħa?** 苹果在哪里？
 
@@ -511,21 +626,40 @@
 - **qiegħda** 位于（阴性）
 - **it-tuffieħa** 苹果。
 
-根据三组小图描述苹果相对于箱子的位置：
+### 逐图位置说明
 
-| 图示关系 | 建议答案 | 逐词拆解 |
-|---|---|---|
-| 苹果在箱子上面 | **It-tuffieħa qiegħda fuq il-kaxxa.** | **it-tuffieħa** 苹果<br>**qiegħda** 位于<br>**fuq** 上面<br>**il-kaxxa** 箱子。 |
-| 苹果在箱子里面 | **It-tuffieħa qiegħda fil-kaxxa.** | **fil-** = 在……里面<br>**kaxxa** 箱子。 |
-| 苹果在箱子旁边 | **It-tuffieħa qiegħda ħdejn il-kaxxa.** | **ħdejn** 旁边；其余同上。 |
-| 苹果在箱子前面 | **It-tuffieħa qiegħda quddiem il-kaxxa.** | **quddiem** 前面。 |
-| 苹果在箱子后面 | **It-tuffieħa qiegħda wara l-kaxxa.** | **wara** 后面。 |
+共 9 幅小图，按**从上到下、每行从左到右**编号。左右以读图者看到的画面为准；前后主要根据苹果是否遮住箱子、是否被箱子遮住判断。以下为按图理解的参考表达，不是教材提供的答案。
 
-图上每一行是一组不同位置的连续小图；按图表达空间关系即可。
+| 编号与图中位置 | 具体描述 | 马耳他语参考句 | 逐词拆解 |
+|---|---|---|---|
+| 1：第一行左图 | 苹果在箱子上面，放在箱顶。 | **It-tuffieħa qiegħda fuq il-kaxxa.** | **it-tuffieħa** 苹果<br>**qiegħda** 位于（阴性单数）<br>**fuq** 在……上面（第 12 页）<br>**il-kaxxa** 箱子。 |
+| 2：第一行中图 | 箱子打开，苹果在箱子里面。 | **It-tuffieħa qiegħda fil-kaxxa.** | **it-tuffieħa** 苹果<br>**qiegħda** 位于<br>**fil-kaxxa** 在箱子里面（fi + il-kaxxa；本页补充表达）。 |
+| 3：第一行右图 | 苹果在箱子右侧、紧靠箱子旁边。 | **It-tuffieħa qiegħda fuq in-naħa tal-lemin tal-kaxxa.** | **it-tuffieħa** 苹果<br>**qiegħda** 位于<br>**fuq in-naħa tal-lemin** 在右侧（第 12 页）<br>**tal-kaxxa** 箱子的。 |
+| 4：第二行左图 | 苹果在箱子前面，偏画面左侧，挡住箱子的部分正面。 | **It-tuffieħa qiegħda quddiem il-kaxxa.** | **it-tuffieħa** 苹果<br>**qiegħda** 位于<br>**quddiem** 在……前面（第 12 页）<br>**il-kaxxa** 箱子。 |
+| 5：第二行中图 | 苹果在箱子后面，偏画面右侧，一部分被箱子遮住。 | **It-tuffieħa qiegħda wara l-kaxxa.** | **it-tuffieħa** 苹果<br>**qiegħda** 位于<br>**wara** 在……后面（第 12 页）<br>**il-kaxxa** 箱子。 |
+| 6：第二行右图 | 苹果在两个箱子之间。 | **It-tuffieħa qiegħda bejn il-kaxxi.** | **it-tuffieħa** 苹果<br>**qiegħda** 位于<br>**bejn** 在……之间（第 12 页）<br>**il-kaxxi** 箱子（复数，这里指图中的两个箱子）。 |
+| 7：第三行左图 | 箱子斜放在苹果上方，苹果在箱子下面。 | **It-tuffieħa qiegħda taħt il-kaxxa.** | **it-tuffieħa** 苹果<br>**qiegħda** 位于<br>**taħt** 在……下面（第 12 页）<br>**il-kaxxa** 箱子。 |
+| 8：第三行中图 | 苹果倒置，画在打开的箱子内部区域；暂按“在里面”描述，箱内外关系需核对原图。 | **It-tuffieħa qiegħda fil-kaxxa.**（暂定） | **it-tuffieħa** 苹果<br>**qiegħda** 位于<br>**fil-kaxxa** 在箱子里面（此处读图暂定，不因苹果倒置就判断为“下面”）。 |
+| 9：第三行右图 | 多个苹果分布在一个箱子周围，不是一个苹果在两个箱子之间。 | **It-tuffieħ qiegħed madwar il-kaxxa.** | **it-tuffieħ** 苹果（集合名词，指图中的多个苹果）<br>**qiegħed** 位于（与集合名词 tuffieħ 搭配）<br>**madwar** 在……周围（本页补充表达）<br>**il-kaxxa** 箱子。 |
+
+### 与第 12 页词汇的对应
+
+- **fuq** 上面：对应图 1。
+- **taħt** 下面：对应图 7。
+- **quddiem** 前面：对应图 4。
+- **wara** 后面：对应图 5；与图 3 的区别是苹果被箱子部分遮住。
+- **bejn** 之间：对应图 6；后面用复数 **il-kaxxi**，因为参照物是两个箱子。
+- **ħdejn / maġenb** 旁边：图 3 也可说 **It-tuffieħa qiegħda ħdejn il-kaxxa.**，但没有说清左侧还是右侧。
+- **fuq in-naħa tal-lemin** 右侧：图 3 的更具体表达。这里整个短语表示“在右侧”，不能只看其中的 **fuq** 就译成“上面”。
+- **fuq in-naħa tax-xellug** 左侧：图 4 从画面看也偏左，可补充说 **It-tuffieħa qiegħda fuq in-naħa tax-xellug tal-kaxxa.**；不过它遮住箱子正面，主要位置关系用 **quddiem** 更贴切。
+- **fil-kaxxa** 在箱子里面：图 2，以及暂定的图 8；不是“在箱子上面”。
+- **madwar** 周围：图 9；区别于 **bejn**（在两个或多个参照物之间）。
+
+**仍需核对：** 图 8 的箱体边界和苹果重叠处不够清晰；目前不将“在里面”视为唯一确定答案。图 9 用集合名词 **tuffieħ**，而不是单个苹果的 **tuffieħa**，所以相应改用 **qiegħed**。
 
 ----------------
 
-## 第 14 页：位置介词（二）
+## 14 位置介词（二）
 
 **Imla l-vojt billi tuża l-prepożizzjonijiet skont l-istampa.** 根据图片使用介词填空。
 
@@ -537,8 +671,8 @@
 | 1. Is-siġġu qiegħed ħdejn il-mejda. | 椅子在桌子旁边。<br>**is-siġġu** 椅子<br>**qiegħed** 位于<br>**ħdejn** 旁边<br>**il-mejda** 桌子。<br>此项已给出。 |
 | 2. Il-ballun jinsab taħt il-mejda. | 球在桌子下面。<br>**il-ballun** 球<br>**jinsab** 位于<br>**taħt** 下面。 |
 | 3. Il-mejda tinsab bejn is-siġġu u l-pultruna. | 桌子在椅子和扶手椅之间。<br>**tinsab** 位于（阴性）<br>**bejn** 在……之间<br>**u** 和<br>**il-pultruna** 扶手椅。 |
-| 4. Fuq il-pultruna hemm żewġ kuxins. | 扶手椅上有两个靠垫。<br>**fuq** 上面<br>**hemm** 有<br>**żewġ** 两个<br>**kuxins** 靠垫。 |
-| 5. Il-qattus qiegħed wara l-pultruna. | 猫在扶手椅后面。<br>**il-qattus** 猫<br>**wara** 后面。 |
+| 4. Fuq il-pultruna hemm żewġ kuxins. | 扶手椅上有两个靠垫。<br>**fuq** 上面<br>**il-pultruna** 扶手椅<br>**hemm** 有<br>**żewġ** 两个<br>**kuxins** 靠垫。<br>原题为“____ fil-pultruna hemm...”，本句将 fil-pultruna 改成 il-pultruna，属于自然表达的改写，不是原题原样单词填空。 |
+| 5. Il-qattus qiegħed ħdejn il-pultruna. | 猫在扶手椅旁边。<br>**il-qattus** 猫<br>**qiegħed** 位于<br>**ħdejn** 旁边<br>**il-pultruna** 扶手椅。<br>图中猫在椅子右侧，选择 ħdejn 更明确；若着眼于局部遮挡也可讨论 wara，但不是唯一可确定的关系。 |
 | 6. Il-ktieb qiegħed fuq il-mejda u ħdejn il-lampa. | 书在桌子上、灯旁边。<br>**il-ktieb** 书<br>**fuq** 上面<br>**u** 和<br>**ħdejn** 旁边<br>**il-lampa** 灯。 |
 | 7. Il-vażun qiegħed ħdejn il-lampa. | 花瓶在灯旁边。<br>**il-vażun** 花瓶<br>**ħdejn** 旁边。 |
 | 8. Il-lampa qiegħda bejn il-ktieb u l-vażun. | 灯在书和花瓶之间。<br>**il-lampa** 灯<br>**qiegħda** 位于（阴性）<br>**bejn** 之间。 |
@@ -549,7 +683,7 @@
 
 ----------------
 
-## 第 15 页：从图片列单数名词并写复数
+## 15 从图片列单数名词并写复数
 
 **Agħmel lista tan-nomi fis-singular li jidhru fl-istampa, imbagħad agħti l-plural tagħhom u għid hux sħiħ jew miksur.**
 
