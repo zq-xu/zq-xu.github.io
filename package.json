@@ -2,23 +2,24 @@
   "name": "vitepress-blog",
   "version": "v1.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "vitepress dev docs --clean-cache",
     "build": "vitepress build docs",
     "serve": "vitepress serve docs"
   },
   "dependencies": {
-    "@sugarat/theme": "^0.1.47",
-    "vitepress-plugin-pagefind": "^0.2.9"
+    "@sugarat/theme": "^0.5.33",
+    "vitepress-plugin-pagefind": "^0.4.27"
   },
   "devDependencies": {
-    "@element-plus/icons-vue": "^2.1.0",
-    "element-plus": "^2.3.14",
-    "pagefind": "^1.0.3",
-    "sass": "^1.56.1",
-    "typescript": "^4.8.2",
-    "vitepress": "1.0.0-rc.14",
-    "vue": "^3.3.4"
+    "@element-plus/icons-vue": "^2.3.2",
+    "element-plus": "^2.14.8",
+    "pagefind": "^1.6.0",
+    "sass": "^1.108.2",
+    "typescript": "^5.9.3",
+    "vitepress": "^1.6.4",
+    "vue": "^3.5.45"
   },
   "pnpm": {
     "peerDependencyRules": {
@@ -29,5 +30,8 @@
     }
   },
   "author": "鸢涯",
-  "license": "MIT"
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  }
 }

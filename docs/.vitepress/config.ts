@@ -2,7 +2,7 @@ import { getThemeConfig, defineConfig } from '@sugarat/theme/node'
 import packageJSON from '../../package.json'
 import { navbarZh } from './navbar'
 import { head } from './head'
-import { chineseSearchOptimize, pagefindPlugin } from 'vitepress-plugin-pagefind'
+import { chineseSearchOptimize } from 'vitepress-plugin-pagefind'
 
 const blogTheme = getThemeConfig({
   // 文章默认作者
@@ -40,7 +40,14 @@ const blogTheme = getThemeConfig({
       }
     ]
   },
-  search: 'pagefind'
+  // 全文搜索：主题内置 pagefind，直接在这里传插件参数即可
+  search: {
+    customSearchQuery: chineseSearchOptimize,
+    btnPlaceholder: '搜索',
+    placeholder: '搜索文档',
+    emptyText: '空空如也',
+    heading: '共: {{searchResult}} 条结果'
+  }
 })
 
 export default defineConfig({
@@ -49,18 +56,12 @@ export default defineConfig({
   lang: 'zh-cmn-Hans',
   title: 'ZQ-XU',
   description: 'ZQ-XU的个人博客',
+  // /downloads/ 下是 static 附件（.cfg/.tgz 等），VitePress 死链检查只认 .html，这里显式忽略
+  ignoreDeadLinks: [/^\/downloads\//],
   vite: {
     optimizeDeps: {
-      include: ['element-plus'],
-      exclude: ['@sugarat/theme']
-    },
-    plugins: [pagefindPlugin({
-      customSearchQuery: chineseSearchOptimize,
-      btnPlaceholder: '搜索',
-      placeholder: '搜索文档',
-      emptyText: '空空如也',
-      heading: '共: {{searchResult}} 条结果'
-    })],
+      include: ['element-plus']
+    }
   },
   extends: blogTheme,
   themeConfig:{
