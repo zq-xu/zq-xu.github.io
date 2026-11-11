@@ -5,3 +5,34 @@
     background-size: cover;
   }
 }
+
+/* 产品卡片（::: card）改为两列排布，并给每条加上卡片外框 */
+.vp-doc .sugar-product-card.sugar-product-card {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin: 20px 0;
+}
+
+.vp-doc .pc-item {
+  padding: 16px 18px;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 12px;
+  background: var(--vp-c-bg-soft);
+}
+
+.vp-doc .pc-item:hover {
+  border-color: var(--vp-c-brand-1);
+}
+
+/* 落单的卡片（奇数个时的最后一张）横跨整行，避免右侧留半行空位 */
+.vp-doc .pc-item:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 860px) {
+  .vp-doc .sugar-product-card.sugar-product-card {
+    grid-template-columns: 1fr;
+  }
+}
+
