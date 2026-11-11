@@ -68,6 +68,7 @@ export const navbarZh: DefaultTheme.NavItem[] = [
         items: [
             { text: '个人简介', link: '/zh/more/aboutme' },
             { text: '资源分享', link: '/zh/more/resource-share' },
+            { text: '马耳他语', link: '/zh/more/maltese/index' },
             { text: 'DockerHub', link: 'https://hub.docker.com/u/zqxu1993' }
         ]
     }
