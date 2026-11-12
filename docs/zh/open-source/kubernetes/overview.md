@@ -30,7 +30,7 @@ Kubernetes也可以部署在单台节点上([Minikube](./installation/minikube.m
 
 ## 架构概览
 
-![Kubernetes高可用集群整体架构](/images/cloud-native/kubernetes/kubernetes-high-level-component-archtecture.jpeg)
+![Kubernetes高可用集群整体架构](/images/open-source/kubernetes/kubernetes-high-level-component-archtecture.jpeg)
 
 
 ## 核心组件

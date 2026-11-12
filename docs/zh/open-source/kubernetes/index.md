@@ -1,6 +1,6 @@
 ---
 description: Kubernetes学习、安装和实践
-cover: /images/cloud-native/kubernetes/kubernetes-stacked-all-blue-color.svg
+cover: /images/open-source/kubernetes/kubernetes-stacked-all-blue-color.svg
 hiddenCover: true 
 title: Kubernetes
 readingTime: false
@@ -11,7 +11,6 @@ tags:
  - 容器编排
 categories:
  - 云原生
-top: 3
 recommend: 1
 ---
 

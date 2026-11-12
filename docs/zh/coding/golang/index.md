@@ -8,7 +8,6 @@ tag:
  - Golang
 categories:
  - Golang
-top: 4
 recommend: 1
 ---
 

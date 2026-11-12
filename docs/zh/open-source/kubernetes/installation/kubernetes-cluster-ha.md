@@ -8,7 +8,7 @@ date: 2022-12-29
 
 
 ## 整体架构
-![Kubernetes高可用集群整体架构](/images/cloud-native/kubernetes/architecture-ha-k8s-cluster.png)
+![Kubernetes高可用集群整体架构](/images/open-source/kubernetes/architecture-ha-k8s-cluster.png)
 
 ## 环境信息
 - Master节点：
@@ -71,7 +71,7 @@ Master和Backup会定时确定对方状态，当Master不可用的时候，Backu
 
 ### Keepalived配置文件
 
-在每个节点上配置相应的keepalived.conf，见附件[Keepalived配置](/downloads/cloud-native/kubernetes/installation/keepalived-config.zip)。
+在每个节点上配置相应的keepalived.conf，见附件[Keepalived配置](/downloads/open-source/kubernetes/installation/keepalived-config.zip)。
 
 配置文件中需要修改的有如下部分：
 ```
@@ -130,7 +130,7 @@ HAProxy作为负载均衡时，可以按照指定策略（比如轮询）将流�
 
 
 ### HAProxy配置文件
-在每个节点上配置`haproxy.cfg`，见附件[HAProxy配置](/downloads/cloud-native/kubernetes/installation/haproxy.cfg)。
+在每个节点上配置`haproxy.cfg`，见附件[HAProxy配置](/downloads/open-source/kubernetes/installation/haproxy.cfg)。
 
 其中，主要的负载相关配置如下：
 ```

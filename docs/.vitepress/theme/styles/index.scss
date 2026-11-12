@@ -36,3 +36,24 @@
   }
 }
 
+
+/* 导航栏项目图标：图标与文字排在同一行，不换行 */
+.nav-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.nav-logo {
+  display: block;
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  flex: none;
+}
+
+/* Kafka 官方 logo 为黑色，深色模式下反色，避免看不见 */
+html.dark .nav-logo-kafka {
+  filter: invert(1);
+}

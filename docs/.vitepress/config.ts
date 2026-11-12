@@ -1,6 +1,6 @@
 import { getThemeConfig, defineConfig } from '@sugarat/theme/node'
 import packageJSON from '../../package.json'
-import { navbarZh } from './navbar'
+import { navbarZh, navbarEn } from './navbar'
 import { head } from './head'
 import { chineseSearchOptimize } from 'vitepress-plugin-pagefind'
 
@@ -47,6 +47,33 @@ const blogTheme = getThemeConfig({
     placeholder: '搜索文档',
     emptyText: '空空如也',
     heading: '共: {{searchResult}} 条结果'
+  },
+  // 英文站点的主题文案（页面列表由主题按 /en 前缀自动切分）
+  locales: {
+    en: {
+      author: 'ZQ-XU',
+      hotArticle: {
+        title: 'Featured',
+        empty: 'No featured posts yet'
+      },
+      friend: {
+        title: 'Links',
+        list: [
+          {
+            nickname: '粥里有勺糖',
+            des: 'Power to change the world at your fingertips',
+            avatar: 'https://img.cdn.sugarat.top/mdImg/MTY3NDk5NTE2NzAzMA==674995167030',
+            url: 'https://sugarat.top'
+          },
+          {
+            nickname: 'Vitepress',
+            des: 'Vite & Vue Powered Static Site Generator',
+            avatar: 'https://img.cdn.sugarat.top/mdImg/MTY3NDk5NTI2NzY1Ng==674995267656',
+            url: 'https://vitepress.vuejs.org/'
+          }
+        ]
+      }
+    }
   }
 })
 
@@ -56,6 +83,29 @@ export default defineConfig({
   lang: 'zh-cmn-Hans',
   title: 'ZQ-XU',
   description: 'ZQ-XU的个人博客',
+  locales: {
+    root: {
+      label: '简体中文',
+      lang: 'zh-cmn-Hans'
+    },
+    en: {
+      label: 'English',
+      lang: 'en-US',
+      link: '/en/',
+      title: 'ZQ-XU',
+      description: 'ZQ-XU · Personal blog',
+      themeConfig: {
+        nav: navbarEn,
+        outline: [2, 6],
+        lastUpdatedText: 'Last updated',
+        footer: {
+          message: '~~~ That is the end ~~~',
+          copyright:
+            'MIT Licensed | <a target="_blank" href="https://theme.sugarat.top/"> ZQ-XU </a>'
+        }
+      }
+    }
+  },
   // /downloads/ 下是 static 附件（.cfg/.tgz 等），VitePress 死链检查只认 .html，这里显式忽略
   ignoreDeadLinks: [/^\/downloads\//],
   vite: {

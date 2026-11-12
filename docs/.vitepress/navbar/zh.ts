@@ -4,26 +4,10 @@ export const navbarZh: DefaultTheme.NavItem[] = [
     {
         text: '开源杂记',
         items: [
-            { text: 'Tekton -- 云原生CI工具', link: '/zh/open-source/tekton/index' },
-            { text: 'Vitess -- 数据库分库分表解决方案', link: '/zh/open-source/vitess/index' },
-            { text: 'Kafka -- 本地运行与Golang验证', link: '/zh/open-source/kafka/index' }
-        ]
-    },
-    {
-        text: '云原生',
-        items: [
-            {
-                text: 'Kubernetes',
-                items: [
-                    { text: 'Kubernetes基础', link: '/zh/cloud-native/kubernetes/overview' },
-                    { text: 'Kubernetes安装', link: '/zh/cloud-native/kubernetes/installation' },
-                    { text: 'Kubernetes常用配置', link: '/zh/cloud-native/kubernetes/configuration' },
-                    { text: 'Kubernetes常用操作', link: '/zh/cloud-native/kubernetes/operation' },
-                    { text: 'CRD && Operator', link: '/zh/cloud-native/kubernetes/crd-operator' },
-                    { text: 'Kubernetes实践', link: '/zh/cloud-native/kubernetes/practice' },
-                    { text: 'Kubernetes参考', link: '/zh/cloud-native/kubernetes/reference' }
-                ]
-            },
+            { text: '<span class="nav-item"><img class="nav-logo" src="/icons/kubernetes.svg" alt="" />Kubernetes -- 容器编排平台</span>', link: '/zh/open-source/kubernetes/index' },
+            { text: '<span class="nav-item"><img class="nav-logo" src="/icons/tekton.svg" alt="" />Tekton -- 云原生CI工具</span>', link: '/zh/open-source/tekton/index' },
+            { text: '<span class="nav-item"><img class="nav-logo" src="/icons/vitess.svg" alt="" />Vitess -- 数据库分库分表解决方案</span>', link: '/zh/open-source/vitess/index' },
+            { text: '<span class="nav-item"><img class="nav-logo nav-logo-kafka" src="/icons/kafka.svg" alt="" />Kafka -- 本地运行与Golang验证</span>', link: '/zh/open-source/kafka/index' }
         ]
     },
     {
