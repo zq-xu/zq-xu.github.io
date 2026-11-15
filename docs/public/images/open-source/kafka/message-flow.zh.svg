@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 1015" width="820" height="1015" role="img" aria-label="Kafka 消息从生产到消费的全链路示意图">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L10,5 L0,10 z" fill="#334155"/>
+    </marker>
+    <marker id="arrowDash" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L10,5 L0,10 z" fill="#B07A1E"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="820" height="1015" fill="#FFFFFF"/>
+
+  <rect x="90" y="25" width="640" height="90" rx="10" fill="#EFF4FF" stroke="#4F7DF3"/>
+  <text x="110" y="53" font-size="16" font-weight="700" fill="#1E3A8A">Producer 生产者</text>
+  <text x="110" y="78" font-size="13" fill="#334155">按 key 选分区：hash(key) / 无 key 轮询</text>
+  <text x="110" y="100" font-size="13" fill="#334155">只写分区的 Leader 副本</text>
+
+  <line x1="410" y1="120" x2="410" y2="160" stroke="#334155" stroke-width="2" marker-end="url(#arrow)"/>
+  <circle cx="438" cy="141" r="13" fill="#334155"/>
+  <text x="438" y="146" font-size="13" font-weight="700" fill="#FFFFFF" text-anchor="middle">1</text>
+
+  <rect x="50" y="165" width="720" height="470" rx="12" fill="#F7F9FC" stroke="#CBD5E1"/>
+  <text x="410" y="194" font-size="16" font-weight="700" fill="#0F172A" text-anchor="middle">Broker（一台服务节点）</text>
+  <text x="410" y="215" font-size="12" fill="#64748B" text-anchor="middle">生产环境通常 ≥3 台；每台持有部分分区的副本，Leader/Follower 按分区而定</text>
+
+  <rect x="70" y="235" width="680" height="300" rx="10" fill="#FFFFFF" stroke="#C7D2E3"/>
+  <text x="410" y="261" font-size="15" font-weight="700" fill="#1F2937" text-anchor="middle">Topic: orders（逻辑分类，固定包含 N 个分区）</text>
+  
+  <rect x="85" y="280" width="650" height="68" rx="8" fill="#FFFFFF" stroke="#D6DEEB"/>
+  <text x="102" y="305" font-size="14" font-weight="700" fill="#1F2937">Partition 0 · Leader</text>
+  <text x="102" y="330" font-size="13" fill="#475569">offset   0 → 1 → 2 → 3 → 4 → …</text>
+  <text x="718" y="330" font-size="12" fill="#94A3B8" text-anchor="end">append-only</text>
+  
+  <rect x="85" y="356" width="650" height="68" rx="8" fill="#FFFFFF" stroke="#D6DEEB"/>
+  <text x="102" y="381" font-size="14" font-weight="700" fill="#1F2937">Partition 1 · Leader</text>
+  <text x="102" y="406" font-size="13" fill="#475569">offset   0 → 1 → 2 → 3 → 4 → …</text>
+  <text x="718" y="406" font-size="12" fill="#94A3B8" text-anchor="end">append-only</text>
+  
+  <rect x="85" y="432" width="650" height="68" rx="8" fill="#FFFFFF" stroke="#D6DEEB"/>
+  <text x="102" y="457" font-size="14" font-weight="700" fill="#1F2937">Partition 2 · Leader</text>
+  <text x="102" y="482" font-size="13" fill="#475569">offset   0 → 1 → 2 → 3 → 4 → …</text>
+  <text x="718" y="482" font-size="12" fill="#94A3B8" text-anchor="end">append-only</text>
+
+  <text x="70" y="562" font-size="12" fill="#475569">副本：1 Leader + N Follower；ISR = 与 Leader 保持同步的副本集</text>
+  <text x="70" y="584" font-size="12" fill="#475569">Retention：按时间/大小删除旧日志段；offset 不回退</text>
+
+  <line x1="410" y1="640" x2="410" y2="680" stroke="#334155" stroke-width="2" marker-end="url(#arrow)"/>
+  <circle cx="438" cy="661" r="13" fill="#334155"/>
+  <text x="438" y="666" font-size="13" font-weight="700" fill="#FFFFFF" text-anchor="middle">2</text>
+
+  <rect x="50" y="690" width="340" height="155" rx="10" fill="#F2FBF5" stroke="#52A86B"/>
+  <text x="220" y="718" font-size="15" font-weight="700" fill="#14532D" text-anchor="middle">Consumer Group A</text>
+  <text x="72" y="748" font-size="13" fill="#334155">C1 → Partition 0</text>
+  <text x="72" y="772" font-size="13" fill="#334155">C2 → Partition 1, 2</text>
+  <text x="72" y="800" font-size="12" fill="#64748B">组内一个分区只分给一个成员</text>
+
+  <rect x="430" y="690" width="340" height="155" rx="10" fill="#F2FBF5" stroke="#52A86B"/>
+  <text x="600" y="718" font-size="15" font-weight="700" fill="#14532D" text-anchor="middle">Consumer Group B</text>
+  <text x="452" y="748" font-size="13" fill="#334155">C3 → Partition 0, 1, 2</text>
+  <text x="452" y="772" font-size="13" fill="#334155">另一组从头读同一份日志</text>
+  <text x="452" y="800" font-size="12" fill="#64748B">组间互不影响，各自持有位点</text>
+
+  <line x1="220" y1="845" x2="220" y2="898" stroke="#B07A1E" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#arrowDash)"/>
+  <circle cx="220" cy="872" r="13" fill="#B07A1E"/>
+  <text x="220" y="877" font-size="13" font-weight="700" fill="#FFFFFF" text-anchor="middle">3</text>
+
+  <rect x="50" y="905" width="720" height="80" rx="10" fill="#FFF9EC" stroke="#D9A441"/>
+  <text x="410" y="930" font-size="15" font-weight="700" fill="#78350F" text-anchor="middle">__consumer_offsets（内部 topic）</text>
+  <text x="70" y="955" font-size="13" fill="#475569">按 (group, topic, partition) 记录已提交位点，即“下一条要读”的 offset</text>
+  <text x="70" y="977" font-size="13" fill="#475569">位点与消息分开存储，所以可以回拨位点重放历史</text>
+
+  <text x="30" y="1005" font-size="12" fill="#64748B">同一份日志可被多个消费组独立读取；组内并行度上限 = 分区数</text>
+</svg>

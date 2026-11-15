@@ -1,14 +1,13 @@
 # Kafka Verification with a Golang Project
 
-Continuing from [part one: Kafka in brief, and running it locally](./introduction.md) — or back to the
-[series index](./index.md). The cluster is up;
-this page answers a different question: **how do we prove it really works, not just that the port
-accepts connections?**
+This page answers one question with a cobra CLI project: **how do we prove Kafka really works, not
+just that the port accepts connections?** It assumes the cluster from
+[Kafka in Brief, and Running It Locally](./introduction.md) is already up.
 
 The demo lives at
-[`public/demos/kafka`](https://github.com/zq-xu/zq-xu.github.io/tree/master/public/demos/kafka) in
-this site's repository. It is a cobra CLI: every basic capability has its own subcommand, every
-subcommand runs and asserts on its own, and `e2e` chains seven steps into one regression command.
+[`docs/public/demos/kafka`](https://github.com/zq-xu/zq-xu.github.io/tree/master/docs/public/demos/kafka) in
+this site's repository. It is a cobra CLI (command-line interface): every basic capability has its own subcommand, every
+subcommand runs and asserts on its own, and `e2e` (end-to-end) chains seven steps into one regression command.
 
 ## The idea behind the checks
 
@@ -18,11 +17,11 @@ quietly:
 | Capability | Command | Evidence |
 |---|---|---|
 | Cluster metadata and controller readiness | `health` | Measured `RefreshMetadata` latency, broker count, controller ID |
-| A created topic becomes visible | `topic create` + `describe` | Polled partition count, leader and ISR readable |
+| A created topic becomes visible | `topic create` + `describe` | Polled partition count, leader and ISR (in-sync replicas) readable |
 | Records actually reach disk | `produce` (sync) | Partition and offset returned by the broker |
 | Key-to-partition mapping is stable | `produce` + `describe` | The same key lands on the same partition every time |
 | Reading by offset without a group | `consume` | Records read from `--partition` / `--offset`, no offsets committed |
-| Group assignment and offset commits | `group` + `lag` | Lag drops after the commit |
+| Group assignment and offset commits | `group` + `lag` | Lag (consumer lag) drops after the commit |
 | The limit is exact, not approximate | `group --limit N` | Exactly N offsets committed |
 | The whole chain is repeatable | `e2e` | Seven assertions all `[PASS]` |
 
@@ -35,13 +34,13 @@ command.
 
 | Item | Requirement |
 |---|---|
-| Kafka | Started as described in part one; `docker ps` shows `kafka-demo` as `healthy` |
+| Kafka | Started as described in [the local setup](./introduction.md); `docker ps` shows `kafka-demo` as `healthy` |
 | Go | 1.25+ (the module declares `go 1.25.0`) |
 | Dependencies | `github.com/IBM/sarama v1.60.2`, `github.com/spf13/cobra v1.10.2` |
 
 ```bash
 git clone https://github.com/zq-xu/zq-xu.github.io.git
-cd zq-xu.github.io/public/demos/kafka
+cd zq-xu.github.io/docs/public/demos/kafka
 
 go mod download
 go build ./...
@@ -63,7 +62,7 @@ Or use the Make shortcuts: `make kafka-up`, `make health`, `make produce`, `make
 ## Project layout
 
 ```
-public/demos/kafka/
+docs/public/demos/kafka/
 ├── main.go                     # entry point, only calls cmd.Execute()
 ├── cmd/                        # command layer, one file per subcommand
 │   ├── root.go                 #   root: binds global flags + wires the tree
@@ -142,7 +141,7 @@ Some deliberate conventions:
 
 ### `health`
 
-Verifies that brokers are discoverable, the metadata API works (evidenced by the measured
+Verifies that brokers are discoverable, the metadata API (application programming interface) works (evidenced by the measured
 `RefreshMetadata` latency), the controller is ready, and how many topics exist.
 
 **Why**: every other command depends on metadata; checking it separately immediately separates
@@ -251,7 +250,7 @@ go run . e2e --messages 500           # more data
 go run . e2e --topic my-topic --keep  # reuse a topic you name, and keep it
 ```
 
-It is a **smoke test**: any failing step exits non-zero, so it fits CI. Topic selection: without
+It is a **smoke test**: any failing step exits non-zero, so it fits CI (Continuous Integration). Topic selection: without
 `--topic` it generates `demo-e2e-<nanotimestamp>` and deletes it; with `--topic` it reuses yours and
 **does not delete it** (so it cannot destroy your data).
 
@@ -277,7 +276,7 @@ Two details in step 5:
 
 ## Code walkthrough
 
-Paths are relative to `public/demos/kafka/`.
+Paths are relative to `docs/public/demos/kafka/`.
 
 **Safety switches set from the start**: `Version=3.9.0.0` aligned with the broker;
 `RequiredAcks=WaitForAll`; `Idempotent=true` together with `MaxOpenRequests=1` (a hard requirement);
@@ -348,7 +347,7 @@ go run . produce --async --messages 200    # async, around 13,000 records/s
 | Symptom | Likely cause | How to check |
 |---|---|---|
 | Every command cannot connect | Container not running / port not published | `./scripts/kafka.sh status` |
-| Connects but hangs forever | `ADVERTISED_LISTENERS` points inside the container | See the advertised settings in part one |
+| Connects but hangs forever | `ADVERTISED_LISTENERS` points inside the container | See the advertised listener settings in the local setup |
 | `create` succeeds but `describe` says it does not exist | Asynchronous creation | The project polls with `WaitTopicVisible`; check `topic list` manually |
 | `NOT_LEADER_FOR_PARTITION` | Stale metadata | The project refreshes metadata per topic first; `Metadata.Retry.Max=5` is the fallback |
 | A group suddenly "stops consuming" | `Consume` not called again after a rebalance | Confirm the loop inside `ConsumeGroup` |
@@ -389,5 +388,5 @@ rm -rf bin                  # build output
 - [franz-go: another popular Go client](https://github.com/twmb/franz-go)
 - [cobra: the CLI framework](https://github.com/spf13/cobra)
 
-Code and scripts: [public/demos/kafka](https://github.com/zq-xu/zq-xu.github.io/tree/master/public/demos/kafka)
-· Back to [part one: Kafka in brief, and running it locally](./introduction.md) · [series index](./index.md)
+Code and scripts: [docs/public/demos/kafka](https://github.com/zq-xu/zq-xu.github.io/tree/master/docs/public/demos/kafka)
+· Related: [Kafka in Brief, and Running It Locally](./introduction.md) · [series index](./index.md)

@@ -57,3 +57,10 @@
 html.dark .nav-logo-kafka {
   filter: invert(1);
 }
+
+/* 流程图/长图：主题默认把正文图片限高 300px，这里允许按栏宽完整展示 */
+.VPDoc .content main img.kafka-flow {
+  max-height: none;
+  width: 100%;
+  height: auto;
+}

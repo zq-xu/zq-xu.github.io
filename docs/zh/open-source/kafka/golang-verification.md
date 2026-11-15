@@ -13,12 +13,12 @@ categories:
 
 # Golang项目验证Kafka
 
-承接[第一篇：Kafka介绍与本地运行](./introduction.md)（也可以先回[系列目录](./index.md)）。集群已经起好，这一篇解决一个问题：
-**怎么证明它"真的能用"，而不只是"端口通了"。**
+本文用一个 cobra 命令行项目解决一个问题：**怎么证明 Kafka "真的能用"，而不只是"端口通了"。**
+默认本地已按[Kafka介绍与本地运行](./introduction.md)起好了集群。
 
-配套项目在仓库 [`public/demos/kafka`](https://github.com/zq-xu/zq-xu.github.io/tree/master/public/demos/kafka)，
+配套项目在仓库 [`docs/public/demos/kafka`](https://github.com/zq-xu/zq-xu.github.io/tree/master/docs/public/demos/kafka)，
 一个 cobra 命令行程序：每个基础能力对应一个子命令，每个子命令都能独立运行、独立断言，
-最后 `e2e` 一条命令把七步串起来做回归。
+最后 `e2e`（end-to-end，端到端）一条命令把七步串起来做回归。
 
 ## 验证思路
 
@@ -27,15 +27,15 @@ categories:
 | 要验证的能力 | 对应命令 | 拿什么当证据 |
 |---|---|---|
 | 集群元数据与 controller 就绪 | `health` | 一次 `RefreshMetadata` 的实际耗时、broker 数、controller ID |
-| 建 topic 后元数据可见 | `topic create` + `describe` | 轮询到分区数正确，能查到 leader / ISR |
+| 建 topic 后元数据可见 | `topic create` + `describe` | 轮询到分区数正确，能查到 leader / ISR（In-Sync Replicas，同步副本） |
 | 消息真的落盘 | `produce`（同步） | broker 返回的 partition + offset |
 | key 与分区的关系稳定 | `produce` + `describe` | 同一 key 每次落同一分区 |
 | 不加入组也能按位点读 | `consume` | 指定 `--partition` / `--offset` 读出消息，且不提交位点 |
-| 消费组分配与位点提交 | `group` + `lag` | 提交后 lag 相应减少 |
+| 消费组分配与位点提交 | `group` + `lag` | 提交后 lag（consumer lag，堆积条数）相应减少 |
 | 限额不能多也不能少 | `group --limit N` | 提交总量正好 N |
 | 全链路可重复回归 | `e2e` | 七步断言全部 `[PASS]` |
 
-**为什么用 Go 项目而不是几条 CLI 命令**：命令行工具验证不了"位点提交的时机""rebalance 后
+**为什么用 Go 项目而不是几条 CLI（command-line interface，命令行工具）命令**：命令行工具验证不了"位点提交的时机""rebalance 后
 是否继续消费""限额与 `MarkMessage` 的关系"这些细节；用代码写出来，才可以把断言固化下来，
 每次改完都能一条命令重跑。
 
@@ -43,13 +43,13 @@ categories:
 
 | 项 | 要求 |
 |---|---|
-| Kafka | 已按第一篇起好，`docker ps` 能看到 `kafka-demo` 且 `healthy` |
+| Kafka | 已按[本地运行步骤](./introduction.md)起好，`docker ps` 能看到 `kafka-demo` 且 `healthy` |
 | Go | 1.25+（项目 `go.mod` 声明 1.25.0） |
 | 依赖 | `github.com/IBM/sarama v1.60.2`、`github.com/spf13/cobra v1.10.2` |
 
 ```bash
 git clone https://github.com/zq-xu/zq-xu.github.io.git
-cd zq-xu.github.io/public/demos/kafka
+cd zq-xu.github.io/docs/public/demos/kafka
 
 go mod download
 go build ./...
@@ -71,7 +71,7 @@ go run . e2e                 # 端到端 7 步断言
 ## 项目结构
 
 ```
-public/demos/kafka/
+docs/public/demos/kafka/
 ├── main.go                     # 入口，只调 cmd.Execute()
 ├── cmd/                        # 命令层：一个子命令一个文件
 │   ├── root.go                 #   root：绑全局参数 + 组装命令树
@@ -239,7 +239,7 @@ go run . e2e --messages 500         # 加大数据量
 go run . e2e --topic my-topic --keep  # 用自己指定的 topic，且不删除
 ```
 
-是**冒烟测试**：任何一步失败都以非 0 退出码结束，可放进 CI。topic 选择：不传 `--topic` 自动生成
+是**冒烟测试**：任何一步失败都以非 0 退出码结束，可放进 CI（Continuous Integration，持续集成）。topic 选择：不传 `--topic` 自动生成
 `demo-e2e-<纳秒时间戳>` 并删除；传了则复用且**不删除**（避免误删你的数据）。
 
 ## e2e 的七步断言
@@ -248,7 +248,7 @@ go run . e2e --topic my-topic --keep  # 用自己指定的 topic，且不删除
 |---|---|---|
 | 1 连接 | broker 可发现、controller 可用 | 没有元数据，后面都是空谈 |
 | 2 topic | 创建（或复用）后元数据可见 | 覆盖"异步建 topic"的时序坑 |
-| 3 生产 | N 条全部拿到 ACK | 覆盖压缩、幂等、`acks=all` 全链路 |
+| 3 生产 | N 条全部拿到 ACK（acknowledgement，确认） | 覆盖压缩、幂等、`acks=all` 全链路 |
 | 4 分区 | 同一 key 落同一分区 | 有序性前提成立 |
 | 5 消费 | 收满 N 条且分区内 offset 单调递增 | 不重不漏不乱序 |
 | 6 位点 | 堆积回到基线（新 topic 基线为 0） | 位点真的提交了；用基线而非硬编码 0，才能在非空 topic 上复用 |
@@ -262,7 +262,7 @@ go run . e2e --topic my-topic --keep  # 用自己指定的 topic，且不删除
 
 ## 关键代码走读
 
-路径都相对 `public/demos/kafka/`。
+路径都相对 `docs/public/demos/kafka/`。
 
 **配置一开始就把"不丢消息"打开**：`Version=3.9.0.0` 对齐 broker；`RequiredAcks=WaitForAll`；
 `Idempotent=true` 配合 `MaxOpenRequests=1`（幂等生产者的硬性要求）；`Offsets.Initial=OffsetOldest`。
@@ -329,7 +329,7 @@ go run . produce --async --messages 200    # 异步，约 13000 条/秒
 | 现象 | 大概率原因 | 怎么查 |
 |---|---|---|
 | 所有命令都连不上 | 容器没起 / 端口没映射 | `./scripts/kafka.sh status` |
-| 能连上但一直卡住 | `ADVERTISED_LISTENERS` 是容器内地址 | 回到第一篇看 advertised 配置 |
+| 能连上但一直卡住 | `ADVERTISED_LISTENERS` 是容器内地址 | 回到[本地运行](./introduction.md)看 advertised 配置 |
 | `create` 成功但 `describe` 说没有 | 建 topic 异步 | 项目已用 `WaitTopicVisible`；手动看 `topic list` |
 | `NOT_LEADER_FOR_PARTITION` | 元数据过期 | 项目已对每个 topic 先 `RefreshMetadata`；手动可用 `Metadata.Retry.Max=5` 兜底 |
 | 消费组"突然不消费" | rebalance 后没重新调 `Consume` | 确认循环在 `ConsumeGroup` 里 |
@@ -369,5 +369,5 @@ rm -rf bin                  # 编译产物
 - [franz-go：另一个常用 Go 客户端](https://github.com/twmb/franz-go)
 - [cobra：命令行框架](https://github.com/spf13/cobra)
 
-代码与脚本：[public/demos/kafka](https://github.com/zq-xu/zq-xu.github.io/tree/master/public/demos/kafka)
-· 回到[第一篇：Kafka介绍与本地运行](./introduction.md) · [系列目录](./index.md)
+代码与脚本：[docs/public/demos/kafka](https://github.com/zq-xu/zq-xu.github.io/tree/master/docs/public/demos/kafka)
+· 相关：[Kafka介绍与本地运行](./introduction.md) · [系列目录](./index.md)
