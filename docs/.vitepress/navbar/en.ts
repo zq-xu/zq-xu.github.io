@@ -5,6 +5,10 @@ export const navbarEn: DefaultTheme.NavItem[] = [
         text: 'Open Source',
         items: [
             {
+                text: '<span class="nav-item"><img class="nav-logo" src="/icons/kind-icon.png" alt="" />Kind -- Local Kubernetes Development</span>',
+                link: '/en/open-source/kind/index'
+            },
+            {
                 text: '<span class="nav-item"><img class="nav-logo nav-logo-kafka" src="/icons/kafka.svg" alt="" />Kafka -- Local Setup & Golang Verification</span>',
                 link: '/en/open-source/kafka/index'
             }

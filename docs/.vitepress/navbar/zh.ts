@@ -5,6 +5,7 @@ export const navbarZh: DefaultTheme.NavItem[] = [
         text: '开源杂记',
         items: [
             { text: '<span class="nav-item"><img class="nav-logo" src="/icons/kubernetes.svg" alt="" />Kubernetes -- 容器编排平台</span>', link: '/zh/open-source/kubernetes/index' },
+            { text: '<span class="nav-item"><img class="nav-logo" src="/icons/kind-icon.png" alt="" />Kind -- 本地Kubernetes开发环境</span>', link: '/zh/open-source/kind/index' },
             { text: '<span class="nav-item"><img class="nav-logo" src="/icons/tekton.svg" alt="" />Tekton -- 云原生CI工具</span>', link: '/zh/open-source/tekton/index' },
             { text: '<span class="nav-item"><img class="nav-logo" src="/icons/vitess.svg" alt="" />Vitess -- 数据库分库分表解决方案</span>', link: '/zh/open-source/vitess/index' },
             { text: '<span class="nav-item"><img class="nav-logo nav-logo-kafka" src="/icons/kafka.svg" alt="" />Kafka -- 本地运行与Golang验证</span>', link: '/zh/open-source/kafka/index' }

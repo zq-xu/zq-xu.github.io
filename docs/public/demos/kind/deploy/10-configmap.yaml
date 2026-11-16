@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kind-demo-config
+  namespace: kind-demo
+data:
+  APP_VERSION: "v1"

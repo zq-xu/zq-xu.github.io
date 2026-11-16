@@ -9,6 +9,7 @@ recommend: 3
 - [安装Minikube集群](./installation/minikube.md)： 单节点Kubernetes环境，常用于学习使用或作为开发环境。
 - [安装Kubernetes集群](./installation/kubernetes-cluster.md)：一个Master节点和若干Worker节点组成，常用于开发或测试环境。
 - [安装Kubernetes高可用集群](./installation/kubernetes-cluster-ha.md)：至少3个Master节点和若干Worker节点组成，常用于测试或生产环境。
+- [Kind本地集群](/zh/open-source/kind/index)：用Docker容器作为节点，在一台机器上运行单节点或多节点Kubernetes。
 
 ## CSI安装
 - [安装LocalPath CSI](./installation/csi-localpath.md): 使用宿主机本地路径作为存储类；

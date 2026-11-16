@@ -64,3 +64,10 @@ html.dark .nav-logo-kafka {
   width: 100%;
   height: auto;
 }
+
+/* Kind 架构图与部署流程图：同样覆盖主题默认的图片限高，按正文栏宽展示 */
+.VPDoc .content main img[src*="/images/open-source/kind/"] {
+  max-height: none;
+  width: 100%;
+  height: auto;
+}

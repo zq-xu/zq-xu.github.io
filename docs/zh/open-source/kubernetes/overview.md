@@ -26,7 +26,7 @@ Kubernetes往往由多台节点组成集群，这些节点主要分为两类：
 - 工作负载可以运行在所有节点上，也可以通过配置使工作负载只运行在Worker节点上。
 :::
 
-Kubernetes也可以部署在单台节点上([Minikube](./installation/minikube.md))，或者部署在单个容器里([Kind](https://kind.sigs.k8s.io/))。
+Kubernetes也可以部署在单台节点上([Minikube](./installation/minikube.md))，或者部署在Docker容器里([Kind](/zh/open-source/kind/index))。
 
 ## 架构概览
 
