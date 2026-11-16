@@ -201,7 +201,7 @@ The form given at the head of each item is the third person masculine singular p
 | 18. **Studja** — Andrew studja l-Malti għal siegħa kuljum u pprattika t-taħdit ma' ħabib Malti wara x-xogħol. | Andrew studied Maltese for an hour a day and practised speaking with a Maltese friend after work.<br>**Andrew studja** Andrew studied<br>**l-Malti** Maltese<br>**għal siegħa kuljum** for an hour a day<br>**u pprattika** and he practised<br>**t-taħdit** speaking<br>**ma' ħabib Malti** with a Maltese friend<br>**wara x-xogħol** after work. |
 
 ----------------
-## 7 The Task and the 56 Conjugated Forms
+## 7 The Past-Tense Conjugation Forms
 
 `Issa agħżel erba' verbi Semitiċi u erbgħa oħra li mhumiex, u kkonjugahom fil-persuni kollha fil-passat`: now choose four Semitic verbs and four others that are not, and conjugate them in all persons in the past.
 

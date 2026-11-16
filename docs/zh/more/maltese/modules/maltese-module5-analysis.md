@@ -2,8 +2,6 @@
 
 ## 封面
 
-### 封面
-
 | 原文 | 中文与词语解析 |
 |---|---|
 | MQF 2 – Maltese Language and Cultural Orientation for Foreigners | 马耳他资格框架第 2 级：面向外国人的马耳他语与文化入门。<br>**MQF 2**：资格级别，不是“第二模块”。<br>**Maltese Language**：马耳他语。<br>**Cultural Orientation**：文化导向／入门。<br>**for Foreigners**：面向外国人。 |
@@ -216,9 +214,9 @@
 
 ----------------
 
-## 7 题目与 56 个变位形式
+## 7 动词过去式的变位形式
 
-### 题目与 56 个变位
+### 动词过去式的变位形式
 
 `Issa agħżel erba’ verbi Semitiċi u erbgħa oħra li mhumiex, u kkonjugahom fil-persuni kollha fil-passat`：现在选四个闪米特类动词和另外四个非此类动词，用过去时变出所有人称。
 
