@@ -1,3 +1,7 @@
+---
+date: 2026-08-01
+---
+
 # Dinner at the Restaurant — Text Messages
 
 **Scenario:** Claire and her friend exchange text messages to confirm tonight's dinner at a restaurant: the meeting time, what to wear, and childcare arrangements. (Speaker labels are inferred from the dialogue context.)

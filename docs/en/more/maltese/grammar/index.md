@@ -1,3 +1,7 @@
+---
+date: 2026-08-01
+---
+
 # Maltese for Beginners
 
 These notes are for beginner learners. Maltese is written with the standard Latin alphabet. English glosses are intended as quick references; meanings may vary with context and collocation.

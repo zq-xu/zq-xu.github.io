@@ -1,3 +1,7 @@
+---
+date: 2026-08-01
+---
+
 # The Rented Car (Il-karozza mikrija)
 
 **Scenario:** Carmen Micallef calls the car-hire company to speak to Mr Martin Deguara. He is not there, so she explains to the employee that she rented a car fifteen days ago and is flying back to her country on Friday; they arrange to return the car at their office in the airport car park before her flight.

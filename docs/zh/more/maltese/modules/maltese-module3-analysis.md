@@ -1,3 +1,7 @@
+---
+date: 2026-08-01
+---
+
 # Module 3: 当事情不如我们所愿时
 
 **模块标题：Meta l-affarijiet ma jmorrux kif nixtiequ**  

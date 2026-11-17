@@ -1,3 +1,7 @@
+---
+date: 2026-08-01
+---
+
 # Verbs and Basic Tenses
 
 This chapter is organized as “rules → tense-specific conjugation → comparison.” Maltese commonly uses the imperfect to express present, habitual, or ongoing actions; the perfect expresses completed actions; and the future is often formed with `se + imperfect`. These forms do not map one-to-one onto English tenses; context and time expressions also matter.

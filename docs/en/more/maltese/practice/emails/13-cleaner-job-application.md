@@ -1,3 +1,7 @@
+---
+date: 2026-08-01
+---
+
 # Cleaner Job Application
 
 **Scenario:** The applicant writes to the cleaning/property company to apply for the position of cleaner.

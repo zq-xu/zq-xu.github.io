@@ -1,3 +1,7 @@
+---
+date: 2026-08-01
+---
+
 # Talking About Upcoming Plans
 
 **Scenario:** Anna and Mark talk about plans for today, tomorrow, this weekend, next week, next month, and next year.

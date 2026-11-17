@@ -1,3 +1,7 @@
+---
+date: 2026-08-01
+---
+
 # Dates, Weekdays, Months, and Seasons
 
 ## 1. Days of the Week

@@ -1,3 +1,7 @@
+---
+date: 2026-08-01
+---
+
 # Module 5: Travel
 
 **Is-safar — Travel**

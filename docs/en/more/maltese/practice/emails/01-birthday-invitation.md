@@ -1,3 +1,7 @@
+---
+date: 2026-08-01
+---
+
 # Birthday Party Invitation
 
 **Scenario:** Anna invites her friend Mark to her birthday party.

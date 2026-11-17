@@ -1,3 +1,7 @@
+---
+date: 2026-08-01
+---
+
 # Maltese Learning Index
 
 This folder gathers Maltese learning materials, organized by topic in subfolders.

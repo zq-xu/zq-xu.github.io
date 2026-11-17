@@ -1,3 +1,7 @@
+---
+date: 2026-08-01
+---
+
 # Psychologist Job Application
 
 **Scenario:** The applicant writes to the counselling clinic to apply for the position of psychologist.

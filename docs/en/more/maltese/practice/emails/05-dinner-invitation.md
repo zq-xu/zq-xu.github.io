@@ -1,3 +1,7 @@
+---
+date: 2026-08-01
+---
+
 # Dinner Invitation
 
 **Scenario:** Anna invites her friend Mark to dinner at her home.

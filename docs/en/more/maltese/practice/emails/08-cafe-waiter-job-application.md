@@ -1,3 +1,7 @@
+---
+date: 2026-08-01
+---
+
 # Cafe Waiter Job Application
 
 **Scenario:** The applicant writes to the cafe manager to apply for the position of waiter.

@@ -1,3 +1,7 @@
+---
+date: 2026-08-01
+---
+
 # Maltese Reading and Word-by-Word Practice
 
 This folder contains the requirements and two categories of beginner reading material: dialogues and emails. Each exercise presents the complete Maltese text first, followed by an English sentence-by-sentence translation and word notes. Each category has its own index and numbering sequence. Hyphens and apostrophes are often part of Maltese spelling; the notes explain articles, preposition contractions, and person suffixes where useful.

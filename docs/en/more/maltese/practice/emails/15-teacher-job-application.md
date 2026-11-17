@@ -1,3 +1,7 @@
+---
+date: 2026-08-01
+---
+
 # Teacher Job Application
 
 **Scenario:** The applicant writes to a school to apply for the position of teacher.

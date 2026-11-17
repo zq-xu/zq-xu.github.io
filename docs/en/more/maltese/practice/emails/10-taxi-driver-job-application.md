@@ -1,3 +1,7 @@
+---
+date: 2026-08-01
+---
+
 # Taxi Driver Job Application
 
 **Scenario:** The applicant writes to the taxi company to apply for the position of taxi driver.

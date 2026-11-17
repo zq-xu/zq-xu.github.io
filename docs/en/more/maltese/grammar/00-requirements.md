@@ -1,3 +1,7 @@
+---
+date: 2026-08-01
+---
+
 # 00 Editorial Requirements
 
 This page records the goals and coverage requirements for this beginner Maltese resource.

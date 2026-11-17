@@ -1,3 +1,7 @@
+---
+date: 2026-08-01
+---
+
 # Reply to a Wedding Invitation
 
 **Scenario:** A guest replies to the couple and confirms that he and his wife will attend the wedding.

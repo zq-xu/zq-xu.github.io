@@ -1,3 +1,7 @@
+---
+date: 2026-08-01
+---
+
 # Dialogue Index
 
 This category contains eight beginner Maltese dialogues. Each dialogue is presented in full, followed by an English sentence-by-sentence translation and word notes. Numbering starts at 01 within this category.

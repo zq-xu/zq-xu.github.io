@@ -1,3 +1,7 @@
+---
+date: 2026-08-01
+---
+
 # Module 4: 购物与食物
 
 **Ix-xiri u l-ikel — Shopping and Food — 购物与食物**

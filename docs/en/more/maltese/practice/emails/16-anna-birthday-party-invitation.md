@@ -1,3 +1,7 @@
+---
+date: 2026-08-01
+---
+
 # Birthday Party Invitation (Textbook Listening Exercise)
 
 **Scenario:** Anna writes an email to Maria to invite her to her 15th birthday party at Għadira Bay. This is the original textbook email from the PDF, including the listening gap-fill options in brackets.

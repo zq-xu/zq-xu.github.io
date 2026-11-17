@@ -1,3 +1,7 @@
+---
+date: 2026-11-12
+---
+
 # Kafka Verification with a Golang Project
 
 This page answers one question with a cobra CLI project: **how do we prove Kafka really works, not

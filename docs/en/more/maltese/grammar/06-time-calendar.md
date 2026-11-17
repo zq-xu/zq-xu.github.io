@@ -1,3 +1,7 @@
+---
+date: 2026-08-01
+---
+
 # Telling the Time
 
 Maltese uses both traditional spoken clock expressions and numeric 24-hour time. Numeric notation is clearest when arranging a meeting. In spoken expressions, note the forms of `siegħa` (hour) and the clock numerals.

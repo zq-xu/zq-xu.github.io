@@ -1,3 +1,7 @@
+---
+date: 2026-08-01
+---
+
 # Maltese Practice Document Requirements
 
 This resource is for beginner Maltese learners. Each practice text should be shown in full first. Names in the text should use English or Maltese spelling. The text should then be translated sentence by sentence, with word-by-word explanations. Save each topic in its own Markdown file and provide directory pages.

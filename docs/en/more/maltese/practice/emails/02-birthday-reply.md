@@ -1,3 +1,7 @@
+---
+date: 2026-08-01
+---
+
 # Reply to a Birthday Party Invitation
 
 **Scenario:** Mark replies to Anna, accepting the birthday party invitation and asking whether help is needed.

@@ -1,3 +1,7 @@
+---
+date: 2026-08-01
+---
+
 # Chef Job Application (Textbook Writing Template)
 
 **Scenario:** An applicant writes to a restaurant to apply for the position of chef. This is the original textbook template from the PDF, including the gap-fill options in brackets. Note: the closing is printed `Tisjiet` in the source; the standard formal spelling is `Tislijiet`.

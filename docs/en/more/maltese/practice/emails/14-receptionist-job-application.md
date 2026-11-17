@@ -1,3 +1,7 @@
+---
+date: 2026-08-01
+---
+
 # Receptionist Job Application
 
 **Scenario:** The applicant writes to a hotel (also usable for a bank) to apply for the position of receptionist.

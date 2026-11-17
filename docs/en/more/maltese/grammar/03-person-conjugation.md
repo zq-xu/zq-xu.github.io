@@ -1,3 +1,7 @@
+---
+date: 2026-08-01
+---
+
 # Personal Pronouns and Verb Conjugation
 
 ## 1. Person Markers and Conjugation Patterns

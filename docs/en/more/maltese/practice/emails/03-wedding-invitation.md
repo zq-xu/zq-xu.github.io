@@ -1,3 +1,7 @@
+---
+date: 2026-08-01
+---
+
 # Wedding Invitation
 
 **Scenario:** A couple invites friends and family to their wedding ceremony and reception.

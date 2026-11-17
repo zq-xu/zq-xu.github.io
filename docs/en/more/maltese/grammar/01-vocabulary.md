@@ -1,3 +1,7 @@
+---
+date: 2026-08-01
+---
+
 # Categorized Basic Maltese Vocabulary
 
 This reference groups basic vocabulary into ten core categories. Relevant forms are included directly in the tables. Maltese has no infinitive exactly equivalent to English `to + verb`; verbs are shown in common citation forms, with person-specific forms in [Personal Pronouns and Verb Conjugation](03-person-conjugation.md).

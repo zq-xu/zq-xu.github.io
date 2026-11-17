@@ -1,3 +1,7 @@
+---
+date: 2026-08-01
+---
+
 # Reply to a Dinner Invitation
 
 **Scenario:** Mark accepts Anna's dinner invitation and offers to bring dessert.

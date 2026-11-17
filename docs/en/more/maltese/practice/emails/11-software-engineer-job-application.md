@@ -1,3 +1,7 @@
+---
+date: 2026-08-01
+---
+
 # Software Engineer Job Application
 
 **Scenario:** The applicant writes to the tech company to apply for the position of software engineer.

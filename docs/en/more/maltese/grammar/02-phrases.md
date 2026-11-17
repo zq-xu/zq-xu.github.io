@@ -1,3 +1,7 @@
+---
+date: 2026-08-01
+---
+
 # 200 Useful Maltese Phrases
 
 The phrases are grouped into ten situations, with 20 examples per category. Numbering restarts in each section. Some expressions change according to the listener's gender, number, or context; ellipses can be replaced with specific information.

@@ -1,3 +1,7 @@
+---
+date: 2026-08-01
+---
+
 # Module 6: Consolidation and Personalisation
 
 ## Cover Page Breakdown

@@ -1,3 +1,7 @@
+---
+date: 2026-08-01
+---
+
 # Making an Appointment with Dr Farrugia
 
 **Scenario:** Jodie calls the clinic to book an appointment with Dr Farrugia. They agree on Thursday at seven in the evening. (Speaker labels are inferred from the dialogue context, as the source is a listening exercise.)

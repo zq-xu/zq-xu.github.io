@@ -1,3 +1,7 @@
+---
+date: 2026-08-01
+---
+
 # Module 3: When Things Go Wrong
 
 **Module title: Meta l-affarijiet ma jmorrux kif nixtiequ**  

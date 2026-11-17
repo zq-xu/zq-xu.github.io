@@ -1,3 +1,7 @@
+---
+date: 2026-08-01
+---
+
 # Common Prepositions and Their Uses
 
 Prepositions are used with nouns and definite articles; some contract with the following article. Prepositions can also take person suffixes, creating forms such as “to me,” “with you,” or “at his place.” The list is ordered approximately by everyday frequency. Dictionaries may also list rare dialectal, archaic, conjunction-like, and inflected forms; this chapter focuses on useful prepositions and phrases in modern standard Maltese.

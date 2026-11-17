@@ -1,3 +1,7 @@
+---
+date: 2026-08-01
+---
+
 # Bus Driver Job Application
 
 **Scenario:** The applicant writes to the bus company to apply for the position of bus driver.

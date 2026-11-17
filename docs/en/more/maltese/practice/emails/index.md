@@ -1,3 +1,7 @@
+---
+date: 2026-08-01
+---
+
 # Email Index
 
 This category contains 17 Maltese emails. Each email is presented in full with its header (To / From / Date / Subject), followed by an English sentence-by-sentence translation and word notes. Numbering starts at 01 within this category.

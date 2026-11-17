@@ -1,3 +1,7 @@
+---
+date: 2026-08-01
+---
+
 # Going to a Weekend Party
 
 **Scenario:** Two friends make plans for a weekend party.

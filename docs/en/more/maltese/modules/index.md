@@ -1,3 +1,7 @@
+---
+date: 2026-08-01
+---
+
 # Maltese Module Analysis
 
 This folder contains page-by-page analyses of the Maltese textbook modules, going page by page with English translations and word notes under the Arabic numerals of the textbook footer (the cover is not numbered).

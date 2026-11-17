@@ -1,3 +1,7 @@
+---
+date: 2026-08-01
+---
+
 # Chef Job Application
 
 **Scenario:** The applicant writes to the restaurant manager to apply for the position of chef.

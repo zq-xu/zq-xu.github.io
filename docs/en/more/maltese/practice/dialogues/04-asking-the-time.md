@@ -1,3 +1,7 @@
+---
+date: 2026-08-01
+---
+
 # Asking the Time
 
 **Scenario:** Two friends meet at an agreed place. One asks the time and checks whether there is still time before an appointment.

@@ -1,3 +1,7 @@
+---
+date: 2026-11-12
+---
+
 # Kafka in Brief, and Running It Locally
 
 What Kafka is, why it is designed this way, when it fits, and how to bring up a working single-node

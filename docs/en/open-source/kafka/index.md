@@ -1,3 +1,7 @@
+---
+date: 2026-11-12
+---
+
 # Kafka
 
 This series walks through Kafka on a real local setup: what it is and why it is designed that way,

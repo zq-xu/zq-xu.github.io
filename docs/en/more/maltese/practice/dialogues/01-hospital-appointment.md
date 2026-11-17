@@ -1,3 +1,7 @@
+---
+date: 2026-08-01
+---
+
 # Making a Hospital Appointment
 
 **Scenario:** David calls the health centre to book a doctor's appointment with receptionist Maria and confirm the time and required documents.
