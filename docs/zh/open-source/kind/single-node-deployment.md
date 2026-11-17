@@ -122,35 +122,70 @@ Kind 会把 API Server 端口映射到宿主机，kubeconfig 中记录的是宿�
 
 ## 实践
 
-### 环境要求
-
-验证环境：
+### 先决条件
 
 - macOS 或 Linux；
 - Docker 25 及以上，Docker 引擎正在运行；
+- Kind `v0.33.0`；
 - kubectl 1.37.x；
 - 至少 2 CPU、4 GB 内存给 Docker；建议 8 GB。
 
 Windows 需要 Docker Desktop 与 WSL2，命令在 WSL2 终端执行。
 
-### 安装 Kind 与 kubectl
+### 安装依赖
 
-macOS：
+Kind 不提供容器运行时，Docker 必须先安装并处于运行状态。Kind 负责创建集群，kubectl 负责访问集群，两者需要分别安装。
+
+#### macOS
 
 ```bash
+brew install --cask docker-desktop
+open -a Docker
+
+# 等待 Docker Desktop 完成首次启动和授权
 brew install kind kubectl
 ```
 
-Linux 或固定版本：
+确认 Docker 已就绪：
 
 ```bash
-# KIND_VERSION: the release to install, for example v0.33.0
+docker info
+```
+
+#### Linux
+
+安装 Docker Engine：
+
+```bash
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+sudo systemctl enable --now docker
+sudo usermod -aG docker "$USER"
+```
+
+`usermod` 修改的是组权限，需要重新登录后生效；也可以在当前终端执行 `newgrp docker` 进入新的 shell。
+
+安装 Kind：
+
+```bash
 KIND_VERSION=v0.33.0
-OS=$(uname -s | tr '[:upper:]' '[:lower:]')
 ARCH=$(uname -m | sed 's/x86_64/amd64/; s/aarch64/arm64/')
-curl -Lo kind "https://kind.sigs.k8s.io/dl/${KIND_VERSION}/kind-${OS}-${ARCH}"
+curl -Lo kind "https://kind.sigs.k8s.io/dl/${KIND_VERSION}/kind-linux-${ARCH}"
 chmod +x kind
 sudo mv kind /usr/local/bin/kind
+```
+
+安装 kubectl：
+
+```bash
+KUBECTL_VERSION=v1.37.0
+ARCH=$(uname -m | sed 's/x86_64/amd64/; s/aarch64/arm64/')
+KUBECTL_BASE="https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/${ARCH}"
+curl -Lo kubectl "${KUBECTL_BASE}/kubectl"
+curl -Lo kubectl.sha256 "${KUBECTL_BASE}/kubectl.sha256"
+echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check
+chmod +x kubectl
+sudo mv kubectl /usr/local/bin/kubectl
 ```
 
 检查：

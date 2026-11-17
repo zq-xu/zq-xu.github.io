@@ -122,35 +122,70 @@ Two resource boundaries also matter:
 
 ## Practice
 
-### Requirements
-
-Verified with:
+### Prerequisites
 
 - macOS or Linux;
 - Docker 25 or newer, daemon running;
+- Kind `v0.33.0`;
 - kubectl 1.37.x;
 - at least 2 CPUs and 4 GB RAM for Docker; 8 GB recommended.
 
 On Windows, use Docker Desktop with WSL2 and run the commands inside WSL2.
 
-### Install Kind and kubectl
+### Install the dependencies
 
-macOS:
+Kind does not provide a container runtime. Docker must be installed and running before Kind can create a cluster. Kind creates the cluster, while kubectl provides access to it; install them separately.
+
+#### macOS
 
 ```bash
+brew install --cask docker-desktop
+open -a Docker
+
+# wait for Docker Desktop to finish its first start and authorization
 brew install kind kubectl
 ```
 
-Linux or a fixed version:
+Confirm that Docker is ready:
 
 ```bash
-# KIND_VERSION: the release to install, for example v0.33.0
+docker info
+```
+
+#### Linux
+
+Install Docker Engine:
+
+```bash
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+sudo systemctl enable --now docker
+sudo usermod -aG docker "$USER"
+```
+
+`usermod` changes group membership. Sign out and back in for it to take effect, or run `newgrp docker` in the current terminal.
+
+Install Kind:
+
+```bash
 KIND_VERSION=v0.33.0
-OS=$(uname -s | tr '[:upper:]' '[:lower:]')
 ARCH=$(uname -m | sed 's/x86_64/amd64/; s/aarch64/arm64/')
-curl -Lo kind "https://kind.sigs.k8s.io/dl/${KIND_VERSION}/kind-${OS}-${ARCH}"
+curl -Lo kind "https://kind.sigs.k8s.io/dl/${KIND_VERSION}/kind-linux-${ARCH}"
 chmod +x kind
 sudo mv kind /usr/local/bin/kind
+```
+
+Install kubectl:
+
+```bash
+KUBECTL_VERSION=v1.37.0
+ARCH=$(uname -m | sed 's/x86_64/amd64/; s/aarch64/arm64/')
+KUBECTL_BASE="https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/${ARCH}"
+curl -Lo kubectl "${KUBECTL_BASE}/kubectl"
+curl -Lo kubectl.sha256 "${KUBECTL_BASE}/kubectl.sha256"
+echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check
+chmod +x kubectl
+sudo mv kubectl /usr/local/bin/kubectl
 ```
 
 Check:

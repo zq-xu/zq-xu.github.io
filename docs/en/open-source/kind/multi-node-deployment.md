@@ -142,12 +142,76 @@ Resource contention is another common issue: multiple `kubelet`, `containerd` an
 | `networking.kubeProxyMode` | `iptables`, `nftables` or `ipvs` |
 | `--config` | Cluster configuration file |
 
-## Requirements
+## Prerequisites
 
 - Docker 25 or newer, daemon running;
 - Kind `v0.33.0`;
 - kubectl 1.37.x;
 - 4 CPUs and 8 GB RAM for the standard layout; 8 CPUs and 12 GB for HA.
+
+## Install the dependencies
+
+Kind relies on Docker for the container runtime. A multi-node cluster starts several node containers at once, so confirm that Docker is available before creating the cluster.
+
+### macOS
+
+```bash
+brew install --cask docker-desktop
+open -a Docker
+
+# wait for Docker Desktop to finish its first start and authorization
+brew install kind kubectl
+```
+
+Confirm that Docker is ready:
+
+```bash
+docker info
+```
+
+### Linux
+
+Install Docker Engine:
+
+```bash
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+sudo systemctl enable --now docker
+sudo usermod -aG docker "$USER"
+```
+
+`usermod` changes group membership. Sign out and back in for it to take effect, or run `newgrp docker` in the current terminal.
+
+Install Kind:
+
+```bash
+KIND_VERSION=v0.33.0
+ARCH=$(uname -m | sed 's/x86_64/amd64/; s/aarch64/arm64/')
+curl -Lo kind "https://kind.sigs.k8s.io/dl/${KIND_VERSION}/kind-linux-${ARCH}"
+chmod +x kind
+sudo mv kind /usr/local/bin/kind
+```
+
+Install kubectl:
+
+```bash
+KUBECTL_VERSION=v1.37.0
+ARCH=$(uname -m | sed 's/x86_64/amd64/; s/aarch64/arm64/')
+KUBECTL_BASE="https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/${ARCH}"
+curl -Lo kubectl "${KUBECTL_BASE}/kubectl"
+curl -Lo kubectl.sha256 "${KUBECTL_BASE}/kubectl.sha256"
+echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check
+chmod +x kubectl
+sudo mv kubectl /usr/local/bin/kubectl
+```
+
+Check:
+
+```bash
+kind version
+docker info
+kubectl version --client
+```
 
 ## Standard deployment
 

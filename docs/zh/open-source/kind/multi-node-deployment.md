@@ -142,12 +142,76 @@ extraPortMappings:
 | `networking.kubeProxyMode` | `iptables`、`nftables` 或 `ipvs` |
 | `--config` | 指定集群配置文件 |
 
-## 环境要求
+## 先决条件
 
 - Docker 25 及以上，Docker 引擎正在运行；
 - Kind `v0.33.0`；
 - kubectl 1.37.x；
 - 普通布局建议 4 CPU、8 GB 内存；高可用布局建议 8 CPU、12 GB 内存。
+
+## 安装依赖
+
+Kind 依赖 Docker 提供容器运行时。多节点集群会同时启动多个节点容器，安装完成后先确认 Docker 可用，再创建集群。
+
+### macOS
+
+```bash
+brew install --cask docker-desktop
+open -a Docker
+
+# 等待 Docker Desktop 完成首次启动和授权
+brew install kind kubectl
+```
+
+确认 Docker 已就绪：
+
+```bash
+docker info
+```
+
+### Linux
+
+安装 Docker Engine：
+
+```bash
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+sudo systemctl enable --now docker
+sudo usermod -aG docker "$USER"
+```
+
+`usermod` 修改的是组权限，需要重新登录后生效；也可以在当前终端执行 `newgrp docker` 进入新的 shell。
+
+安装 Kind：
+
+```bash
+KIND_VERSION=v0.33.0
+ARCH=$(uname -m | sed 's/x86_64/amd64/; s/aarch64/arm64/')
+curl -Lo kind "https://kind.sigs.k8s.io/dl/${KIND_VERSION}/kind-linux-${ARCH}"
+chmod +x kind
+sudo mv kind /usr/local/bin/kind
+```
+
+安装 kubectl：
+
+```bash
+KUBECTL_VERSION=v1.37.0
+ARCH=$(uname -m | sed 's/x86_64/amd64/; s/aarch64/arm64/')
+KUBECTL_BASE="https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/${ARCH}"
+curl -Lo kubectl "${KUBECTL_BASE}/kubectl"
+curl -Lo kubectl.sha256 "${KUBECTL_BASE}/kubectl.sha256"
+echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check
+chmod +x kubectl
+sudo mv kubectl /usr/local/bin/kubectl
+```
+
+检查：
+
+```bash
+kind version
+docker info
+kubectl version --client
+```
 
 ## 普通部署
 
