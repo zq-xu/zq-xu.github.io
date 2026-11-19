@@ -1,6 +1,6 @@
 module github.com/zq-xu/kafka-demo
 
-go 1.25.0
+go 1.27.4
 
 require (
 	github.com/IBM/sarama v1.60.2

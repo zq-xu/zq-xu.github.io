@@ -217,7 +217,7 @@ docker build -t kind-demo:v1 ./app
 
 The Dockerfile is a two-stage build:
 
-- build with `golang:1.25-alpine` into a static binary;
+- build with `golang:1.27-alpine` into a static binary;
 - run on `alpine:3.22` as non-root UID 10001;
 - copy only the binary, not the source or toolchain.
 

@@ -39,7 +39,7 @@ command.
 | Item | Requirement |
 |---|---|
 | Kafka | Started as described in [the local setup](./introduction.md); `docker ps` shows `kafka-demo` as `healthy` |
-| Go | 1.25+ (the module declares `go 1.25.0`) |
+| Go | 1.27.4 (the module declares `go 1.27.4`) |
 | Dependencies | `github.com/IBM/sarama v1.60.2`, `github.com/spf13/cobra v1.10.2` |
 
 ```bash
@@ -96,7 +96,7 @@ docs/public/demos/kafka/
 │       ├── step_consume.go  step_offsets.go  step_cleanup.go
 ├── scripts/kafka.sh            # docker run cluster management
 ├── Makefile
-├── go.mod                      # go 1.25.0 + sarama v1.60.2 + cobra v1.10.2
+├── go.mod                      # go 1.27.4 + sarama v1.60.2 + cobra v1.10.2
 └── go.sum
 ```
 

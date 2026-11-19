@@ -44,7 +44,7 @@ categories:
 | 项 | 要求 |
 |---|---|
 | Kafka | 已按[本地运行步骤](./introduction.md)起好，`docker ps` 能看到 `kafka-demo` 且 `healthy` |
-| Go | 1.25+（项目 `go.mod` 声明 1.25.0） |
+| Go | 1.27.4（项目 `go.mod` 声明 1.27.4） |
 | 依赖 | `github.com/IBM/sarama v1.60.2`、`github.com/spf13/cobra v1.10.2` |
 
 ```bash
@@ -101,7 +101,7 @@ docs/public/demos/kafka/
 │       ├── step_consume.go  step_offsets.go  step_cleanup.go
 ├── scripts/kafka.sh            # docker run 起集群
 ├── Makefile
-├── go.mod                      # go 1.25.0 + sarama v1.60.2 + cobra v1.10.2
+├── go.mod                      # go 1.27.4 + sarama v1.60.2 + cobra v1.10.2
 └── go.sum
 ```
 

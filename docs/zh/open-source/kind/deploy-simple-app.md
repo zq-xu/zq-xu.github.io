@@ -219,7 +219,7 @@ docker build -t kind-demo:v1 ./app
 
 Dockerfile 采用两阶段构建：
 
-- 构建阶段用 `golang:1.25-alpine` 编译静态二进制；
+- 构建阶段用 `golang:1.27-alpine` 编译静态二进制；
 - 运行阶段用 `alpine:3.22`，创建 UID 10001 的非 root 用户；
 - 只复制二进制，不把源码和编译工具带进运行镜像。
 
