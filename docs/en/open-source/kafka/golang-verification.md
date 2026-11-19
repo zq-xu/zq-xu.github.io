@@ -1,12 +1,20 @@
 ---
+description: "Verify Kafka step by step with a cobra CLI project: connectivity, topic management, sync/async producing, direct partition reads, consumer groups with exact limits, offsets and lag, plus seven end-to-end assertions."
 date: 2026-11-12
+recommend: 4
+tag:
+ - Kafka
+tags:
+ - Kafka
+ - Golang
+ - Cobra
+categories:
+ - Open Source
 ---
 
 # Kafka Verification with a Golang Project
 
-This page answers one question with a cobra CLI project: **how do we prove Kafka really works, not
-just that the port accepts connections?** It assumes the cluster from
-[Kafka in Brief, and Running It Locally](./introduction.md) is already up.
+A cobra CLI project that proves Kafka really works, not just that the port accepts connections. It assumes the cluster from [Running Kafka Locally](./local-deployment.md) is already up.
 
 The demo lives at
 [`docs/public/demos/kafka`](https://github.com/zq-xu/zq-xu.github.io/tree/master/docs/public/demos/kafka) in
@@ -38,9 +46,31 @@ command.
 
 | Item | Requirement |
 |---|---|
-| Kafka | Started as described in [the local setup](./introduction.md); `docker ps` shows `kafka-demo` as `healthy` |
+| Kafka | Started as described in [Running Kafka Locally](./local-deployment.md); `docker ps` shows `kafka-demo` as `healthy` |
 | Go | 1.27.4 (the module declares `go 1.27.4`) |
 | Dependencies | `github.com/IBM/sarama v1.60.2`, `github.com/spf13/cobra v1.10.2` |
+
+If Go is missing, install it on macOS with Homebrew:
+
+```bash
+brew install go
+go version
+```
+
+On Linux, download the official archive (same version as the table above):
+
+```bash
+GO_VERSION=1.27.4
+ARCH=$(uname -m | sed 's/x86_64/amd64/; s/aarch64/arm64/')
+curl -Lo go.tgz "https://go.dev/dl/go${GO_VERSION}.linux-${ARCH}.tar.gz"
+sudo rm -rf /usr/local/go
+sudo tar -C /usr/local -xzf go.tgz
+export PATH="/usr/local/go/bin:${PATH}"
+go version
+```
+
+Persist the `PATH` change in `~/.bashrc` or `~/.zshrc` so new terminals pick it up. Once Go works,
+fetch the dependencies and build:
 
 ```bash
 git clone https://github.com/zq-xu/zq-xu.github.io.git
@@ -351,7 +381,7 @@ go run . produce --async --messages 200    # async, around 13,000 records/s
 | Symptom | Likely cause | How to check |
 |---|---|---|
 | Every command cannot connect | Container not running / port not published | `./scripts/kafka.sh status` |
-| Connects but hangs forever | `ADVERTISED_LISTENERS` points inside the container | See the advertised listener settings in the local setup |
+| Connects but hangs forever | `ADVERTISED_LISTENERS` points inside the container | Check the advertised listener settings in [Running Kafka Locally](./local-deployment.md) |
 | `create` succeeds but `describe` says it does not exist | Asynchronous creation | The project polls with `WaitTopicVisible`; check `topic list` manually |
 | `NOT_LEADER_FOR_PARTITION` | Stale metadata | The project refreshes metadata per topic first; `Metadata.Retry.Max=5` is the fallback |
 | A group suddenly "stops consuming" | `Consume` not called again after a rebalance | Confirm the loop inside `ConsumeGroup` |
@@ -360,18 +390,20 @@ go run . produce --async --messages 200    # async, around 13,000 records/s
 | Records repeat after manual commits | The tail was never committed | Check whether `Cleanup` commits once more |
 | `e2e` fails on an existing topic | It asserted 0 while the baseline was non-zero | Assert "back to baseline", not "lag=0" |
 
-## Production checklist
+## Client-side reliability notes
 
-| Item | Demo | Production |
+The settings the demo turns on by default on the client side are the ones production should keep:
+
+| Item | This demo | Production advice |
 |---|---|---|
-| Replication factor | 1 | 3 (`min.insync.replicas=2`) |
-| Auto topic creation | true | false; created by the platform |
-| acks | all | all |
-| Idempotence / transactions | Idempotence on | Transactions when atomic writes span partitions |
-| Security | PLAINTEXT | SASL_SSL / mTLS |
-| Monitoring | None | Lag, ISR shrinkage, UnderReplicatedPartitions, disk usage |
-| Partitions | 3 | Planned from peak throughput and parallelism; resizing later breaks the key mapping |
-| Retention | 7 days | Based on value and capacity; tiered storage when needed |
+| acks | `all` | `all` |
+| Idempotence | on (`enable.idempotence=true`) | keep it on; enable transactions only for atomic writes across partitions |
+| Offset commits | manual, committed after successful processing | at-least-once plus consumer-side idempotence |
+| Consumption tracking | `lag` assertions to prove offsets move | monitor lag and rebalance count |
+| Partitions | 3 | plan from peak throughput and parallelism; resizing later breaks the key mapping |
+
+Cluster-side differences (replication factor, topic auto-creation, security, retention) are covered in
+[Differences from production](./local-deployment#differences-from-production).
 
 Reliability is the combination of "replicas + acks + idempotence/transactions + consumer-side
 idempotence"; leave one out and "no loss, no duplicates" does not hold.
@@ -388,9 +420,9 @@ rm -rf bin                  # build output
 
 - [Apache Kafka documentation](https://kafka.apache.org/documentation/)
 - [KRaft mode (no ZooKeeper)](https://kafka.apache.org/documentation/#kraft)
-- [sarama: the Go client used here](https://github.com/IBM/sarama)
+- [sarama: the Go client used by the demo](https://github.com/IBM/sarama)
 - [franz-go: another popular Go client](https://github.com/twmb/franz-go)
 - [cobra: the CLI framework](https://github.com/spf13/cobra)
 
 Code and scripts: [docs/public/demos/kafka](https://github.com/zq-xu/zq-xu.github.io/tree/master/docs/public/demos/kafka)
-· Related: [Kafka in Brief, and Running It Locally](./introduction.md) · [series index](./index.md)
+· Related: [Kafka Concepts and When to Use It](./introduction.md) · [Running Kafka Locally](./local-deployment.md) · [series index](./index.md)

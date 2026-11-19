@@ -1,19 +1,23 @@
 ---
+description: "Kafka concepts and when to use it: the full path of one record, cluster and partition concepts, replica roles, log storage, the three acks levels, core capabilities, typical applications, performance and comparison with similar middleware."
 date: 2026-11-12
+recommend: 2
+tag:
+ - Kafka
+tags:
+ - Kafka
+ - Docker
+ - KRaft
+categories:
+ - Open Source
 ---
 
-# Kafka in Brief, and Running It Locally
+# Kafka Concepts and When to Use It
 
-What Kafka is, why it is designed this way, when it fits, and how to bring up a working single-node
-cluster on your machine with one `docker run`.
+Kafka is a distributed commit log: records are only appended to the end of a log on disk, and many consumers read the same data at their own pace. It targets high-throughput event streams rather than per-message delivery queues that delete records once read.
 
-The page starts with the full path of one record, then builds the overall picture around storage,
-producers and consumers, and finally drills into replica roles, the on-disk log and write
-acknowledgement.
-
-The demo code and startup script live at
-[`docs/public/demos/kafka`](https://github.com/zq-xu/zq-xu.github.io/tree/master/docs/public/demos/kafka)
-in this site's repository.
+One record travels the whole path: the Producer picks a partition and writes to that partition's Leader replica, Followers keep it in sync as ISR, and a consumer belonging to some Consumer Group later pulls it by offset. Demo code and startup scripts live at
+[`docs/public/demos/kafka`](https://github.com/zq-xu/zq-xu.github.io/tree/master/docs/public/demos/kafka).
 
 ## What Kafka is
 
@@ -68,8 +72,8 @@ steps ①-③ mark the life of one record; the list below follows that path.
 ## Concept overview
 
 Kafka's concepts are not a flat list but a containment chain from cluster to partition. The next three
-subsections build the overall picture — storage, producers, consumers — and the key mechanisms section
-then drills into replica roles, the on-disk log and write acknowledgement.
+subsections cover storage, producers and consumers; replica roles, the on-disk log and write
+acknowledgement are covered under "Replicas, log storage and write acknowledgement".
 
 ### Cluster and storage
 
@@ -88,7 +92,7 @@ Early Kafka kept that metadata in an external ZooKeeper ensemble. From 3.x it us
 metadata and replica assignment with no ZooKeeper. The single-node cluster in this guide runs in
 KRaft mode, so its one broker also acts as the controller.
 
-| Concept | Level | One-line definition | How it relates to the others |
+| Concept | Level | Definition | How it relates to the others |
 |---|---|---|---|
 | Broker | Cluster | One Kafka server node | A cluster has several brokers; each holds replicas of some partitions |
 | Controller | Cluster | Owns metadata, partition assignment and leader election; runs on one of the brokers | **Not a partition leader**; one active controller per cluster |
@@ -117,7 +121,7 @@ covered under key mechanisms.
 The consumer is the read client: it fetches records by offset and processes them. Several consumers
 can form a consumer group that subscribes to the same topic.
 
-| Concept | One-line definition | How it relates to the others |
+| Concept | Definition | How it relates to the others |
 |---|---|---|
 | Consumer | Read client: fetch by offset and process | Must belong to a consumer group; commits offsets manually or automatically |
 | Consumer group | A set of consumers sharing one subscription | Partitions are split exclusively inside the group; groups are independent of each other |
@@ -139,7 +143,7 @@ offsets, so the same log can be read by several groups at different paces.
 - **Partition-count boundary**: partitions can only be added, never removed; expanding changes the
   key-to-partition mapping, and existing records are not redistributed.
 
-## Key mechanisms
+## Replicas, log storage and write acknowledgement
 
 ### Leader and follower: replica roles of a partition
 
@@ -227,25 +231,6 @@ Common points of confusion:
 - `acks` only covers the write to replicas. It says nothing about exactly-once consumption; end-to-end
   exactly-once needs transactions or idempotent consumers.
 
-## Abbreviations at a glance
-
-| Abbreviation | Full name | What it means here |
-|---|---|---|
-| KRaft | Kafka Raft | Raft-based metadata mode that replaces ZooKeeper; used by this demo |
-| ISR | In-Sync Replicas | Replicas keeping up with the leader; `acks=all` waits for them |
-| ACK / `acks` | acknowledgement | Producer write acknowledgement: `0` waits for nobody, `1` for the leader, `all` for the ISR; see the table above |
-| CDC | change data capture | Turns database changes into an event stream |
-| lag | consumer lag | Records a consumer is behind the producer, summed per partition |
-| RTT | round-trip time | Time for one network round trip |
-| JDK | Java Development Kit | Java toolchain bundled in the demo image |
-| CLI | command-line interface | A command-line tool |
-| CI | Continuous Integration | The build/test pipeline |
-| e2e | end-to-end | Covers the whole path from producing to consuming |
-| SASL | Simple Authentication and Security Layer | Auth framework; SASL_SSL = SASL auth + TLS |
-| TLS | Transport Layer Security | Transport encryption; mTLS is the mutual variant |
-| mTLS | mutual TLS | Both client and server verify each other's certificates |
-| SQS | Amazon Simple Queue Service | Queue service hosted by AWS (Amazon Web Services) |
-
 ## Core capabilities
 
 - **Read, write and durability**: publish/subscribe, replay by `retention.ms`, the compaction cleanup policy
@@ -308,184 +293,17 @@ CDC; eventual consistency and asynchronous processing are acceptable.
 | Synchronous service calls | gRPC / HTTP | A broker only adds latency |
 | Tiny volumes (tens of thousands per day) | A database table / cron job | Operational cost outweighs the benefit |
 
-In one line: **log/event streams + throughput + replay → Kafka; task distribution + fine routing +
+In short: **log/event streams + throughput + replay → Kafka; task distribution + fine routing +
 low-latency acknowledgement → RabbitMQ-style brokers.**
 
-## Running a single-node Kafka locally
+The local practice in this series uses the official Kafka 3.9.1 image `apache/kafka:3.9.1` in KRaft
+mode; creating and verifying that cluster is covered in [Running Kafka Locally](./local-deployment).
 
-The setup below uses the official Kafka 3.9.1 image in KRaft (Kafka Raft, a metadata mode that
-replaces ZooKeeper with a Raft quorum) mode: one node acts as both broker and controller, no
-ZooKeeper, and no JDK (Java Development Kit) on the host — everything stays inside the container.
+## Versions and references
 
-### Prerequisites
-
-| Item | Requirement | Note |
-|---|---|---|
-| Docker | Docker Desktop / Engine | Docker Desktop on macOS |
-| Memory | At least 2 GB for Docker | The broker heap is around 1 GB; leave room for the page cache |
-| Port | Host port 9092 free | Port 9093 is the controller and is not published |
-| Java | **Not needed** | Bundled in the image |
-| Disk | 5 GB+ recommended | Default retention is 7 days, so logs keep growing |
-
-### Option 1: one docker run
-
-Create the volume, then start the container:
-
-```bash
-docker volume create kafka-demo-data
-
-docker run -d \
-  --name kafka-demo \
-  --restart unless-stopped \
-  -p 9092:9092 \
-  -v kafka-demo-data:/var/lib/kafka/data \
-  -e CLUSTER_ID=4L6g3nShT-eMCtK--X86sw \
-  -e KAFKA_NODE_ID=1 \
-  -e KAFKA_PROCESS_ROLES=broker,controller \
-  -e KAFKA_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093 \
-  -e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092 \
-  -e KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT \
-  -e KAFKA_CONTROLLER_LISTENER_NAMES=CONTROLLER \
-  -e KAFKA_INTER_BROKER_LISTENER_NAME=PLAINTEXT \
-  -e KAFKA_CONTROLLER_QUORUM_VOTERS=1@localhost:9093 \
-  -e KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1 \
-  -e KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=1 \
-  -e KAFKA_TRANSACTION_STATE_LOG_MIN_ISR=1 \
-  -e KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS=0 \
-  -e KAFKA_NUM_PARTITIONS=3 \
-  -e KAFKA_AUTO_CREATE_TOPICS_ENABLE=true \
-  -e KAFKA_LOG_DIRS=/var/lib/kafka/data \
-  --health-cmd '/opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list >/dev/null 2>&1 || exit 1' \
-  --health-interval 10s \
-  --health-timeout 10s \
-  --health-retries 10 \
-  --health-start-period 30s \
-  apache/kafka:3.9.1
-```
-
-What each setting does:
-
-| Setting | Value | Purpose |
-|---|---|---|
-| `--name` / `--restart` | kafka-demo / unless-stopped | Fixed name; comes back after a Docker restart |
-| `-p` | 9092:9092 | Host clients connect on 9092 |
-| `-v` | kafka-demo-data:/var/lib/kafka/data | Data lives in a named volume, surviving container re-creation |
-| `CLUSTER_ID` | fixed string | KRaft cluster ID used when formatting the storage directory |
-| `KAFKA_NODE_ID` | 1 | Node ID |
-| `KAFKA_PROCESS_ROLES` | broker,controller | One node plays both roles; no ZooKeeper |
-| `KAFKA_CONTROLLER_QUORUM_VOTERS` | 1@localhost:9093 | A single-node quorum is itself |
-| `KAFKA_LISTENERS` | PLAINTEXT://:9092, CONTROLLER://:9093 | Clients on 9092, controller on 9093 |
-| `KAFKA_ADVERTISED_LISTENERS` | PLAINTEXT://localhost:9092 | **The address handed to clients**; wrong value breaks connections |
-| `KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR` | 1 | Must be 1 on a single broker |
-| `KAFKA_TRANSACTION_STATE_LOG_*` | 1 / 1 | Replication and min ISR for the transaction topic; also 1 |
-| `KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS` | 0 | Removes the initial rebalance delay for faster local debugging |
-| `KAFKA_NUM_PARTITIONS` | 3 | Default partition count for auto-created topics |
-| `KAFKA_AUTO_CREATE_TOPICS_ENABLE` | true | Convenient for a demo; disable in production |
-| `KAFKA_LOG_DIRS` | /var/lib/kafka/data | Exactly the volume mount point |
-
-The `--health-cmd` probe runs `kafka-topics.sh --list` inside the container: a broker that can list
-topics is actually serving. Combine it with `docker inspect` to wait for `healthy` before running
-clients, avoiding the "connected but not ready" kind of false failure.
-
-> The classic trap is `ADVERTISED_LISTENERS`: a client connects to 9092 for metadata, and the broker
-> addresses in that metadata are exactly the advertised ones. Set it to a container-internal hostname
-> and a host-side client will try to connect somewhere it cannot resolve — the symptom is "connects,
-> then times out forever".
-
-### Option 2: manage it with the script
-
-Read the raw command once; day to day the script that ships with the demo is easier. The snippet
-assumes the repository is already cloned:
-
-```bash
-git clone https://github.com/zq-xu/zq-xu.github.io.git
-cd zq-xu.github.io/docs/public/demos/kafka
-
-./scripts/kafka.sh start     # create the container if missing, then wait for healthy
-./scripts/kafka.sh status    # container status, ports and data volume
-./scripts/kafka.sh logs      # follow the broker log (first stop when debugging)
-./scripts/kafka.sh stop      # stop the container, keep the data volume
-./scripts/kafka.sh restart   # stop + start
-./scripts/kafka.sh reset     # remove the container and the volume, back to a clean slate
-```
-
-Environment variables override the defaults without editing the file:
-
-```bash
-KAFKA_PORT=19092 KAFKA_CONTAINER=kafka-test ./scripts/kafka.sh start
-```
-
-Available variables: `KAFKA_IMAGE`, `KAFKA_PORT`, `KAFKA_CONTAINER`, `KAFKA_VOLUME`, `CLUSTER_ID`.
-
-### Verification
-
-Three steps, from "the process is up" to "it reads and writes":
-
-```bash
-# 1. The container is running and healthy
-docker ps --filter name=kafka-demo
-docker inspect -f '{{.State.Health.Status}}' kafka-demo     # expect healthy
-
-# 2. The broker answers metadata requests
-docker exec kafka-demo /opt/kafka/bin/kafka-topics.sh \
-  --bootstrap-server localhost:9092 --list
-
-# 3. Smoke-test writes and reads with the bundled CLI (command-line interface)
-docker exec kafka-demo /opt/kafka/bin/kafka-topics.sh \
-  --bootstrap-server localhost:9092 --create --topic quickstart --partitions 3
-
-printf 'hello\nkafka\n' | docker exec -i kafka-demo /opt/kafka/bin/kafka-console-producer.sh \
-  --bootstrap-server localhost:9092 --topic quickstart
-
-docker exec kafka-demo /opt/kafka/bin/kafka-console-consumer.sh \
-  --bootstrap-server localhost:9092 --topic quickstart --from-beginning \
-  --max-messages 2 --timeout-ms 10000
-
-docker exec kafka-demo /opt/kafka/bin/kafka-topics.sh \
-  --bootstrap-server localhost:9092 --delete --topic quickstart
-```
-
-Reading back the two lines proves "create topic → produce → consume" works on your machine. For
-consumer groups, offsets and partitions, the companion [Golang verification
-project](./golang-verification.md) exercises each of them.
-
-### Data persistence and container lifecycle
-
-| Operation | Data | Note |
-|---|---|---|
-| `docker stop` / `docker start` | Kept | Container and volume both stay |
-| `docker rm` then `docker run` again | Kept | As long as the volume name is the same |
-| `./scripts/kafka.sh reset` | **Deleted** | Container and volume removed; next start is a fresh cluster |
-| Upgrading the image | Kept | The same volume works with a newer version; downgrading across majors is not advised |
-
-`docker volume inspect kafka-demo-data` shows where the volume lives.
-
-### Common issues
-
-| Symptom | Likely cause | How to check |
-|---|---|---|
-| `port is already allocated` | 9092 is taken | `lsof -i :9092`, or use another `KAFKA_PORT` |
-| Container stays `unhealthy` | Internal topics not ready, disk full, low memory | `./scripts/kafka.sh logs` |
-| Connects but every request times out | `ADVERTISED_LISTENERS` is not `localhost:9092` | `docker inspect` the environment variables |
-| `NOT_LEADER_FOR_PARTITION` | Stale metadata (common right after creating a topic) | Retry shortly, or describe once |
-| Image pull is very slow | Network / registry mirror | Configure a Docker registry mirror |
-| Fails to start on Apple Silicon | Wrong architecture pulled | Use the multi-arch `apache/kafka:3.9.1` image |
-
-### Differences from production
-
-| Item | Local demo | Production |
-|---|---|---|
-| Nodes | 1 (broker and controller in one process) | At least 3 brokers + 3 controllers |
-| Replication factor | 1 | 3 (`min.insync.replicas=2`) |
-| Auto topic creation | true | false; topics created by the platform |
-| Security | PLAINTEXT (plain text, no auth) | SASL_SSL (SASL auth + TLS) / mTLS (mutual TLS) |
-| Monitoring | None | Lag (consumer lag), ISR shrinkage, UnderReplicatedPartitions, disk usage |
-| Retention | 7 days by default | Based on value and capacity; tiered storage when needed |
-
-This local setup exists for **functional verification and debugging** only — never put real data on it.
-
-## Related walkthrough
-
-Once the cluster is up, the companion
-[Kafka verification with a Golang project](./golang-verification.md) walks through the project
-structure, what each subcommand verifies, and what the seven end-to-end assertions cover.
+- Versions used in this series: Kafka `3.9.1` (KRaft mode), Go client sarama `v1.60.2`.
+- [Apache Kafka documentation](https://kafka.apache.org/documentation/): the authoritative source for
+  configuration, protocol and operations.
+- [KRaft mode](https://kafka.apache.org/documentation/#kraft): metadata management without ZooKeeper.
+- [Kafka configuration](https://kafka.apache.org/documentation/#configuration): the full list of
+  broker, topic and client settings.

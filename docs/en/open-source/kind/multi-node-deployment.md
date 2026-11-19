@@ -1,5 +1,5 @@
 ---
-description: "Build a multi-node Kubernetes cluster with Kind: one control plane plus two workers, a three-control-plane HA layout, port mappings, scheduling checks and a one-shot script."
+description: "Build a multi-node Kubernetes cluster with Kind: prerequisites and installation, a one-control-plane-plus-two-workers layout, a three-control-plane HA layout, taints and scheduling checks, data persistence and a one-shot script."
 date: 2026-11-16
 recommend: 4
 tag:
@@ -14,84 +14,64 @@ categories:
 
 # Kind Multi-Node Deployment
 
-A multi-node cluster provides several Kubernetes nodes on one host, enabling validation of scheduling, cross-node networking, service discovery and high availability. Kind declares node count and roles in a cluster config. Common layouts are one control plane with two workers, or three control planes with three workers.
+A multi-node cluster provides several Kubernetes nodes on one host and is used to verify scheduling, cross-node networking, service discovery and high availability. Kind declares the node count and roles in the cluster configuration; the common layouts are one control plane with two workers, or three control planes with three workers.
 
-All nodes still run on the same host, so a multi-node cluster cannot replace a real multi-machine environment. Its value lies in reproducing node joins, taint changes and scheduling distribution at low cost.
+All nodes still run on the same host, so a multi-node cluster does not replace a real multi-machine environment. Its value is reproducing node joins, taint changes and scheduling spread at low cost.
 
-## Core concepts
+The steps below cover the standard layout and the HA layout in full: the standard layout uses the cluster name `kind-multi` with context `kind-kind-multi`, the HA layout uses `kind-ha` with `kind-kind-ha`. Cluster architecture and the creation flow are covered in [Kind Overview](./introduction).
+
+## Cluster shape
 
 ### Roles
 
-| Role | Components | Responsibility |
+| Role | Components running | Purpose |
 | --- | --- | --- |
-| `control-plane` | API server, etcd, scheduler, controller manager, kubelet, containerd | Cluster state, API requests, scheduling |
-| `worker` | kubelet, containerd, kube-proxy | Run scheduled Pods |
+| `control-plane` | API server, etcd, scheduler, controller manager, kubelet, containerd | Manages cluster state, serves API requests, schedules Pods |
+| `worker` | kubelet, containerd, kube-proxy | Runs scheduled Pods |
 
-Each role is still a Docker container. The number of node containers is the number of cluster nodes; there are no extra VMs or host agents.
+Each role is still one Docker container. The number of node containers is the number of nodes; there is no extra "virtual machine" or host agent.
 
-### Cluster configuration
+### How nodes join the cluster
 
-Kind uses the `kind.x-k8s.io/v1alpha4` YAML API. The core of a multi-node config is the `nodes` array:
+Creating a multi-node cluster is not just starting several containers:
 
-```yaml
-kind: Cluster
-apiVersion: kind.x-k8s.io/v1alpha4
-nodes:
-  - role: control-plane
-  - role: worker
-  - role: worker
-```
+1. The first control-plane generates the cluster certificates, token and join configuration;
+2. the other control planes join with `kubeadm join --control-plane` and sync the certificates;
+3. workers join with a plain `kubeadm join`;
+4. every node starts `kubelet` and registers with the API server;
+5. once the CNI is ready, the node turns `Ready`.
 
-Each node can also set:
-
-- `image`: the Kubernetes version for that node;
-- `kubeadmConfigPatches`: kubeadm patches, such as node labels and kubelet arguments;
-- `extraPortMappings`: host port to node container port mappings;
-- `extraMounts`: host directories mounted into the node container.
-
-The `networking` field controls Pod CIDR, Service CIDR, API server address and kube-proxy mode. Keep the defaults unless there is a specific reason to change them.
+Node containers talk to each other over the Docker bridge network that Kind creates; the Pod network is a separate overlay handled by `kindnetd`.
 
 ### Taints and scheduling
 
-Kind removes the control-plane `NoSchedule` taint by default, so workload Pods may land on control planes in a multi-node cluster. That is convenient locally but differs from the usual production convention.
+Kind removes the control-plane `NoSchedule` taint by default, so business Pods may land on control-plane nodes in a multi-node cluster. This is convenient for local verification but differs from the usual production convention.
 
-To keep control planes management-only, use [`control-plane-taint.sh`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/installation/multiple-node/scripts/control-plane-taint.sh) to add the taint to every control plane:
+To mimic "control planes only manage and never run workloads", restore the taint on every control-plane with [`control-plane-taint.sh`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/installation/multiple-node/scripts/control-plane-taint.sh):
 
 ```bash
 cd zq-xu.github.io/docs/public/demos/kind
 ./installation/multiple-node/scripts/control-plane-taint.sh apply
 ```
 
-After that, only components with the matching toleration (for example an Ingress controller) can schedule onto control planes.
+After the taint is restored, only system components with a matching toleration (an Ingress controller, for example) can still be scheduled onto control planes.
 
-### HA layout
+### The HA layout
 
-With three control planes, each runs an etcd member. etcd needs a quorum:
+With 3 control planes each runs its own etcd member. etcd needs a majority to accept writes, so:
 
-- one control plane down: the remaining two still work;
-- two control planes down: the cluster loses quorum and API writes are blocked.
+- with 1 control-plane down the remaining 2 still work;
+- with 2 control planes down the cluster loses its majority and API writes stall.
 
-Kind starts an extra load balancer container on the Docker network and points the kubeconfig API server address at it, so requests are distributed across surviving control planes. Users still see one kubeconfig and one context.
+Kind starts an extra load-balancer container on the Docker network, points the API server address in the kubeconfig at it, and it forwards requests to the surviving control planes. For you it is still one kubeconfig and one context.
 
-The HA layout is much heavier: six node containers plus a load balancer. Give Docker at least 8 GB, preferably 12 GB.
+The HA layout costs considerably more resources: six node containers plus one load-balancer container. Allocate at least 8 GB of memory to Docker, or 12 GB when possible.
 
-## Key mechanisms
-
-### How nodes join
-
-Kind does not stop after starting several containers. During creation:
-
-1. the first control plane generates certificates, a token and join configuration;
-2. additional control planes join with `kubeadm join --control-plane` and synchronise certificates;
-3. workers join with a regular `kubeadm join`;
-4. every node starts `kubelet` and registers with the API server;
-5. once the CNI is ready, nodes become `Ready`.
-
-Node containers communicate over the Docker bridge network Kind creates. Pod networking is a separate overlay handled by `kindnetd`.
+## Configuration notes
 
 ### Port mappings apply only to the node that declares them
 
-`extraPortMappings` maps a host port to **one node container port**. It does not apply to every node. In a multi-node config it is usually declared only on the first control plane:
+`extraPortMappings` maps a host port onto one node container port and is never applied to all nodes. Multi-node configurations usually declare it only on the first control plane:
 
 ```yaml
 extraPortMappings:
@@ -103,59 +83,37 @@ extraPortMappings:
     protocol: TCP
 ```
 
-Traffic to host `8080` enters port `80` of the control-plane container. If an Ingress controller listens on `hostPort: 80` there, it is reachable from the host at `8080`.
+This means traffic to host port `8080` reaches port `80` of the control-plane container. If an Ingress controller listens on `hostPort: 80` on the control plane, it becomes reachable at host port `8080`.
 
-If `8080` or `8443` is already in use, change the host port rather than removing the mapping; without it the service is unreachable from the host.
+If host ports `8080` or `8443` are already taken, change them to other ports instead of deleting the mappings; without them those services are unreachable from the host.
 
-### Multi-node and image distribution
+### Image distribution
 
-`kind load docker-image` imports into all nodes by default. Multi-node clusters need that: otherwise a Pod scheduled to a node without the image fails to pull it.
+`kind load docker-image` imports the image into every node by default. Multi-node clusters depend on this behaviour: otherwise a Pod scheduled onto a node without the image fails to pull it.
 
-Loading only some nodes is possible with `--nodes`, but then Pods must be pinned to those nodes with affinity or a fixed schedule.
+Use `--nodes` to import into a subset only when node affinity or a fixed scheduler placement guarantees the Pod lands on a node that has the image.
 
-### Node-local storage and persistence
+### Node-local storage
 
-Each node runs its own `local-path-provisioner`, and a PersistentVolume it creates exists only on that node. The default data path is `/var/local-path-provisioner` inside the node container, and the data disappears when the container is removed.
+Every node runs its own `local-path-provisioner`, and the PersistentVolumes it creates live only on that node under `/var/local-path-provisioner` inside the node container. Deleting the node container deletes that data.
 
-Mount that path to a different host directory for each node with `extraMounts`, and PV data is written to the corresponding host directory. Multi-node clusters use `${HOME}/.kind-multiple-node/<cluster-name>` as the root, with a subdirectory per node, for example `kind-multi/control-plane` and `kind-multi/worker-1`.
+Mount the path per node with `extraMounts` so PV data lands on the host. The multi-node scenario uses `${HOME}/.kind-multiple-node/<cluster-name>` as the root and one subdirectory per node, for example `kind-multi/control-plane` and `kind-multi/worker-1`.
 
-Storage is not shared between nodes. A Pod rescheduled to another node cannot assume access to the original node's data; use node affinity, a StatefulSet or external shared storage when the data location must be stable.
-
-## Boundaries and pitfalls
-
-| Pitfall | What actually happens | Fix |
-| --- | --- | --- |
-| Multi-node means multi-host | All containers still run on one host | Use it for local validation only |
-| Editing the config updates an existing cluster | Kind reads the config only at creation time | Delete and recreate |
-| Control planes do not run workloads by default | Kind removes the taint | Add the taint back when needed |
-| Every node automatically has the local image | Images require an explicit `kind load` | Load after build and use fixed tags |
-| HA is as fast as a single node | Three etcd members and a load balancer cost more | Size Docker resources accordingly |
-
-Resource contention is another common issue: multiple `kubelet`, `containerd` and system Pods start at once. When Docker memory is short, nodes boot slowly, stay `NotReady`, or the create command times out instead of printing a clear error.
-
-## Reference
-
-| Field | Meaning |
-| --- | --- |
-| `nodes[].role` | `control-plane` or `worker` |
-| `nodes[].image` | Node image for that node; use the same tag as the rest of the cluster |
-| `nodes[].kubeadmConfigPatches` | Patches for labels, kubelet arguments and more |
-| `nodes[].extraPortMappings` | Host port to node container port mapping |
-| `networking.podSubnet` | Pod CIDR, default `10.244.0.0/16` |
-| `networking.serviceSubnet` | Service CIDR, default `10.96.0.0/12` |
-| `networking.kubeProxyMode` | `iptables`, `nftables` or `ipvs` |
-| `--config` | Cluster configuration file |
+Storage is never shared between nodes. After a Pod moves to another node do not assume it can read the old node's data; use node affinity, a StatefulSet or external shared storage when the data must stay in place.
 
 ## Prerequisites
 
-- Docker 25 or newer, daemon running;
-- Kind `v0.33.0`;
-- kubectl 1.37.x;
-- 4 CPUs and 8 GB RAM for the standard layout; 8 CPUs and 12 GB for HA.
+| Item | Requirement |
+| --- | --- |
+| Operating system | macOS or Linux; on Windows use Docker Desktop with WSL2 and run the commands inside WSL2 |
+| Docker | 25 or newer, daemon running |
+| Kind | `v0.33.0` |
+| kubectl | `1.37.x` |
+| Resources | Standard layout: 4 CPU and 8 GB RAM recommended; HA layout: 8 CPU and 12 GB RAM recommended |
 
 ## Install the dependencies
 
-Kind relies on Docker for the container runtime. A multi-node cluster starts several node containers at once, so confirm that Docker is available before creating the cluster.
+Kind ships no container runtime: Docker provides the node containers, Kind creates the cluster, and kubectl accesses it. A multi-node cluster starts several node containers at once, so confirm Docker works before creating anything. Version numbers match the table above.
 
 ### macOS
 
@@ -167,7 +125,7 @@ open -a Docker
 brew install kind kubectl
 ```
 
-Confirm that Docker is ready:
+Confirm Docker is ready:
 
 ```bash
 docker info
@@ -184,7 +142,7 @@ sudo systemctl enable --now docker
 sudo usermod -aG docker "$USER"
 ```
 
-`usermod` changes group membership. Sign out and back in for it to take effect, or run `newgrp docker` in the current terminal.
+`usermod` changes group membership, which takes effect after you log in again; run `newgrp docker` in the current terminal to enter a new shell immediately.
 
 Install Kind:
 
@@ -209,7 +167,9 @@ chmod +x kubectl
 sudo mv kubectl /usr/local/bin/kubectl
 ```
 
-Check:
+### Verify the installation
+
+All three commands print a version:
 
 ```bash
 kind version
@@ -217,22 +177,20 @@ docker info
 kubectl version --client
 ```
 
-## Standard deployment
+## Standard deployment: 1 control plane + 2 workers
 
-The standard layout consists of one control plane and two workers. It is suitable for validating Pod scheduling, cross-node networking and taint behaviour. The configuration below maps host ports `8080` and `8443` to the control plane for Ingress or NodePort access.
+The standard layout suits verifying Pod scheduling, cross-node networking and taint behaviour, and it maps host ports `8080` and `8443` onto the control plane for Ingress or NodePort use.
 
-### Create one control plane and two workers
+### Render the configuration and create the cluster
 
-The standard layout template is [`installation/multiple-node/yaml/kind-multi.yaml`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/installation/multiple-node/yaml/kind-multi.yaml). The [`render-config.sh`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/installation/multiple-node/yaml/render-config.sh) beside it uses this template by default, stores data under `${HOME}/.kind-multiple-node/kind-multi`, and creates one subdirectory for `control-plane`, `worker-1` and `worker-2`.
+The template is [`installation/multiple-node/yaml/kind-multi.yaml`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/installation/multiple-node/yaml/kind-multi.yaml). The [`render-config.sh`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/installation/multiple-node/yaml/render-config.sh) next to it uses that template by default, takes `${HOME}/.kind-multiple-node/kind-multi` as the data root and creates one subdirectory for `control-plane`, `worker-1` and `worker-2`.
 
-Render the configuration:
+Render the configuration (writes `installation/multiple-node/yaml/kind-multi.local.yaml`, which is not committed):
 
 ```bash
 cd zq-xu.github.io/docs/public/demos/kind
 ./installation/multiple-node/yaml/render-config.sh
 ```
-
-This writes `installation/multiple-node/yaml/kind-multi.local.yaml`.
 
 Create the cluster:
 
@@ -243,42 +201,47 @@ kind create cluster \
   --wait 180s
 ```
 
-When `--name` and a config file are both used, the CLI name wins. Omitting `name` from the config avoids ambiguity.
+When `--name` is passed together with a configuration file, `--name` wins; leaving `name` out of the file avoids ambiguity.
 
-### Verify nodes
+### Verify the nodes
 
 ```bash
 kind get clusters
 kind get nodes --name kind-multi
+
+# wait for every node to report Ready
+kubectl --context kind-kind-multi wait \
+  --for=condition=Ready nodes --all --timeout=300s
+
 kubectl --context kind-kind-multi get nodes -o wide
 kubectl --context kind-kind-multi get pods -A -o wide
 ```
 
-Expect three nodes: one control plane and two workers, all `Ready`.
+Expect three nodes — one control plane and two workers — all `Ready`.
 
 ### Restore the control-plane taint
 
-Add the taint to all `kind-multi` control planes:
+Restore the taint on every control-plane of `kind-multi`:
 
 ```bash
 cd zq-xu.github.io/docs/public/demos/kind
 ./installation/multiple-node/scripts/control-plane-taint.sh apply
 ```
 
-Inspect the nodes:
+Confirm the taint took effect:
 
 ```bash
-kubectl --context kind-kind-multi get nodes -o wide
+kubectl --context kind-kind-multi describe node kind-multi-control-plane | grep -A2 Taints
 ```
 
-Workload Pods now land only on workers. To restore Kind's default, remove the taint:
+Business Pods now schedule onto workers only. To restore Kind's default behaviour, remove the taint:
 
 ```bash
 cd zq-xu.github.io/docs/public/demos/kind
 ./installation/multiple-node/scripts/control-plane-taint.sh remove
 ```
 
-For the HA cluster, select its context:
+For an HA cluster, select the context through `CONTEXT`:
 
 ```bash
 cd zq-xu.github.io/docs/public/demos/kind
@@ -286,6 +249,8 @@ CONTEXT=kind-kind-ha ./installation/multiple-node/scripts/control-plane-taint.sh
 ```
 
 ### Check cross-node scheduling
+
+Use a minimal Deployment to see Pods land on different workers:
 
 ```bash
 kubectl --context kind-kind-multi create deployment spread-demo \
@@ -295,30 +260,28 @@ kubectl --context kind-kind-multi rollout status deployment/spread-demo
 kubectl --context kind-kind-multi get pods -o wide
 ```
 
-The scheduler does not guarantee that two replicas land on two different workers. Add `topologySpreadConstraints` or Pod anti-affinity to enforce it; the sample project page shows a complete manifest.
+The scheduler does not guarantee that the two replicas spread across two workers; add `topologySpreadConstraints` or Pod anti-affinity to force it, see [Deploying a Simple Project](./deploy-simple-app) for the full snippet.
 
-Clean up:
+Clean up afterwards:
 
 ```bash
 kubectl --context kind-kind-multi delete deployment spread-demo
 ```
 
-## High-availability deployment
+## High-availability deployment: 3 control planes + 3 workers
 
-The HA layout consists of three control planes and three workers. Each control plane runs an etcd member, together forming a quorum, while the API server is reached through the load balancer container created by Kind.
+The HA layout runs three control planes and three workers. Each control plane runs an etcd member and they form a majority, while the API server is exposed through Kind's load-balancer container.
 
-### Create the HA layout
+### Render the configuration and create the cluster
 
-The HA template is [`installation/multiple-node/yaml/kind-ha.yaml`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/installation/multiple-node/yaml/kind-ha.yaml). Data is stored under `${HOME}/.kind-multiple-node/kind-ha`, with one subdirectory for each of the three control planes and three workers.
+The template is [`installation/multiple-node/yaml/kind-ha.yaml`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/installation/multiple-node/yaml/kind-ha.yaml). The data root is `${HOME}/.kind-multiple-node/kind-ha`, with one subdirectory for each of the three control planes and three workers.
 
-Render the configuration:
+Render the configuration (writes `installation/multiple-node/yaml/kind-ha.local.yaml`):
 
 ```bash
 cd zq-xu.github.io/docs/public/demos/kind
 LAYOUT=ha ./installation/multiple-node/yaml/render-config.sh
 ```
-
-This writes `installation/multiple-node/yaml/kind-ha.local.yaml`.
 
 Create the cluster:
 
@@ -331,31 +294,31 @@ kind create cluster \
 
 ### Verify high availability
 
-Inspect etcd members:
+Confirm that all six nodes are ready and that `kube-system` runs three etcd replicas:
 
 ```bash
-kubectl --context kind-kind-ha -n kube-system get pods -l component=etcd -o wide
 kubectl --context kind-kind-ha get nodes
+kubectl --context kind-kind-ha -n kube-system get pods -l component=etcd -o wide
 ```
 
-Do not test HA by deleting a control-plane container unless you know exactly what you are doing. If you do test failover, first confirm kubeconfig points at the load balancer address, then stop one control-plane container and observe whether the API remains available.
+To verify failover, first confirm the kubeconfig points at the load-balancer address, then stop one control-plane container and watch whether the API stays available. Do not treat "delete a control-plane container" as a routine test unless you know exactly what you are doing.
 
 ## Data persistence
 
-Both the standard and HA configurations mount a separate host directory into each node at `/var/local-path-provisioner`. PVs created by the default `standard` StorageClass therefore store their data on the host. The standard cluster uses `${HOME}/.kind-multiple-node/kind-multi` and the HA cluster uses `${HOME}/.kind-multiple-node/kind-ha`, with one subdirectory per node.
+Both layouts mount `/var/local-path-provisioner` per node onto a dedicated host directory, so PersistentVolumes created by the default StorageClass `standard` land on the host. The standard cluster uses `${HOME}/.kind-multiple-node/kind-multi` as the root, the HA cluster `${HOME}/.kind-multiple-node/kind-ha`; every node uses its own subdirectory.
 
-Each node has its own directory and its PV remains bound to that node: a Pod rescheduled to another node does not automatically see the original node's data. Use a StatefulSet, node affinity or external shared storage when the data location must be stable.
+The directories are independent, and PVs stay bound to their node: a Pod scheduled elsewhere does not inherit the old node's data. Use a StatefulSet, node affinity or external shared storage when the data must stay in place.
 
-The commands below use `kind-multi`; for the HA cluster, replace the cluster name and context with `kind-ha` and `kind-kind-ha`.
+The commands below use `kind-multi`; for the HA cluster swap the cluster name and context for `kind-ha` and `kind-kind-ha`.
 
-Create a PVC and a test Pod. The manifest is [`installation/multiple-node/yaml/pvc-check.yaml`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/installation/multiple-node/yaml/pvc-check.yaml):
+Create a PVC and a writing test Pod. The manifest is [`installation/multiple-node/yaml/pvc-check.yaml`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/installation/multiple-node/yaml/pvc-check.yaml):
 
 ```bash
 kubectl --context kind-kind-multi apply \
   -f zq-xu.github.io/docs/public/demos/kind/installation/multiple-node/yaml/pvc-check.yaml
 ```
 
-Confirm that the file exists:
+Confirm the data was written:
 
 ```bash
 kubectl --context kind-kind-multi wait \
@@ -365,14 +328,14 @@ kubectl --context kind-kind-multi exec host-data-check -- cat /data/check.log
 find "${HOME}/.kind-multiple-node/kind-multi" -maxdepth 3 -type f -name check.log
 ```
 
-Stop and start every node container, then read the same file again. [`restart-nodes.sh`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/installation/multiple-node/scripts/restart-nodes.sh) resolves all node containers for the cluster, stops and starts them in order, and waits for readiness:
+Stop and start every node container, then read the same file. [`restart-nodes.sh`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/installation/multiple-node/scripts/restart-nodes.sh) lists all node containers of the cluster, stops and starts them in turn, and waits for the nodes:
 
 ```bash
 cd zq-xu.github.io/docs/public/demos/kind
 ./installation/multiple-node/scripts/restart-nodes.sh
 ```
 
-Wait for the Pod and read the data:
+Wait for the business Pod to become ready again and read the data:
 
 ```bash
 kubectl --context kind-kind-multi wait \
@@ -380,13 +343,13 @@ kubectl --context kind-kind-multi wait \
 kubectl --context kind-kind-multi exec host-data-check -- cat /data/check.log
 ```
 
-`kind delete cluster` removes node containers, etcd and the PV/PVC objects. Files under the host directories remain, but a new cluster does not automatically recognise the old PVC. Stopping and starting node containers keeps both the cluster objects and the PVC.
+`kind delete cluster` removes the node containers, etcd and the PV/PVC objects; files under the host directory remain, but a new cluster does not pick up old PVCs. Stopping and starting only the node containers keeps both the cluster objects and the PVC.
 
-Do not delete the PVC unless the data is no longer needed; the default StorageClass uses the `Delete` reclaim policy.
+Do not delete the PVC when the test finishes unless you no longer need the data; the default StorageClass uses the `Delete` reclaim policy.
 
 ## One-shot script
 
-[`kind-multi-node.sh`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/installation/multiple-node/scripts/kind-multi-node.sh) generates the config, creates the cluster, waits for readiness and optionally applies the taint:
+[`kind-multi-node.sh`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/installation/multiple-node/scripts/kind-multi-node.sh) renders the configuration, creates the cluster, applies the taint when asked and waits for readiness:
 
 ```bash
 cd zq-xu.github.io/docs/public/demos/kind
@@ -398,18 +361,16 @@ cd zq-xu.github.io/docs/public/demos/kind
 HA=true ./installation/multiple-node/scripts/kind-multi-node.sh
 ```
 
-The script:
+The script runs these steps in order:
 
-1. checks Docker, kind and kubectl;
-2. creates host data directories and writes a temporary cluster config with `extraMounts`, removing the config on exit;
-3. creates the cluster when absent, otherwise reuses it;
-4. waits for every node to become Ready;
-5. taints control planes by default; set `TAINT_CONTROL_PLANE=false` to skip;
-6. prints nodes and system Pod placement.
+1. check Docker, kind and kubectl, and exit with an error if one is missing;
+2. create the host data directories and render a configuration with `extraMounts` in a temporary file, deleted on exit;
+3. create the cluster if it does not exist, otherwise reuse it;
+4. wait until every node is `Ready`;
+5. restore the `NoSchedule` taint on control planes by default, disable with `TAINT_CONTROL_PLANE=false`;
+6. print the distribution of nodes and system Pods.
 
-It creates `${HOME}/.kind-multiple-node/<cluster-name>/<node-name>` for each node by default.
-
-Override defaults:
+By default one `${HOME}/.kind-multiple-node/<cluster>/<node>` data directory is created per node. Environment variables override the defaults:
 
 ```bash
 CLUSTER_NAME=kind-dev \
@@ -418,7 +379,7 @@ HA=true \
 ./installation/multiple-node/scripts/kind-multi-node.sh
 ```
 
-The script does not modify an existing cluster. To change the layout, delete the current cluster and recreate it.
+The script never reconfigures an existing cluster. To change the layout, delete the cluster and create it again.
 
 ## Clean up
 
@@ -427,20 +388,49 @@ kind delete cluster --name kind-multi
 kind delete cluster --name kind-ha
 ```
 
-This removes node containers, the Docker network, etcd and the kubeconfig context. Files under the host data directories are not deleted automatically, but a new cluster does not automatically recognise the old PVC.
+Deleting removes the node containers, the Docker network, etcd and the matching kubeconfig contexts. Files under the host data directories are not removed automatically, but a new cluster does not pick up old PVCs.
 
 ## Troubleshooting
 
-| Symptom | Usual cause | Action |
+| Symptom | Likely cause | Fix |
 | --- | --- | --- |
-| Only one node is Ready | Other nodes failed to join or the CNI is not ready | `kubectl describe node`, `kind export logs` |
-| Create times out | Docker CPU/memory shortage or host port conflict | Raise resources; check `8080`/`8443` |
-| Control planes still run workloads | The taint was not restored | Run the commands in “Restore the control-plane taint”. |
-| HA cluster starts slowly | Six containers and etcd synchronisation | Increase timeout and Docker resources |
-| YAML changes do not apply | Kind does not hot-reload existing clusters | Delete and recreate |
+| Only 1 node is `Ready` | Other nodes failed to join, or the CNI is not ready | `kubectl describe node`, then `kind export logs` |
+| Creation times out | Not enough Docker memory/CPU, or a host port conflict | Raise Docker resources and check the usage of `8080`/`8443` |
+| Control planes still run workloads | The `NoSchedule` taint was never restored | Run `control-plane-taint.sh apply` |
+| The HA cluster starts slowly | Six node containers starting at once, etcd needs to sync | Increase the wait timeout and Docker resources |
+| Edits to the YAML have no effect | Kind only reads the configuration at creation time | Delete and recreate the cluster |
 
-Export logs:
+Export the logs:
 
 ```bash
 kind export logs --name kind-multi ./kind-multi-logs
 ```
+
+## Common pitfalls
+
+| Pitfall | Actual behaviour | What to do |
+| --- | --- | --- |
+| Multi-node means multiple machines | Every node container still runs on one host | Use it for local verification only, never production |
+| Editing the configuration updates a live cluster | Kind reads the configuration only at creation | Delete the cluster and recreate it |
+| Control planes do not run workloads by default | Kind removes the taint by default | Restore the taint when needed |
+| Every node has the local image automatically | `kind load` must be run explicitly | Load after building and use a fixed tag |
+| The HA layout is as fast as a single node | Three etcd members plus the load balancer cost more | Choose as needed and allocate enough memory |
+
+Another frequent problem is resource contention: a multi-node cluster starts several `kubelet`, `containerd` and system Pods at once. When Docker Desktop lacks memory this shows up as slow node startup, `NotReady` or a creation timeout rather than a clear error message.
+
+## Configuration reference
+
+| Field / flag | Meaning |
+| --- | --- |
+| `nodes[].role` | `control-plane` or `worker` |
+| `nodes[].image` | Node image for that node; use the same tag as the rest of the cluster |
+| `nodes[].kubeadmConfigPatches` | Patches passed to kubeadm for labels, kubelet parameters and more |
+| `nodes[].extraPortMappings` | Host port to node container port mappings |
+| `networking.podSubnet` | Pod CIDR, defaults to `10.244.0.0/16` |
+| `networking.serviceSubnet` | Service CIDR, defaults to `10.96.0.0/12` |
+| `networking.kubeProxyMode` | `iptables`, `nftables` or `ipvs` |
+| `--config` | Path to the cluster configuration file |
+
+
+
+

@@ -1,5 +1,5 @@
 ---
-description: 用 Kind 创建多节点 Kubernetes 集群：1 control-plane + 2 worker 的配置、3 control-plane 高可用布局、端口映射、调度验证与一键脚本。
+description: 用 Kind 创建多节点 Kubernetes 集群：先决条件与安装、1 control-plane + 2 worker 普通布局、3 control-plane 高可用布局、污点与调度验证、数据持久化与一键脚本。
 date: 2026-11-16
 recommend: 4
 tag:
@@ -18,7 +18,9 @@ categories:
 
 所有节点仍然运行在同一台主机上，因此多节点集群不能替代真实的多机环境。它的价值在于以较低成本复现节点加入、污点调整和调度分布等行为。
 
-## 核心概念
+以下步骤分别给出普通布局与高可用布局的完整流程：普通布局使用集群名 `kind-multi`、context `kind-kind-multi`，高可用布局使用 `kind-ha` 与 `kind-kind-ha`。集群架构与创建流程见 [Kind 项目介绍](./introduction.md)。
+
+## 集群形态
 
 ### 节点角色
 
@@ -29,33 +31,23 @@ categories:
 
 每个角色仍然是一个 Docker 容器。节点容器的数量就是集群的节点数量，没有额外的“虚拟机”或“宿主机代理”。
 
-### 集群配置
+### 节点加入集群的过程
 
-Kind 使用 `kind.x-k8s.io/v1alpha4` 的 YAML 描述集群。多节点配置的核心是 `nodes` 数组：
+创建多节点集群不是简单地启动多个容器：
 
-```yaml
-kind: Cluster
-apiVersion: kind.x-k8s.io/v1alpha4
-nodes:
-  - role: control-plane
-  - role: worker
-  - role: worker
-```
+1. 第一个 control-plane 生成集群证书、token 和 join 配置；
+2. 其他 control-plane 使用 `kubeadm join --control-plane` 加入，并同步证书；
+3. worker 使用普通 `kubeadm join` 加入；
+4. 所有节点启动 `kubelet`，向 API Server 注册；
+5. CNI 就绪后，节点变为 `Ready`。
 
-每个节点还可以设置：
-
-- `image`：该节点的 Kubernetes 版本；
-- `kubeadmConfigPatches`：给 kubeadm 的补丁，例如节点标签、kubelet 参数；
-- `extraPortMappings`：宿主机端口到该节点容器端口的映射；
-- `extraMounts`：宿主机目录挂载到节点容器。
-
-`networking` 字段用于设置 Pod CIDR、Service CIDR、API Server 监听地址、kube-proxy 模式等。没有特殊需求时保持默认即可。
+节点容器之间通过 Kind 创建的 Docker 桥接网络通信；Pod 网络是另一层覆盖网络，由 `kindnetd` 负责。
 
 ### 污点与调度
 
 Kind 默认移除 control-plane 的 `NoSchedule` 污点，因此多节点集群中的业务 Pod 也可能调度到 control-plane。这一行为在本地验证中较为便利，但与生产环境的常见约定不同。
 
-如果希望模拟“control-plane 只承担管理职责、不运行工作负载”，需要手动恢复污点。使用 [`control-plane-taint.sh`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/installation/multiple-node/scripts/control-plane-taint.sh) 为所有 control-plane 加回污点：
+如果希望模拟“control-plane 只承担管理职责、不运行工作负载”，用 [`control-plane-taint.sh`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/installation/multiple-node/scripts/control-plane-taint.sh) 为所有 control-plane 加回污点：
 
 ```bash
 cd zq-xu.github.io/docs/public/demos/kind
@@ -73,21 +65,9 @@ cd zq-xu.github.io/docs/public/demos/kind
 
 Kind 会在 Docker 网络里额外启动一个负载均衡容器，让 kubeconfig 中的 API Server 地址指向它，再由它把请求分发到存活的 control-plane。对用户来说，仍然是一个 kubeconfig、一个 context。
 
-高可用布局的资源开销明显更高：6 个节点容器加 1 个负载均衡容器。建议为 Docker 分配至少 8 GB 内存，条件允许时分配 12 GB。
+高可用布局的资源开销明显更高：6 个节点容器加 1 个负载均衡容器，建议为 Docker 分配至少 8 GB 内存，条件允许时分配 12 GB。
 
-## 关键机制
-
-### 节点如何加入集群
-
-Kind 不是简单地“启动多个容器”就结束。创建过程中：
-
-1. 第一个 control-plane 生成集群证书、token 和 join 配置；
-2. 其他 control-plane 使用 `kubeadm join --control-plane` 加入，并同步证书；
-3. worker 使用普通 `kubeadm join` 加入；
-4. 所有节点启动 `kubelet`，向 API Server 注册；
-5. CNI 就绪后，节点变为 `Ready`。
-
-节点容器之间通过 Kind 创建的 Docker 桥接网络通信。Pod 网络是另一层覆盖网络，由 `kindnetd` 负责。
+## 配置要点
 
 ### 端口映射只作用于声明它的节点
 
@@ -107,13 +87,13 @@ extraPortMappings:
 
 如果宿主机 `8080` 或 `8443` 已被占用，改成其他端口；不要直接删除映射，否则从宿主机无法访问这些服务。
 
-### 多节点与镜像分布
+### 镜像分发
 
-`kind load docker-image` 默认把镜像导入所有节点。多节点集群尤其需要这个行为：否则 Pod 被调度到没有镜像的节点时会拉取失败。
+`kind load docker-image` 默认把镜像导入所有节点。多节点集群尤其依赖这个行为：否则 Pod 被调度到没有镜像的节点时会拉取失败。
 
-如果只想导入部分节点，可以使用 `--nodes`，但必须配合节点亲和性或固定调度，否则 Pod 可能落到没有镜像的节点。
+只想导入部分节点时可以使用 `--nodes`，但必须配合节点亲和性或固定调度，否则 Pod 可能落到没有镜像的节点。
 
-### 节点本地存储与持久化
+### 节点本地存储
 
 每个节点都运行独立的 `local-path-provisioner`，由它创建的 PersistentVolume 只存在于本节点，默认数据路径是节点容器内的 `/var/local-path-provisioner`。节点容器被删除后，该路径中的数据也会消失。
 
@@ -121,41 +101,19 @@ extraPortMappings:
 
 节点之间的存储互不共享。Pod 迁移到其他节点后，不能假定还能访问原节点的数据；需要固定数据位置时，使用节点亲和、StatefulSet 或外部共享存储。
 
-## 边界与常见误区
-
-| 误区 | 实际行为 | 正确做法 |
-| --- | --- | --- |
-| 多节点等于多机 | 所有节点容器仍在一台宿主机上 | 只用于本地验证，不用于生产 |
-| 改了配置，已有集群会自动更新 | Kind 只在创建时读取配置 | 删除集群后重新创建 |
-| control-plane 默认不运行工作负载 | Kind 默认移除污点 | 需要时手动恢复污点 |
-| 所有节点自动有本地镜像 | `kind load` 需要显式执行 | 构建后导入，并使用固定标签 |
-| 高可用布局和单节点一样快 | 3 个 etcd 成员与额外负载均衡容器开销更大 | 按需选择，给足内存 |
-
-另一个常见问题是资源竞争：多节点集群会同时启动多个 `kubelet`、`containerd` 和系统 Pod。Docker Desktop 内存不足时，表现为节点启动慢、`NotReady` 或创建超时，而不是明确的错误信息。
-
-## 参数速查
-
-| 参数 | 含义 |
-| --- | --- |
-| `nodes[].role` | `control-plane` 或 `worker` |
-| `nodes[].image` | 该节点的节点镜像，指定与原集群一致的标签 |
-| `nodes[].kubeadmConfigPatches` | 传给 kubeadm 的补丁，用于标签、kubelet 参数等 |
-| `nodes[].extraPortMappings` | 宿主机端口到该节点容器端口的映射 |
-| `networking.podSubnet` | Pod CIDR，默认 `10.244.0.0/16` |
-| `networking.serviceSubnet` | Service CIDR，默认 `10.96.0.0/12` |
-| `networking.kubeProxyMode` | `iptables`、`nftables` 或 `ipvs` |
-| `--config` | 指定集群配置文件 |
-
 ## 先决条件
 
-- Docker 25 及以上，Docker 引擎正在运行；
-- Kind `v0.33.0`；
-- kubectl 1.37.x；
-- 普通布局建议 4 CPU、8 GB 内存；高可用布局建议 8 CPU、12 GB 内存。
+| 项目 | 要求 |
+| --- | --- |
+| 操作系统 | macOS 或 Linux；Windows 使用 Docker Desktop + WSL2，命令在 WSL2 终端执行 |
+| Docker | 25 及以上，引擎正在运行 |
+| Kind | `v0.33.0` |
+| kubectl | `1.37.x` |
+| 资源 | 普通布局建议 4 CPU、8 GB 内存；高可用布局建议 8 CPU、12 GB 内存 |
 
 ## 安装依赖
 
-Kind 依赖 Docker 提供容器运行时。多节点集群会同时启动多个节点容器，安装完成后先确认 Docker 可用，再创建集群。
+Kind 不提供容器运行时：Docker 提供节点容器，Kind 负责创建集群，kubectl 负责访问集群。多节点集群会同时启动多个节点容器，安装完成后先确认 Docker 可用，再创建集群。版本号与上表保持一致。
 
 ### macOS
 
@@ -163,7 +121,7 @@ Kind 依赖 Docker 提供容器运行时。多节点集群会同时启动多个�
 brew install --cask docker-desktop
 open -a Docker
 
-# 等待 Docker Desktop 完成首次启动和授权
+# wait for Docker Desktop to finish its first start and authorization
 brew install kind kubectl
 ```
 
@@ -209,7 +167,9 @@ chmod +x kubectl
 sudo mv kubectl /usr/local/bin/kubectl
 ```
 
-检查：
+### 安装检查
+
+三个命令都能返回版本号：
 
 ```bash
 kind version
@@ -217,22 +177,20 @@ docker info
 kubectl version --client
 ```
 
-## 普通部署
+## 普通部署：1 control-plane + 2 worker
 
-普通多节点布局由 1 个 control-plane 和 2 个 worker 组成，适合验证 Pod 调度、跨节点网络和污点行为。以下配置同时将宿主机 `8080` 与 `8443` 映射到 control-plane，供 Ingress 或 NodePort 使用。
+普通布局适合验证 Pod 调度、跨节点网络和污点行为，同时把宿主机 `8080` 与 `8443` 映射到 control-plane，供 Ingress 或 NodePort 使用。
 
-### 创建 1 control-plane + 2 worker
+### 生成配置与创建集群
 
-普通布局模板位于 [`installation/multiple-node/yaml/kind-multi.yaml`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/installation/multiple-node/yaml/kind-multi.yaml)。同目录的 [`render-config.sh`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/installation/multiple-node/yaml/render-config.sh) 默认使用该模板，数据根目录为 `${HOME}/.kind-multiple-node/kind-multi`，并在其下为 `control-plane`、`worker-1`、`worker-2` 各建一个子目录。
+模板位于 [`installation/multiple-node/yaml/kind-multi.yaml`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/installation/multiple-node/yaml/kind-multi.yaml)。同目录的 [`render-config.sh`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/installation/multiple-node/yaml/render-config.sh) 默认使用该模板，数据根目录为 `${HOME}/.kind-multiple-node/kind-multi`，并在其下为 `control-plane`、`worker-1`、`worker-2` 各建一个子目录。
 
-生成配置：
+生成配置（输出 `installation/multiple-node/yaml/kind-multi.local.yaml`，该文件不入库）：
 
 ```bash
 cd zq-xu.github.io/docs/public/demos/kind
 ./installation/multiple-node/yaml/render-config.sh
 ```
-
-脚本会生成 `installation/multiple-node/yaml/kind-multi.local.yaml`。
 
 创建集群：
 
@@ -250,28 +208,33 @@ kind create cluster \
 ```bash
 kind get clusters
 kind get nodes --name kind-multi
+
+# wait for every node to report Ready
+kubectl --context kind-kind-multi wait \
+  --for=condition=Ready nodes --all --timeout=300s
+
 kubectl --context kind-kind-multi get nodes -o wide
 kubectl --context kind-kind-multi get pods -A -o wide
 ```
 
-期望看到 3 个节点，角色分别是 1 个 control-plane 和 2 个 worker。节点状态全部为 `Ready`。
+期望看到 3 个节点，角色分别是 1 个 control-plane 和 2 个 worker，状态全部为 `Ready`。
 
 ### 恢复 control-plane 污点
 
-使用脚本为 `kind-multi` 的所有 control-plane 加回污点：
+用脚本为 `kind-multi` 的所有 control-plane 加回污点：
 
 ```bash
 cd zq-xu.github.io/docs/public/demos/kind
 ./installation/multiple-node/scripts/control-plane-taint.sh apply
 ```
 
-查看节点与污点结果：
+确认污点已生效：
 
 ```bash
-kubectl --context kind-kind-multi get nodes -o wide
+kubectl --context kind-kind-multi describe node kind-multi-control-plane | grep -A2 Taints
 ```
 
-之后业务 Pod 只会调度到 worker。若想恢复 Kind 的默认行为，移除该污点：
+之后业务 Pod 只会调度到 worker。想恢复 Kind 的默认行为，移除该污点：
 
 ```bash
 cd zq-xu.github.io/docs/public/demos/kind
@@ -297,7 +260,7 @@ kubectl --context kind-kind-multi rollout status deployment/spread-demo
 kubectl --context kind-kind-multi get pods -o wide
 ```
 
-`scheduler` 不保证两个副本一定分散到两个 worker；如果需要强制分散，给 Deployment 加 `topologySpreadConstraints` 或 Pod 反亲和。示例项目页给出了完整写法。
+调度器不保证两个副本一定分散到两个 worker；需要强制分散时，给 Deployment 加 `topologySpreadConstraints` 或 Pod 反亲和，完整写法见 [在 Kind 中部署简单项目](./deploy-simple-app.md)。
 
 验证完成后清理：
 
@@ -305,22 +268,20 @@ kubectl --context kind-kind-multi get pods -o wide
 kubectl --context kind-kind-multi delete deployment spread-demo
 ```
 
-## 高可用部署
+## 高可用部署：3 control-plane + 3 worker
 
 高可用布局由 3 个 control-plane 和 3 个 worker 组成。三个 control-plane 分别运行 etcd 成员并形成多数派，API Server 通过 Kind 的负载均衡容器对外提供访问。
 
-### 创建高可用布局
+### 生成配置与创建集群
 
-高可用模板位于 [`installation/multiple-node/yaml/kind-ha.yaml`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/installation/multiple-node/yaml/kind-ha.yaml)。数据根目录为 `${HOME}/.kind-multiple-node/kind-ha`，三个 control-plane 与三个 worker 各用一个子目录。
+模板位于 [`installation/multiple-node/yaml/kind-ha.yaml`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/installation/multiple-node/yaml/kind-ha.yaml)。数据根目录为 `${HOME}/.kind-multiple-node/kind-ha`，三个 control-plane 与三个 worker 各用一个子目录。
 
-生成配置：
+生成配置（输出 `installation/multiple-node/yaml/kind-ha.local.yaml`）：
 
 ```bash
 cd zq-xu.github.io/docs/public/demos/kind
 LAYOUT=ha ./installation/multiple-node/yaml/render-config.sh
 ```
-
-脚本会生成 `installation/multiple-node/yaml/kind-ha.local.yaml`。
 
 创建集群：
 
@@ -333,18 +294,18 @@ kind create cluster \
 
 ### 验证高可用
 
-验证 etcd 成员：
+确认 6 个节点就绪，且 `kube-system` 中有 3 个 etcd 副本：
 
 ```bash
-kubectl --context kind-kind-ha -n kube-system get pods -l component=etcd -o wide
 kubectl --context kind-kind-ha get nodes
+kubectl --context kind-kind-ha -n kube-system get pods -l component=etcd -o wide
 ```
 
-高可用验证不应通过“删除一个 control-plane 容器”来做破坏性测试，除非明确知道自己在做什么。需要验证故障转移时，先确认 kubeconfig 指向的是负载均衡地址，再停一个 control-plane 容器并观察 API 是否仍可用。
+需要验证故障转移时，先确认 kubeconfig 指向的是负载均衡地址，再停一个 control-plane 容器并观察 API 是否仍可用。不要把“删除一个 control-plane 容器”当作常规测试，除非明确知道自己在做什么。
 
 ## 数据持久化
 
-普通部署和高可用部署的配置都已在每个节点挂载独立宿主机目录到 `/var/local-path-provisioner`。默认 StorageClass `standard` 创建的 PV 数据因此落到宿主机。普通集群的根目录是 `${HOME}/.kind-multiple-node/kind-multi`，高可用集群是 `${HOME}/.kind-multiple-node/kind-ha`；每个节点在各自根目录下使用独立子目录。
+普通布局和高可用布局的配置都已在每个节点把 `/var/local-path-provisioner` 挂载到独立的宿主机目录，因此默认 StorageClass `standard` 创建的 PV 数据会落到宿主机。普通集群的根目录是 `${HOME}/.kind-multiple-node/kind-multi`，高可用集群是 `${HOME}/.kind-multiple-node/kind-ha`；每个节点在各自根目录下使用独立子目录。
 
 每个节点的目录彼此独立，PV 仍与节点绑定：Pod 被调度到其他节点后不会自动获得原节点上的数据。需要固定数据位置时，使用 StatefulSet、节点亲和或外部共享存储。
 
@@ -367,7 +328,7 @@ kubectl --context kind-kind-multi exec host-data-check -- cat /data/check.log
 find "${HOME}/.kind-multiple-node/kind-multi" -maxdepth 3 -type f -name check.log
 ```
 
-停止并重新启动所有节点容器，再读取同一个文件。使用 [`restart-nodes.sh`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/installation/multiple-node/scripts/restart-nodes.sh) 查询该集群的全部节点容器，依次停止和启动，并等待节点就绪：
+停止并重新启动所有节点容器，再读取同一个文件。[`restart-nodes.sh`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/installation/multiple-node/scripts/restart-nodes.sh) 查询该集群的全部节点容器，依次停止和启动，并等待节点就绪：
 
 ```bash
 cd zq-xu.github.io/docs/public/demos/kind
@@ -388,7 +349,7 @@ kubectl --context kind-kind-multi exec host-data-check -- cat /data/check.log
 
 ## 一键脚本
 
-脚本 [`kind-multi-node.sh`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/installation/multiple-node/scripts/kind-multi-node.sh)负责生成配置、创建集群、等待 Ready，并按需加污点：
+[`kind-multi-node.sh`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/installation/multiple-node/scripts/kind-multi-node.sh) 负责生成配置、创建集群、按需加污点并等待就绪：
 
 ```bash
 cd zq-xu.github.io/docs/public/demos/kind
@@ -400,18 +361,16 @@ cd zq-xu.github.io/docs/public/demos/kind
 HA=true ./installation/multiple-node/scripts/kind-multi-node.sh
 ```
 
-脚本行为：
+脚本按顺序完成：
 
-1. 检查 Docker、kind、kubectl；
+1. 检查 Docker、kind、kubectl，缺项直接报错退出；
 2. 创建宿主机数据目录，并在临时目录生成带 `extraMounts` 的集群配置，退出时自动删除配置；
-3. 集群不存在时创建；已存在时直接复用；
-4. 等待所有节点 Ready；
+3. 集群不存在时创建，已存在时直接复用；
+4. 等待所有节点 `Ready`；
 5. 默认给 control-plane 加回 `NoSchedule` 污点，`TAINT_CONTROL_PLANE=false` 可关闭；
 6. 打印节点与系统 Pod 分布。
 
-默认为每个节点创建 `${HOME}/.kind-multiple-node/<集群名>/<节点名>` 数据目录。
-
-可通过环境变量覆盖默认值：
+默认为每个节点创建 `${HOME}/.kind-multiple-node/<集群名>/<节点名>` 数据目录。可用环境变量覆盖默认值：
 
 ```bash
 CLUSTER_NAME=kind-dev \
@@ -437,7 +396,7 @@ kind delete cluster --name kind-ha
 | --- | --- | --- |
 | 仅 1 个节点处于 `Ready` | 其他节点 join 失败或 CNI 未就绪 | `kubectl describe node`，`kind export logs` |
 | 创建超时 | Docker 内存/CPU 不足，或宿主机端口冲突 | 提高 Docker 资源，检查 `8080`/`8443` 占用 |
-| control-plane 仍运行工作负载 | 没有恢复 `NoSchedule` 污点 | 执行“恢复 control-plane 污点”中的命令 |
+| control-plane 仍运行工作负载 | 没有恢复 `NoSchedule` 污点 | 执行 `control-plane-taint.sh apply` |
 | 高可用集群启动缓慢 | 6 个节点容器同时启动，etcd 需要同步 | 增加等待时间与 Docker 资源 |
 | 修改 YAML 后不生效 | Kind 不会热更新已有集群 | 删除并重新创建 |
 
@@ -446,3 +405,31 @@ kind delete cluster --name kind-ha
 ```bash
 kind export logs --name kind-multi ./kind-multi-logs
 ```
+
+## 常见误区
+
+| 误区 | 实际行为 | 正确做法 |
+| --- | --- | --- |
+| 多节点等于多机 | 所有节点容器仍在一台宿主机上 | 只用于本地验证，不用于生产 |
+| 改了配置，已有集群会自动更新 | Kind 只在创建时读取配置 | 删除集群后重新创建 |
+| control-plane 默认不运行工作负载 | Kind 默认移除污点 | 需要时手动恢复污点 |
+| 所有节点自动有本地镜像 | `kind load` 需要显式执行 | 构建后导入，并使用固定标签 |
+| 高可用布局和单节点一样快 | 3 个 etcd 成员与额外负载均衡容器开销更大 | 按需选择，给足内存 |
+
+另一个常见问题是资源竞争：多节点集群会同时启动多个 `kubelet`、`containerd` 和系统 Pod。Docker Desktop 内存不足时，表现为节点启动慢、`NotReady` 或创建超时，而不是明确的错误信息。
+
+## 配置字段速查
+
+| 字段 / 参数 | 含义 |
+| --- | --- |
+| `nodes[].role` | `control-plane` 或 `worker` |
+| `nodes[].image` | 该节点的节点镜像，指定与原集群一致的标签 |
+| `nodes[].kubeadmConfigPatches` | 传给 kubeadm 的补丁，用于标签、kubelet 参数等 |
+| `nodes[].extraPortMappings` | 宿主机端口到该节点容器端口的映射 |
+| `networking.podSubnet` | Pod CIDR，默认 `10.244.0.0/16` |
+| `networking.serviceSubnet` | Service CIDR，默认 `10.96.0.0/12` |
+| `networking.kubeProxyMode` | `iptables`、`nftables` 或 `ipvs` |
+| `--config` | 指定集群配置文件 |
+
+
+

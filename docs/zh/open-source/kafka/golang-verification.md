@@ -1,6 +1,7 @@
 ---
-description: 用一个 cobra 命令行项目逐项验证 Kafka：连通性、topic 管理、同步/异步生产、按分区直读、消费组与精确限额、位点与堆积，以及七步端到端断言。
+description: 用一个 cobra 命令行项目逐项验证 Kafka：连通性、topic 管理、同步 / 异步生产、按分区直读、消费组与精确限额、位点与堆积，以及七步端到端断言。
 date: 2026-11-12
+recommend: 4
 tag:
  - Kafka
 tags:
@@ -11,18 +12,15 @@ categories:
  - Open Source
 ---
 
-# Golang项目验证Kafka
+# Golang 项目验证 Kafka
 
-本文用一个 cobra 命令行项目解决一个问题：**怎么证明 Kafka "真的能用"，而不只是"端口通了"。**
-默认本地已按[Kafka介绍与本地运行](./introduction.md)起好了集群。
+一个 cobra 命令行项目，用来证明 Kafka “真的能用”，而不只是“端口通了”。默认本地已按 [Kafka 本地部署与运行](./local-deployment.md) 起好集群。
 
-配套项目在仓库 [`docs/public/demos/kafka`](https://github.com/zq-xu/zq-xu.github.io/tree/master/docs/public/demos/kafka)，
-一个 cobra 命令行程序：每个基础能力对应一个子命令，每个子命令都能独立运行、独立断言，
-最后 `e2e`（end-to-end，端到端）一条命令把七步串起来做回归。
+配套项目在仓库 [`docs/public/demos/kafka`](https://github.com/zq-xu/zq-xu.github.io/tree/master/docs/public/demos/kafka)：每个基础能力对应一个子命令，每个子命令都能独立运行、独立断言；最后 `e2e`（end-to-end，端到端）一条命令把七步串起来做回归。
 
 ## 验证思路
 
-"能连上"只是第一层。真正要验证的是这些容易出错、出错了又不容易发现的地方：
+“能连上”只是第一层。真正要验证的是这些容易出错、出错了又不容易发现的地方：
 
 | 要验证的能力 | 对应命令 | 拿什么当证据 |
 |---|---|---|
@@ -35,17 +33,36 @@ categories:
 | 限额不能多也不能少 | `group --limit N` | 提交总量正好 N |
 | 全链路可重复回归 | `e2e` | 七步断言全部 `[PASS]` |
 
-**为什么用 Go 项目而不是几条 CLI（command-line interface，命令行工具）命令**：命令行工具验证不了"位点提交的时机""rebalance 后
-是否继续消费""限额与 `MarkMessage` 的关系"这些细节；用代码写出来，才可以把断言固化下来，
-每次改完都能一条命令重跑。
+**为什么用 Go 项目而不是几条 CLI（command-line interface，命令行工具）命令**：命令行工具验证不了“位点提交的时机”“rebalance 后是否继续消费”“限额与 `MarkMessage` 的关系”这些细节；用代码写出来，才可以把断言固化下来，每次改完都能一条命令重跑。
 
 ## 准备
 
 | 项 | 要求 |
 |---|---|
-| Kafka | 已按[本地运行步骤](./introduction.md)起好，`docker ps` 能看到 `kafka-demo` 且 `healthy` |
+| Kafka | 已按 [Kafka 本地部署与运行](./local-deployment.md) 起好，`docker ps` 能看到 `kafka-demo` 且 `healthy` |
 | Go | 1.27.4（项目 `go.mod` 声明 1.27.4） |
 | 依赖 | `github.com/IBM/sarama v1.60.2`、`github.com/spf13/cobra v1.10.2` |
+
+Go 未安装时，macOS 使用 Homebrew：
+
+```bash
+brew install go
+go version
+```
+
+Linux 下载官方二进制包（版本与上表一致）：
+
+```bash
+GO_VERSION=1.27.4
+ARCH=$(uname -m | sed 's/x86_64/amd64/; s/aarch64/arm64/')
+curl -Lo go.tgz "https://go.dev/dl/go${GO_VERSION}.linux-${ARCH}.tar.gz"
+sudo rm -rf /usr/local/go
+sudo tar -C /usr/local -xzf go.tgz
+export PATH="/usr/local/go/bin:${PATH}"
+go version
+```
+
+`PATH` 修改需要写入 `~/.bashrc` 或 `~/.zshrc` 才能在新终端生效。确认 Go 可用后，拉取依赖并编译：
 
 ```bash
 git clone https://github.com/zq-xu/zq-xu.github.io.git
@@ -60,10 +77,10 @@ go build ./...
 ## 快速开始
 
 ```bash
-./scripts/kafka.sh start     # 如果还没起（脚本会等到 healthy）
-go run . health              # 连通性
+./scripts/kafka.sh start     # start the cluster if needed (waits until healthy)
+go run . health              # connectivity
 go run . produce --messages 9
-go run . e2e                 # 端到端 7 步断言
+go run . e2e                 # seven end-to-end assertions
 ```
 
 或者用 Makefile 的快捷目标：`make kafka-up`、`make health`、`make produce`、`make e2e`、`make help`。
@@ -72,34 +89,34 @@ go run . e2e                 # 端到端 7 步断言
 
 ```
 docs/public/demos/kafka/
-├── main.go                     # 入口，只调 cmd.Execute()
-├── cmd/                        # 命令层：一个子命令一个文件
-│   ├── root.go                 #   root：绑全局参数 + 组装命令树
+├── main.go                     # entry point, only calls cmd.Execute()
+├── cmd/                        # command layer, one file per subcommand
+│   ├── root.go                 #   root: binds global flags + wires the tree
 │   ├── health.go  produce.go  consume.go
 │   ├── group.go   lag.go  groups.go  e2e.go
-│   └── topic/                  #   topic 命令组独立成包
-│       ├── topic.go            #   topic 父命令：只负责组装
+│   └── topic/                  #   the topic group lives in its own package
+│       ├── topic.go            #   parent command: wiring only
 │       ├── create.go  list.go  describe.go  config.go  delete.go
 ├── internal/
-│   ├── cli/                    # 命令层公共设施：全局参数、topic 解析、连接封装
+│   ├── cli/                    # command plumbing: flags, topic resolution, clients
 │   │   └── cli.go
-│   ├── kafkax/                 # Kafka 客户端封装，不打印
+│   ├── kafkax/                 # Kafka client wrapper, no printing
 │   │   ├── config.go           #   Options / SaramaConfig / NewClient(With) / NewAdmin
-│   │   ├── error.go            #   wrap：统一错误前缀
-│   │   ├── topic.go            #   列表/创建/等可见/详情/删除/配置
-│   │   ├── produce.go          #   ProduceOptions、消息构造、同步/异步生产
-│   │   ├── consumer.go         #   GroupHandler、ConsumeGroup
-│   │   ├── partition_consume.go#   按分区直读（不加入组）
-│   │   ├── lag.go              #   分区堆积与总堆积
-│   │   └── format.go           #   消息打印、offset 解析
-│   └── verify/                 # 7 步断言，一步一个文件
-│       ├── e2e.go              #   Run：按顺序执行步骤
-│       ├── run.go              #   run 状态 + steps 声明
-│       ├── checker.go          #   断言计数与 [PASS]/[FAIL]
-│       ├── stats.go            #   消费统计快照
+│   │   ├── error.go            #   wrap: consistent error prefixes
+│   │   ├── topic.go            #   list/create/wait/describe/delete/config
+│   │   ├── produce.go          #   ProduceOptions, message builder, sync/async produce
+│   │   ├── consumer.go         #   GroupHandler, ConsumeGroup
+│   │   ├── partition_consume.go#   direct partition reads (no group)
+│   │   ├── lag.go              #   per-partition and total lag
+│   │   └── format.go           #   message printing, offset parsing
+│   └── verify/                 # the 7 assertions, one file per step
+│       ├── e2e.go              #   Run: executes the steps in order
+│       ├── run.go              #   shared state + step list
+│       ├── checker.go          #   assertion tally and [PASS]/[FAIL]
+│       ├── stats.go            #   consume statistics snapshot
 │       ├── step_connect.go  step_topic.go  step_produce.go
 │       ├── step_consume.go  step_offsets.go  step_cleanup.go
-├── scripts/kafka.sh            # docker run 起集群
+├── scripts/kafka.sh            # docker run cluster management
 ├── Makefile
 ├── go.mod                      # go 1.27.4 + sarama v1.60.2 + cobra v1.10.2
 └── go.sum
@@ -121,7 +138,7 @@ docs/public/demos/kafka/
 
 - **一个子命令一个文件**；有下级子命令的（`topic`）单独成包 `cmd/topic`，父命令只负责组装；
 - **每个命令的参数放在自己的 flags 结构体里**（如 `produceFlags`），不用包级可变变量，命令之间不会串状态；
-- **函数不超过 50 行**，长流程按"一步一个函数、一步一个文件"拆开；
+- **函数不超过 50 行**，长流程按“一步一个函数、一步一个文件”拆开；
 - **命令体不重复连接样板**：`cli.WithClient` / `cli.WithAdmin` 负责开连接、关连接；
 - **局部配置用 tweak 函数**：`NewClientWith(g, func(c *sarama.Config){...})`，只改需要改的那一行。
 
@@ -149,10 +166,10 @@ docs/public/demos/kafka/
 验证：broker 可发现、元数据接口可用（用一次 `RefreshMetadata` 的耗时作证据）、controller 就绪、
 topic 总数。
 
-**为什么**：后面每条命令都依赖元数据，先单独拎出来，出问题能立刻区分"连不上"和"代码有 bug"。
+**为什么**：后面每条命令都依赖元数据，先单独拎出来，出问题能立刻区分“连不上”和“代码有 bug”。
 
-> 坑：sarama 懒连接，`Broker.Connected()` 在没发过请求前一直是 `false`，直接打印会误判。
-> 所以用"元数据刷新成功与否 + 耗时"说话。
+> 注意：sarama 采用懒连接，`Broker.Connected()` 在没发过请求前一直是 `false`，直接打印会误判。
+> 所以用“元数据刷新成功与否 + 耗时”说话。
 
 ### `topic create / list / describe / config / delete`
 
@@ -160,10 +177,10 @@ topic 总数。
 |---|---|---|
 | `create` | 能建、且建完**真的可见** | 建 topic 异步，`CreateTopic` 成功 ≠ 能 describe，所以建完轮询 `WaitTopicVisible` |
 | `create` | 重复建被拒 | 幂等保护，避免脚本重跑误判 |
-| `list` | 枚举 topic 与分区/副本 | 判断"发到哪个 topic""是否已存在" |
+| `list` | 枚举 topic 与分区/副本 | 判断“发到哪个 topic”“是否已存在” |
 | `describe` | 分区、leader、ISR、最早/最新位点 | **判断消息有没有真写进去**：最新位点涨了才算落盘 |
 | `describe` | 条数 = 最新 - 最早 | 一眼看出数据量与分区是否均衡 |
-| `config` | 生效值 + 来源 | 排查"改了配置怎么不生效"，先看是 topic 覆盖还是 broker 默认 |
+| `config` | 生效值 + 来源 | 排查“改了配置怎么不生效”，先看是 topic 覆盖还是 broker 默认 |
 | `delete` | 能删且不影响其他 topic | 清理现场，也验证请求路径正确 |
 
 `describe` 里 ISR 为空是重要信号：leader 没有同步副本，写入会失败（生产上是故障前兆）。
@@ -173,15 +190,15 @@ topic 总数。
 - `--retention` 用 Go duration（`24h`、`168h` 默认 7 天），底层写入的仍是 `retention.ms`；
 - `--cleanup` 可选 `delete` / `compact` / `compact,delete`；
 - `describe` 在取位点前先刷新该 topic 的元数据，否则刚建完的 topic 在客户端缓存里还没有分区
-  leader，会报 "not the leader"。
+  leader，会报 “not the leader”。
 
 ### `produce`
 
 验证：写入成功（同步模式拿到 broker 返回的 partition/offset，是硬证据）；同一 key 分区稳定；
 分区是否均衡；同步 vs 异步吞吐差异。
 
-**为什么**：只统计"发了多少条"没意义，`Successes()` 的回执才代表 broker 已接收；key 与分区的关系是
-有序性的基础，同一 key 乱跳分区，"按订单有序"就不成立；同一份数据对比同步/异步，直观看到批量的价值。
+**为什么**：只统计“发了多少条”没意义，`Successes()` 的回执才代表 broker 已接收；key 与分区的关系是
+有序性的基础，同一 key 乱跳分区，“按订单有序”就不成立；同一份数据对比同步/异步，直观看到批量的价值。
 
 3 个 key 可能只落到 2 个分区（哈希不保证均匀），看到 `partition 2 -> 0 records` 属正常。
 
@@ -189,7 +206,7 @@ topic 总数。
 
 验证能按分区、按指定起点读取，并打印 partition/offset/key/headers/value 以核对顺序，到量即停且不提交位点。
 
-**为什么要有它**：证明读取不依赖消费组——位点就是个数字，可以从任意位置读；也是排查"某条消息在不在"
+**为什么要有它**：证明读取不依赖消费组——位点就是个数字，可以从任意位置读；也是排查“某条消息在不在”
 的利器；不提交位点所以是**只读安全操作**，反复跑不改变任何状态。
 
 ### `group`
@@ -198,12 +215,12 @@ topic 总数。
 （`lag` 相应减少）；限额精确；手动提交可用。
 
 **为什么限额要精确**：这是真实 bug 现场。最早版本每个分区各自判断 `count < limit`，3 分区并发，
-`--limit 6` 实收 9 条。修法是把"判断 + 计数"放进同一把锁（`tryAcquire`），抢不到名额的分区直接返回
-**且不 `MarkMessage`**，位点不推进，消息下次还能读——所以"少消费"不会变成"丢消息"：
+`--limit 6` 实收 9 条。修法是把“判断 + 计数”放进同一把锁（`tryAcquire`），抢不到名额的分区直接返回
+**且不 `MarkMessage`**，位点不推进，消息下次还能读——所以“少消费”不会变成“丢消息”：
 `--limit 6` 后提交位点 2+3+1=6，堆积正好少 6 条。
 
 **为什么 `Consume` 要放在 for 循环里**：它在 rebalance 时是**正常返回**（不是出错）。
-只调用一次的话，组内有成员进出后，第一个实例就"看起来不消费了"。这是消费组最经典的坑，
+只调用一次的话，组内有成员进出后，第一个实例就“看起来不消费了”。这是消费组最常见的问题，
 所以循环收在 `kafkax.ConsumeGroup` 里，命令层只调一次，不会漏。
 
 ### `lag`
@@ -220,23 +237,26 @@ topic 总数。
 `Committed` 来自 `OffsetFetch`，`End` 来自 `ListOffsets(Newest)`，差值即欠账；`Committed = -1`
 表示从未提交。
 
-**为什么用它**：消费"有没有跟上"只有这一个可靠信号。看日志只知道处理了哪些，不知道还差多少。
+**为什么用它**：消费“有没有跟上”只有这一个可靠信号。看日志只知道处理了哪些，不知道还差多少。
 
-实现坑：`OffsetFetch` v8 之后响应结构从 `Blocks` 变成 `Groups`，必须用 `resp.GetBlock(topic, partition)`。
+实现注意点：`OffsetFetch` v8 之后响应结构从 `Blocks` 变成 `Groups`，必须用 `resp.GetBlock(topic, partition)`。
 
 ### `groups`
 
 验证组是否存在、状态（`Stable` / `Empty` / `PreparingRebalance` / `CompletingRebalance`）、成员数。
 
 **为什么**：`Empty` 是常态——进程退出后位点仍保留（默认 7 天，`offsets.retention.minutes`）。
-理解这点才不会误以为"组没了位点也丢了"。
+理解这点才不会误以为“组没了位点也丢了”。
 
 ### `e2e`
 
 ```
-go run . e2e                        # 自动建临时 topic，跑完删除
-go run . e2e --messages 500         # 加大数据量
-go run . e2e --topic my-topic --keep  # 用自己指定的 topic，且不删除
+# create a temporary topic automatically, then delete it when finished
+go run . e2e
+# use a larger data set
+go run . e2e --messages 500
+# reuse your own topic and keep it afterwards
+go run . e2e --topic my-topic --keep
 ```
 
 是**冒烟测试**：任何一步失败都以非 0 退出码结束，可放进 CI（Continuous Integration，持续集成）。topic 选择：不传 `--topic` 自动生成
@@ -247,7 +267,7 @@ go run . e2e --topic my-topic --keep  # 用自己指定的 topic，且不删除
 | 步骤 | 断言 | 为什么必须有 |
 |---|---|---|
 | 1 连接 | broker 可发现、controller 可用 | 没有元数据，后面都是空谈 |
-| 2 topic | 创建（或复用）后元数据可见 | 覆盖"异步建 topic"的时序坑 |
+| 2 topic | 创建（或复用）后元数据可见 | 覆盖“异步建 topic”的时序问题 |
 | 3 生产 | N 条全部拿到 ACK（acknowledgement，确认） | 覆盖压缩、幂等、`acks=all` 全链路 |
 | 4 分区 | 同一 key 落同一分区 | 有序性前提成立 |
 | 5 消费 | 收满 N 条且分区内 offset 单调递增 | 不重不漏不乱序 |
@@ -256,15 +276,15 @@ go run . e2e --topic my-topic --keep  # 用自己指定的 topic，且不删除
 
 第 5 步有两个细节：
 
-- 顺序：每个分区记录"上一条 offset"，新来的必须严格大于它，重复或乱序立刻失败；
-- 完成判定**不能只等 ctx**：限额只在"下一条消息到来"时触发，收满后没有新消息就永远不触发
+- 顺序：每个分区记录“上一条 offset”，新来的必须严格大于它，重复或乱序立刻失败；
+- 完成判定**不能只等 ctx**：限额只在“下一条消息到来”时触发，收满后没有新消息就永远不触发
   `OnLimit`，所以改为轮询已消费条数。
 
 ## 关键代码走读
 
 路径都相对 `docs/public/demos/kafka/`。
 
-**配置一开始就把"不丢消息"打开**：`Version=3.9.0.0` 对齐 broker；`RequiredAcks=WaitForAll`；
+**配置一开始就把“不丢消息”打开**：`Version=3.9.0.0` 对齐 broker；`RequiredAcks=WaitForAll`；
 `Idempotent=true` 配合 `MaxOpenRequests=1`（幂等生产者的硬性要求）；`Offsets.Initial=OffsetOldest`。
 
 **消息带 header**：`source` 与 `seq`，证明 header 会被完整保存与传递，这是链路验证常漏的一环。
@@ -282,7 +302,7 @@ go run . e2e --topic my-topic --keep  # 用自己指定的 topic，且不删除
 
 ## 一次实测记录
 
-本机（单机 Docker、Go 1.25、小消息）的真实输出：
+本机（单机 Docker、小消息）的真实输出：
 
 ```
 == Cluster health ==
@@ -320,8 +340,10 @@ Step 7/7 cleanup
 在生产端还能看到同步与异步的差距：
 
 ```bash
-go run . produce --messages 9              # 同步，约 400 条/秒
-go run . produce --async --messages 200    # 异步，约 13000 条/秒
+# synchronous: about 400 messages per second
+go run . produce --messages 9
+# asynchronous: about 13,000 messages per second
+go run . produce --async --messages 200
 ```
 
 ## 排错表
@@ -329,45 +351,46 @@ go run . produce --async --messages 200    # 异步，约 13000 条/秒
 | 现象 | 大概率原因 | 怎么查 |
 |---|---|---|
 | 所有命令都连不上 | 容器没起 / 端口没映射 | `./scripts/kafka.sh status` |
-| 能连上但一直卡住 | `ADVERTISED_LISTENERS` 是容器内地址 | 回到[本地运行](./introduction.md)看 advertised 配置 |
+| 能连上但一直卡住 | `ADVERTISED_LISTENERS` 是容器内地址 | 回到 [Kafka 本地部署与运行](./local-deployment.md) 核对 advertised 配置 |
 | `create` 成功但 `describe` 说没有 | 建 topic 异步 | 项目已用 `WaitTopicVisible`；手动看 `topic list` |
 | `NOT_LEADER_FOR_PARTITION` | 元数据过期 | 项目已对每个 topic 先 `RefreshMetadata`；手动可用 `Metadata.Retry.Max=5` 兜底 |
-| 消费组"突然不消费" | rebalance 后没重新调 `Consume` | 确认循环在 `ConsumeGroup` 里 |
+| 消费组“突然不消费” | rebalance 后没重新调 `Consume` | 确认循环在 `ConsumeGroup` 里 |
 | `lag` 显示 `none` | 该组在此分区从未提交 | 正常，整段算未消费 |
 | 条数比预期少 | key 哈希集中在少数分区 | `topic describe` 看分布 |
 | 手动提交后仍重复 | 尾部未提交 | 看 `Cleanup` 是否补了 `Commit()` |
-| `e2e` 在旧 topic 上失败 | 基线不是 0 却按 0 断言 | 断言应"回到基线"，而不是"lag=0" |
+| `e2e` 在旧 topic 上失败 | 基线不是 0 却按 0 断言 | 断言应“回到基线”，而不是“lag=0” |
 
-## 生产化清单
+## 客户端可靠性要点
 
-| 项 | demo | 生产建议 |
+示例项目在客户端侧默认打开的设置，生产环境同样应当保持：
+
+| 项 | 示例项目 | 生产建议 |
 |---|---|---|
-| 副本数 | 1 | 3（`min.insync.replicas=2`） |
-| 自动建 topic | true | false，由平台统一建 |
-| acks | all | all |
-| 幂等/事务 | 幂等开 | 需要跨分区原子写再开事务 |
-| 认证 | PLAINTEXT | SASL_SSL / mTLS |
-| 监控 | 无 | lag、ISR 收缩、UnderReplicatedPartitions、磁盘水位 |
-| 分区数 | 3 | 按峰值吞吐与并行度规划，避免事后扩容打乱映射 |
-| 保留 | 7 天 | 按价值与容量定，必要时分层存储 |
+| acks | `all` | `all` |
+| 幂等 | 开启（`enable.idempotence=true`） | 保持开启；需要跨分区原子写时再开事务 |
+| 位点提交 | 手动提交，处理成功后再提交 | 至少一次语义，配合消费端幂等去重 |
+| 消费跟踪 | 用 `lag` 断言位点是否推进 | 把 lag 与 rebalance 次数纳入监控 |
+| 分区数 | 3 | 按峰值吞吐与并行度规划，避免事后扩容打乱 key 映射 |
 
-可靠性来自"副本 + acks + 幂等/事务 + 消费端幂等"的组合，少一环都得不到"不丢不重"。
+集群侧的差异（副本数、自动建 topic、认证方式、保留策略）见 [与生产环境的差异](./local-deployment.md#与生产环境的差异)。
+
+可靠性来自“副本 + acks + 幂等 / 事务 + 消费端幂等”的组合，少一环都得不到“不丢不重”。
 
 ## 清理
 
 ```bash
-./scripts/kafka.sh stop     # 停容器，数据卷保留
-./scripts/kafka.sh reset    # 连数据卷删除，彻底回到初始状态
-rm -rf bin                  # 编译产物
+./scripts/kafka.sh stop     # stop the container, keep the data volume
+./scripts/kafka.sh reset    # remove the container and the volume for a clean state
+rm -rf bin                  # build output
 ```
 
 ## 参考资料
 
 - [Apache Kafka 官方文档](https://kafka.apache.org/documentation/)
 - [KRaft 模式（无 ZooKeeper）](https://kafka.apache.org/documentation/#kraft)
-- [sarama：本文 demo 使用的 Go 客户端](https://github.com/IBM/sarama)
+- [sarama：示例项目使用的 Go 客户端](https://github.com/IBM/sarama)
 - [franz-go：另一个常用 Go 客户端](https://github.com/twmb/franz-go)
 - [cobra：命令行框架](https://github.com/spf13/cobra)
 
 代码与脚本：[docs/public/demos/kafka](https://github.com/zq-xu/zq-xu.github.io/tree/master/docs/public/demos/kafka)
-· 相关：[Kafka介绍与本地运行](./introduction.md) · [系列目录](./index.md)
+· 相关：[Kafka 核心模型与选型](./introduction.md) · [Kafka 本地部署与运行](./local-deployment.md) · [系列目录](./index.md)

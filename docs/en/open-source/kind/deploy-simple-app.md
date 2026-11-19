@@ -1,5 +1,5 @@
 ---
-description: "Deploy a small Go service to a multi-node Kind cluster: local image build and loading, Deployment, Service, probes, resource limits, verification and one-shot deployment."
+description: "Deploy a small Go service to a multi-node Kind cluster: prerequisites, image build and loading, Deployment and Service manifest notes, deployment and access verification, updates and rollback, a one-shot script and common issues."
 date: 2026-11-16
 recommend: 5
 tag:
@@ -14,184 +14,45 @@ categories:
 
 # Deploying a Simple Project on Kind
 
-Deploying a local project on Kind requires one step beyond ordinary Kubernetes operations: the local image must be delivered to the nodes. The deployment flow below runs from building the image to reaching the workload through a Service, and establishes configuration conventions suitable for local development and CI.
+Deploying a local project on Kind adds one step to the usual Kubernetes workflow: the image must be pushed into the nodes. Kind ships no registry, and each node runs its own containerd, separate from the Docker image store on the host.
 
-The following steps assume a multi-node cluster named `kind-multi`.
+This walkthrough uses a small Go service with no external dependencies and runs from building the image to reaching the workload through a Service, with configuration conventions that fit local development and CI. Every command uses the multi-node cluster `kind-multi` and the context `kind-kind-multi`.
 
-## Deployment flow
+## Prerequisites
 
-![Deploying a sample project on Kind](/images/open-source/kind/kind-demo-flow.svg)
+| Item | Requirement | Check |
+| --- | --- | --- |
+| Docker | 25 or newer, daemon running | `docker info` |
+| Kind | `v0.33.0` | `kind version` |
+| kubectl | `1.37.x` | `kubectl version --client` |
+| Cluster | a ready `kind-multi` multi-node cluster | `kubectl --context kind-kind-multi get nodes` |
 
-1. Build the image in the project directory with a fixed tag, for example `kind-demo:v1`.
-2. Import the image into every node with `kind load docker-image`.
-3. Apply the Namespace, ConfigMap, Deployment and Service.
-4. The Deployment creates two Pods; only Pods that pass readiness join the Service.
-5. Expose the Service to the host with `kubectl port-forward`, then verify health and business responses.
-6. To update, build, load, update the image and wait for the rollout to complete.
+Install commands for Docker, Kind and kubectl are in [Kind Single-Node Deployment](./single-node-deployment) under "Install the dependencies"; creating `kind-multi` is covered in [Kind Multi-Node Deployment](./multi-node-deployment) under "Standard deployment". Continue once every node reports `Ready`.
 
-In one sentence: **Kind has no built-in registry, so the local image must be loaded explicitly; beyond that, deployment is ordinary Kubernetes.**
+The sample service, Dockerfile, Kubernetes manifests and scripts live at [`docs/public/demos/kind`](https://github.com/zq-xu/zq-xu.github.io/tree/master/docs/public/demos/kind).
 
 ## Sample service and resources
 
 ### Sample service
 
-The sample is a dependency-free Go service with two endpoints:
+The sample is a Go service with no external dependencies and two endpoints:
 
-| Endpoint | Purpose | Response |
+| Endpoint | Purpose | Returns |
 | --- | --- | --- |
-| `/` | Business response | Hostname and version |
-| `/healthz` | Health check | `ok` |
+| `/` | business response | hostname and version |
+| `/healthz` | health check | `ok` |
 
-It reads `PORT` and `APP_VERSION` from the environment and supports graceful shutdown. It is small enough to keep attention on the deployment path rather than business logic.
+The service reads the `PORT` and `APP_VERSION` environment variables and shuts down gracefully. It stays small so that the verification focuses on the deployment flow rather than the business code.
 
 ### Deployed resources
 
 | Object | Purpose |
 | --- | --- |
-| Namespace | Isolate demo resources and delete them as a group |
-| ConfigMap | Supply `APP_VERSION`, separating configuration from the image |
-| Deployment | Manage two Pods, probes, resources and rolling updates |
-| Service | Provide a stable in-cluster endpoint |
-| Image | Built by Dockerfile and loaded into nodes with `kind load` |
-
-### Images and node image stores
-
-Each Kind node runs its own `containerd`. The host Docker image store and the node image stores are separate:
-
-```text
-host docker build ──> host image store
-                         │
-                         │ kind load docker-image
-                         ▼
-              node containerd image store (all nodes)
-```
-
-A successful build does not mean the cluster can use the image. Run `kind load`, and make sure the node that runs the Pod has the image.
-
-## Deployment configuration
-
-### Image loading and tag policy
-
-```bash
-docker build -t kind-demo:v1 ./app
-kind load docker-image kind-demo:v1 --name kind-multi
-```
-
-By default the image is imported into every node. Confirm with `docker exec kind-worker crictl images`.
-
-Use a fixed tag. Avoid `:latest`: Kubernetes defaults to `Always` for it and bypasses the local image. Also declare:
-
-```yaml
-image: kind-demo:v1
-imagePullPolicy: IfNotPresent
-```
-
-### Readiness and liveness probes
-
-| Probe | Action on failure | Purpose |
-| --- | --- | --- |
-| `readinessProbe` | Remove the Pod from Service endpoints; do not restart | Stop traffic while the app is starting or a dependency is unavailable |
-| `livenessProbe` | Restart the container | Recover from deadlocks or stuck processes |
-
-The sample uses the same `/healthz` for both, but the semantics differ: readiness decides "can this Pod serve traffic", liveness decides "should this container be restarted". Production liveness checks should not depend on external services, or an outage can trigger a restart storm.
-
-### Requests and limits
-
-```yaml
-resources:
-  requests:
-    cpu: 50m
-    memory: 64Mi
-  limits:
-    cpu: 200m
-    memory: 128Mi
-```
-
-- `requests` participates in scheduling and decides whether the Pod fits on a node;
-- `limits` is the runtime ceiling; CPU overuse is throttled, memory overuse is OOM-killed.
-
-On Kind, values that are too small cause restarts; values that are too large can leave Pods `Pending` because the node has no room.
-
-### Multi-node scheduling
-
-The sample uses `topologySpreadConstraints` to spread two replicas across nodes:
-
-```yaml
-topologySpreadConstraints:
-  - maxSkew: 1
-    topologyKey: kubernetes.io/hostname
-    whenUnsatisfiable: ScheduleAnyway
-    labelSelector:
-      matchLabels:
-        app.kubernetes.io/name: kind-demo
-```
-
-`ScheduleAnyway` still schedules when perfect spreading is impossible, avoiding `Pending` on small clusters. Use `DoNotSchedule` for strict spreading, but first make sure enough workers exist.
-
-If control planes have the `NoSchedule` taint, the two replicas land on the two workers. Without the taint, one can land on a control plane.
-
-### Service access
-
-Kind does not expose workload ports automatically. Common options:
-
-| Method | Use case | Advantage | Limitation |
-| --- | --- | --- | --- |
-| `kubectl port-forward` | Local development, one-off checks | No configuration, cross-platform | Dies with the process; not for sharing |
-| NodePort + `extraPortMappings` | Fixed port, LAN access | No extra components | Host ports must be planned |
-| Ingress | Multiple services, host/path routing | Closer to production ingress | Kind has no built-in Ingress controller |
-| LoadBalancer | External IP semantics | Close to cloud behaviour | Kind has no LoadBalancer implementation by default |
-
-`port-forward` needs no cluster changes and directly validates whether the image and manifests are correct.
-
-### Container security context
-
-```yaml
-securityContext:
-  allowPrivilegeEscalation: false
-  readOnlyRootFilesystem: true
-  runAsNonRoot: true
-  runAsUser: 10001
-  capabilities:
-    drop:
-      - ALL
-```
-
-These settings match `USER 10001:10001` in the Dockerfile. Changing only the manifest can still leave a root process; changing only the image loses the Kubernetes-side guardrails.
-
-### Persistent data
-
-The sample service does not write to local disk, so its manifests contain no PVC. A workload that needs durable data cannot rely on the container filesystem alone: data inside a Kind node container disappears when that container is removed, and a PV from the default StorageClass is node-local and `ReadWriteOnce`, so it cannot be mounted by replicas on different nodes.
-
-Use `extraMounts` to mount `/var/local-path-provisioner` to a host directory when creating the cluster, and PV data from the default StorageClass is written to the host. On the application side, a single-replica Deployment or a StatefulSet fits a PVC better; sharing one dataset across replicas requires external shared storage.
-
-## Common deployment issues and fixes
-
-The issues below are common when deploying workloads on Kind. Most stem from local image distribution, host access to Services, or node architecture rather than from the Kubernetes manifests themselves.
-
-| Issue | Symptom | Action |
-| --- | --- | --- |
-| `docker build` then `kubectl apply` | The image is absent; Pods report `ErrImagePull` | Run `kind load docker-image` |
-| Use `:latest` | Default `Always` pull ignores the local image | Use a fixed tag and `IfNotPresent` |
-| Load only one node | Pods on other nodes fail to pull | Load all nodes or use node affinity |
-| Use `port-forward` as a long-term entry | Connections drop when the terminal closes | Use NodePort or Ingress for shared access |
-| Treat a PVC as shared storage | The default StorageClass is node-local | Use external storage or pin the Pod |
-| Build amd64 on Apple Silicon | Architecture mismatch; the container cannot start | Build for the same architecture as the node image |
-
-Ingress is another common issue: Kind does not install an Ingress controller. The official docs now recommend `cloud-provider-kind` for Ingress and LoadBalancer support; third-party controllers such as ingress-nginx also work. Either way, node labels and port mappings must match.
-
-## Commands and configuration
-
-| Flag / command | Meaning |
-| --- | --- |
-| `docker build -t <tag>` | Build a local image |
-| `kind load docker-image <tag> --name <cluster>` | Import the image into all nodes of a cluster |
-| `imagePullPolicy: IfNotPresent` | Use the local image when present |
-| `kubectl rollout status` | Wait for a Deployment rollout |
-| `kubectl port-forward svc/<name> <local>:<remote>` | Forward a Service port to the host |
-| `kubectl get endpoints` | Check whether the Service has Ready Pods |
-| `kubectl rollout undo` | Roll back to the previous ReplicaSet |
-
-## Deployment steps
+| Namespace | isolates the sample resources for group deletion |
+| ConfigMap | supplies `APP_VERSION`, decoupling configuration from the image |
+| Deployment | manages 2 replicas, probes, resources and rollouts |
+| Service | gives the Pods a stable in-cluster access point |
+| Image | built from the Dockerfile and loaded into the nodes by `kind load` |
 
 ### Project layout
 
@@ -227,78 +88,204 @@ docs/public/demos/kind/
             └── kind-demo-deploy.sh
 ```
 
-`app/` holds the sample application and its deploy manifest. `installation/single-node/` and `installation/multiple-node/` each keep layout-specific `yaml/` templates, rendering scripts and persistence check manifests plus `scripts/` create and operational scripts. The application deployment script lives in `installation/application/scripts/`. Generated `*.local.yaml` files stay next to their templates and are not versioned.
+`app/` holds the sample code and its deployment manifest; `installation/single-node/` and `installation/multiple-node/` hold the `yaml/` templates, render scripts, persistence checks and `scripts/` for their own layout; the application deployment script lives in `installation/application/scripts/`. Generated `*.local.yaml` files sit next to their templates and are not committed.
 
-All resources live in one `kind-demo.yaml`, separated by `---`. `kubectl apply` processes documents in order, so the Namespace comes first and the remaining resources are created in the same pass.
+All resources are written into a single `kind-demo.yaml` separated by `---`. `kubectl apply` processes the file in order, so the Namespace comes first and the rest can be created in one pass.
 
-### Build the image
+## How images reach the nodes
+
+The host Docker image store and the node image store are separate:
+
+```text
+host docker build ──> host image store
+                         │
+                         │ kind load docker-image
+                         ▼
+              node containerd image store (all nodes)
+```
+
+So "the build succeeded" never means "the cluster can run it": `kind load` must push the image into every node (the commands are in "Build and load the image" below). The command imports into all nodes by default; check with `docker exec kind-multi-worker crictl images`. When you import into a subset only, node affinity or a fixed scheduler placement must guarantee the Pod lands on a node that has the image.
+
+Tags must be fixed — never use `:latest`, because Kubernetes defaults to the `Always` pull policy for `:latest` and would bypass the local image. Declare both lines in the Deployment:
+
+```yaml
+image: kind-demo:v1
+imagePullPolicy: IfNotPresent
+```
+
+## Manifest configuration notes
+
+Everything in this section lives in [`app/deploy/kind-demo.yaml`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/app/deploy/kind-demo.yaml).
+
+### Readiness and liveness probes
+
+| Probe | Effect on failure | When to use it |
+| --- | --- | --- |
+| `readinessProbe` | removes the Pod from Service endpoints, no restart | stop traffic while startup or a dependency is incomplete |
+| `livenessProbe` | restarts the container | unrecoverable faults such as a stuck or deadlocked process |
+
+The sample uses the same `/healthz` for both, but the semantics differ: readiness answers "may it take traffic", liveness answers "should it restart". In production keep liveness away from external services, otherwise an external outage triggers a restart storm.
+
+### Requests and limits
+
+```yaml
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    cpu: 200m
+    memory: 128Mi
+```
+
+- `requests` take part in scheduling and decide whether the Pod fits on a node;
+- `limits` cap runtime: CPU is throttled, memory is OOM-killed.
+
+In Kind neither extreme helps verification: values that are too small cause restart loops, values that are too large leave the Pod `Pending` for lack of node resources.
+
+### Multi-node scheduling
+
+The sample uses `topologySpreadConstraints` to place the 2 replicas on different nodes when possible:
+
+```yaml
+topologySpreadConstraints:
+  - maxSkew: 1
+    topologyKey: kubernetes.io/hostname
+    whenUnsatisfiable: ScheduleAnyway
+    labelSelector:
+      matchLabels:
+        app.kubernetes.io/name: kind-demo
+```
+
+`ScheduleAnyway` schedules even when the spread cannot be perfect, so a shortage of nodes does not block the Pod. Change it to `DoNotSchedule` for strict spreading, but check that enough workers exist first.
+
+If the control planes carry the `NoSchedule` taint, the 2 replicas land on the 2 workers; without it they may also land on a control plane.
+
+### Container security context
+
+The sample container runs as a non-root user with restricted write access:
+
+```yaml
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 10001
+  capabilities:
+    drop:
+      - ALL
+```
+
+These settings pair with `USER 10001:10001` in the Dockerfile. Changing only the manifest may still let the container start as root; changing only the image leaves the Kubernetes-side guard missing.
+
+### Service access options
+
+Kind does not expose business ports automatically:
+
+| Option | When to use | Advantage | Limitation |
+| --- | --- | --- | --- |
+| `kubectl port-forward` | local development, one-off verification | zero configuration, cross-platform | dies with the process, not for sharing |
+| NodePort + `extraPortMappings` | fixed ports, LAN access | no extra component | requires host port planning |
+| Ingress | several services routed by host or path | closest to a production entry | Kind ships no Ingress controller, one must be installed |
+| LoadBalancer | an external IP is required | matches cloud semantics | Kind has no LoadBalancer implementation by default |
+
+The verification here uses `port-forward`, which needs no cluster configuration and is enough to confirm that the image and manifests are correct.
+
+### Persistent data
+
+The sample writes no local disk, so the manifest has no PVC. Workloads that need persistence cannot rely on the container file system alone: deleting a Kind node container deletes its data, and the default StorageClass is node-local with `ReadWriteOnce` access, so replicas on different nodes cannot mount the same volume.
+
+Mounting `/var/local-path-provisioner` onto a host directory with `extraMounts` at cluster creation writes the default StorageClass data to the host. On the application side prefer a single-replica Deployment or a StatefulSet for PVC-backed data; sharing one volume across replicas requires external shared storage.
+
+## Deployment flow
+
+![Deployment flow of the sample project on Kind](/images/open-source/kind/kind-demo-flow.svg)
+
+1. Build the image in the project directory with the fixed tag `kind-demo:v1`;
+2. import it into every node with `kind load docker-image`;
+3. create the Namespace, ConfigMap, Deployment and Service with `kubectl apply`;
+4. let the Deployment start 2 Pods and attach them to the Service once readiness passes;
+5. expose the Service on the host with `kubectl port-forward` and verify health and business responses;
+6. for updates repeat build, load, image update and rollout wait.
+
+## Build and load the image
+
+Build the sample image:
 
 ```bash
 cd zq-xu.github.io/docs/public/demos/kind
 docker build -t kind-demo:v1 ./app
 ```
 
-The Dockerfile is a two-stage build:
+The Dockerfile uses a two-stage build:
 
-- build with `golang:1.27-alpine` into a static binary;
-- run on `alpine:3.22` as non-root UID 10001;
-- copy only the binary, not the source or toolchain.
+- the build stage compiles a static binary with `golang:1.27-alpine`;
+- the runtime stage uses `alpine:3.22` and creates a non-root user with UID 10001;
+- only the binary is copied, so sources and compilers never reach the runtime image.
 
-### Load and deploy
-
-First load the image into every node. Kind nodes run their own containerd and cannot read the host Docker image store directly:
+Import the image into every node of the cluster:
 
 ```bash
 kind load docker-image kind-demo:v1 --name kind-multi
 ```
 
-Apply all resources in one pass. `kind-demo.yaml` orders them as Namespace, ConfigMap, Deployment and Service:
+Confirm the node has the image:
+
+```bash
+docker exec kind-multi-worker crictl images | grep kind-demo
+```
+
+## Deploy the resources
+
+Apply everything in one pass. Inside `kind-demo.yaml` the resources are ordered Namespace, ConfigMap, Deployment, Service:
 
 ```bash
 kubectl --context kind-kind-multi apply -f app/deploy/kind-demo.yaml
 ```
 
-Wait for the Deployment rollout and confirm that both Pods become Ready:
+Wait for the rollout and confirm both Pods are ready:
 
 ```bash
 kubectl --context kind-kind-multi -n kind-demo rollout status \
   deployment/kind-demo --timeout=180s
 ```
 
-Show the node, IP and status of each Pod:
+Inspect the node, IP and state of each Pod:
 
 ```bash
 kubectl --context kind-kind-multi -n kind-demo get pods -o wide
 ```
 
-Expected:
+Expected results:
 
-- two Pods are `Running` with `READY 2/2`;
-- the Pods are spread across different workers when possible;
-- the `kind-demo` Service Endpoints contain both Pod IPs.
+- both Pods are `Running` with `READY` `2/2`;
+- the two Pods sit on different worker nodes when possible;
+- the Endpoints of Service `kind-demo` list both Pod IPs.
 
-Inspect the Service:
+Check the Service and its endpoints:
 
 ```bash
 kubectl --context kind-kind-multi -n kind-demo get service kind-demo
 kubectl --context kind-kind-multi -n kind-demo get endpoints kind-demo
 ```
 
-### Verify
+## Verify access
+
+Forward the Service to host port `18080` and keep the command running:
 
 ```bash
 kubectl --context kind-kind-multi -n kind-demo port-forward \
   svc/kind-demo 18080:80
 ```
 
-In another terminal:
+In a second terminal:
 
 ```bash
 curl -i http://127.0.0.1:18080/healthz
 curl -i http://127.0.0.1:18080/
 ```
 
-The response looks like:
+The business response looks like:
 
 ```text
 hello from kind
@@ -306,42 +293,46 @@ host: kind-demo-7c9f8d6b5-xxxxx
 version: v1
 ```
 
-Calling `/` repeatedly shows the `host` alternating between the two Pods, which confirms the Service is distributing traffic.
+Repeated requests to `/` alternate the `host` field between the two Pods, which shows the Service spreads traffic across both replicas.
 
-### One-shot deployment
+## One-shot deployment
 
-[`kind-demo-deploy.sh`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/installation/application/scripts/kind-demo-deploy.sh) chains build, load, deploy and verify:
+[`kind-demo-deploy.sh`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/installation/application/scripts/kind-demo-deploy.sh) chains build, load, deployment and verification into one run:
 
 ```bash
 cd zq-xu.github.io/docs/public/demos/kind
 ./installation/application/scripts/kind-demo-deploy.sh
 ```
 
-The script:
+The script runs these steps in order:
 
-1. checks Docker, kind, kubectl and curl;
-2. creates `kind-multi` through `kind-multi-node.sh` when missing;
-3. builds `kind-demo:v1` and loads it into all nodes;
-4. applies `kind-demo.yaml`, creating the Namespace and all resources in one pass;
-5. waits for the Deployment rollout;
-6. starts a temporary `port-forward` on `127.0.0.1:18080` and calls `/healthz` and `/`;
-7. closes the temporary forward and prints the long-lived access command.
+1. check Docker, kind, kubectl and curl;
+2. create the cluster through `kind-multi-node.sh` when it does not exist;
+3. build `kind-demo:v1` and import it into every node;
+4. apply `kind-demo.yaml`, creating the Namespace and all resources at once;
+5. wait for the rollout to finish;
+6. start a temporary `port-forward` on `127.0.0.1:18080` and request `/healthz` and `/`;
+7. close the temporary forward on exit and print the long-lived access command.
 
-Override defaults:
+Environment variables override the defaults:
 
 ```bash
 CLUSTER_NAME=kind-dev IMAGE=kind-demo:v1 LOCAL_PORT=18081 \
   ./installation/application/scripts/kind-demo-deploy.sh
 ```
 
-The script does not delete the namespace, so you can keep investigating.
+The script does not delete the namespace, so you can keep investigating afterwards.
 
-### Update and roll back
+## Update and roll back
+
+Build a new tag, load it and point the Deployment at it:
 
 ```bash
+# build the new tag and load it into every node
 docker build -t kind-demo:v2 ./app
 kind load docker-image kind-demo:v2 --name kind-multi
 
+# point the deployment at the new image and wait for the rollout
 kubectl --context kind-kind-multi -n kind-demo set image \
   deployment/kind-demo app=kind-demo:v2
 
@@ -349,45 +340,50 @@ kubectl --context kind-kind-multi -n kind-demo rollout status \
   deployment/kind-demo
 ```
 
-Roll back:
+Roll back to the previous version:
 
 ```bash
 kubectl --context kind-kind-multi -n kind-demo rollout undo deployment/kind-demo
 ```
 
-After a ConfigMap change, restart the Pods to pick up the new value:
+A ConfigMap change only reaches the Pods after a restart:
 
 ```bash
 kubectl --context kind-kind-multi -n kind-demo rollout restart deployment/kind-demo
 ```
 
-### Clean up application resources
+## Clean up application resources
 
 ```bash
 kubectl --context kind-kind-multi delete namespace kind-demo
 ```
 
-Deleting the namespace removes its Deployment, Service, ConfigMap and Pods. The Kind cluster and other namespaces are unaffected.
+Deleting the Namespace also deletes its Deployment, Service, ConfigMap and Pods, and leaves the Kind cluster and other namespaces untouched. Cleanup targets application resources only; the cluster stays.
 
-### Troubleshooting
+## Common issues and troubleshooting
 
-| Symptom | Usual cause | Action |
+Most of these problems come from local image distribution, host access to Services or node architecture rather than from how the manifest is written.
+
+| Issue | Symptom | Fix |
 | --- | --- | --- |
-| `ErrImagePull` / `ImagePullBackOff` | Image not loaded, tag mismatch, or `:latest` | Re-run `kind load`; check the Pod's node and tag |
-| Pod `Pending` | Resource shortage, taint, affinity, port conflict | `kubectl describe pod` and read Events |
-| `CrashLoopBackOff` | App fails to start or probes are too strict | `kubectl logs`, `kubectl describe pod` |
-| `port-forward` connection refused | Service port or targetPort mismatch | `kubectl get svc -o yaml`; check `targetPort: http` |
-| Empty response | Pod not Ready or Endpoints empty | `kubectl get endpoints`; wait for readiness |
-| `exec format error` | Image architecture differs from the node | Build with the same `--platform` as the node image |
+| `kubectl apply` right after `docker build` | no image inside the node, the Pod reports `ErrImagePull` | run `kind load docker-image` first |
+| Using `:latest` | the default `Always` policy ignores the local image | use a fixed tag with `IfNotPresent` |
+| Loading the image into one node only | the pull fails when the Pod lands elsewhere | load into all nodes, or add node affinity |
+| Pod `Pending` | insufficient resources, taints, affinity or a port conflict | `kubectl describe pod` and read the Events |
+| `CrashLoopBackOff` | the application fails to start, or the probes are too strict | `kubectl logs`, `kubectl describe pod` |
+| `port-forward` refuses the connection | Service port and targetPort do not match | `kubectl get svc -o yaml` and check `targetPort: http` |
+| Empty response | the Pod is not ready or the endpoints are empty | `kubectl get endpoints` and wait for readiness |
+| Using `port-forward` as a long-lived entry | the connection drops when the terminal closes | share access through NodePort or Ingress |
+| Treating a PVC as shared storage | the default StorageClass is node-local | use external storage or pin the scheduling |
+| Container starts with `exec format error` | image architecture does not match the node (amd64 built on Apple Silicon, for example) | build with the same `--platform` as the node image |
 
-Check images inside a node:
+Ingress is another frequent problem: Kind installs no Ingress controller. The official docs now recommend `cloud-provider-kind` for Ingress and LoadBalancer support, and third-party controllers such as ingress-nginx also work. Either way node labels and port mappings must match.
 
-```bash
-docker exec kind-multi-worker crictl images | grep kind-demo
-```
-
-Inspect Pod events:
+Read the Pod events to find the cause:
 
 ```bash
 kubectl --context kind-kind-multi -n kind-demo describe pod <pod-name>
 ```
+
+
+
