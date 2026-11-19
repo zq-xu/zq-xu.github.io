@@ -3,19 +3,26 @@
 # Create and verify a single-node kind cluster.
 #
 # Usage:
-#   ./scripts/kind-single-node.sh
+#   ./installation/single-node/scripts/kind-single-node.sh
 #
 # Environment overrides:
 #   CLUSTER_NAME=kind-single
 #   KIND_VERSION=v0.33.0
-#   NODE_IMAGE=kindest/node:v1.37.0@sha256:<digest>
+#   NODE_IMAGE=kindest/node:v1.37.0
+#   DATA_DIR=${HOME}/.kind-single-node
 #
 set -euo pipefail
 
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 CLUSTER_NAME="${CLUSTER_NAME:-kind-single}"
 KIND_VERSION="${KIND_VERSION:-v0.33.0}"
-NODE_IMAGE="${NODE_IMAGE:-kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5}"
+NODE_IMAGE="${NODE_IMAGE:-kindest/node:v1.37.0}"
+DATA_DIR="${DATA_DIR:-${HOME}/.kind-single-node}"
 CONTEXT="kind-${CLUSTER_NAME}"
+
+CONFIG_FILE="$(mktemp "${TMPDIR:-/tmp}/kind-single.XXXXXX.yaml")"
+cleanup() { rm -f "$CONFIG_FILE"; }
+trap cleanup EXIT
 
 log() { printf '[kind] %s\n' "$*"; }
 die() { printf '[kind] error: %s\n' "$*" >&2; exit 1; }
@@ -54,6 +61,13 @@ install_kind() {
   export PATH="${target}:${PATH}"
 }
 
+write_config() {
+  DATA_DIR="$DATA_DIR" \
+  NODE_IMAGE="$NODE_IMAGE" \
+  OUTPUT="$CONFIG_FILE" \
+  "${ROOT_DIR}/installation/single-node/yaml/render-config.sh"
+}
+
 create_cluster() {
   if kind get clusters 2>/dev/null | grep -qx "$CLUSTER_NAME"; then
     log "cluster ${CLUSTER_NAME} already exists"
@@ -62,7 +76,7 @@ create_cluster() {
   log "creating cluster ${CLUSTER_NAME} with ${NODE_IMAGE}"
   kind create cluster \
     --name "$CLUSTER_NAME" \
-    --image "$NODE_IMAGE" \
+    --config "$CONFIG_FILE" \
     --wait 120s
 }
 
@@ -80,6 +94,7 @@ verify_cluster() {
 main() {
   require_tools
   install_kind
+  write_config
   create_cluster
   verify_cluster
 }

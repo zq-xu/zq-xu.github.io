@@ -34,13 +34,13 @@ The same default means scheduling results on a single node do not represent a pr
 
 ### The node image determines the Kubernetes version
 
-The Kubernetes version comes from the node image, not from the kubectl binary on the host. The pinned image is:
+The Kubernetes version comes from the node image, not from the kubectl binary on the host. This series uses:
 
 ```text
-kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5
+kindest/node:v1.37.0
 ```
 
-Pinning the `@sha256` digest guarantees the image Kind built for that release. A tag alone usually works, but CI should pin the digest.
+`v1.37.0` is the node image tag and maps to Kubernetes v1.37.0. Reusing the same tag keeps the node version stable.
 
 ### kubeconfig and context
 
@@ -92,6 +92,14 @@ Kind maps the API server port to the host, and kubeconfig records a host-reachab
 - declare `extraPortMappings` for fixed host ports;
 - on macOS and Windows, node container IPs are not directly reachable from the host.
 
+### Persistent storage
+
+Kind installs `local-path-provisioner` and creates the `standard` StorageClass. Without extra configuration, PersistentVolume data is written to `/var/local-path-provisioner` inside the node container and disappears when that container is removed.
+
+Mount this path to a host directory with `extraMounts` in the cluster configuration, and PV data is written to the host instead. A single-node cluster can use `${HOME}/.kind-single-node` directly; files on the host survive a node container stop and start.
+
+This remains node-local storage: PVCs are bound to the node, and `kind delete cluster` removes the node container and the PV/PVC objects. Host files remain, but a new cluster does not automatically recognise the old PVC.
+
 ## Boundaries and pitfalls
 
 | Pitfall | What actually happens | Fix |
@@ -99,7 +107,7 @@ Kind maps the API server port to the host, and kubeconfig records a host-reachab
 | A single node can test HA | One etcd member and one control plane; no failover | Use three control planes for HA tests |
 | A successful create means the node is usable | `--wait` only covers the control plane | Also run `kubectl wait --for=condition=Ready nodes` |
 | Local images are visible to Pods | Each node has its own containerd | Run `kind load docker-image` first |
-| Data survives cluster deletion | Node containers and local volumes are removed | Mount a host path when data matters |
+| Data survives cluster deletion | Node containers are removed and in-container data disappears with them | Mount the storage path to a host directory when creating the cluster |
 | An old Kind binary runs any new image | Kind and node images have compatibility limits | Follow the release notes |
 
 Two resource boundaries also matter:
@@ -198,14 +206,33 @@ kubectl version --client
 
 ### Create the cluster
 
+The single-node configuration is stored in [`installation/single-node/yaml/kind-single.yaml`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/installation/single-node/yaml/kind-single.yaml). [`render-config.sh`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/installation/single-node/yaml/render-config.sh) in the same directory replaces `${NODE_IMAGE}` and `${DATA_DIR}`; the node image defaults to `kindest/node:v1.37.0` and the data directory to `${HOME}/.kind-single-node`.
+
+Render the configuration:
+
+```bash
+cd zq-xu.github.io/docs/public/demos/kind
+./installation/single-node/yaml/render-config.sh
+```
+
+This creates `${HOME}/.kind-single-node` and writes `installation/single-node/yaml/kind-single.local.yaml`.
+
+To use another data directory:
+
+```bash
+cd zq-xu.github.io/docs/public/demos/kind
+DATA_DIR="${HOME}/.kind-single-node-test" \
+  ./installation/single-node/yaml/render-config.sh
+```
+
+Create the cluster:
+
 ```bash
 kind create cluster \
   --name kind-single \
-  --image kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5 \
+  --config installation/single-node/yaml/kind-single.local.yaml \
   --wait 120s
 ```
-
-The first run pulls the node image; duration depends on the network.
 
 ### Verify
 
@@ -241,24 +268,64 @@ kubectl --context kind-kind-single run dns-test \
   -- nslookup kubernetes.default
 ```
 
-### One-shot script
+### Data persistence
 
-[`kind-single-node.sh`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/scripts/kind-single-node.sh) runs the same steps:
+The default StorageClass `standard` writes PVC data to `/var/local-path-provisioner` inside the node container. The configuration above mounts that path at `${HOME}/.kind-single-node` on the host, so PVC data is stored in that host directory.
+
+Create a PVC and a Pod that writes to it. The manifest is [`installation/single-node/yaml/pvc-check.yaml`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/installation/single-node/yaml/pvc-check.yaml):
+
+```bash
+kubectl --context kind-kind-single apply \
+  -f zq-xu.github.io/docs/public/demos/kind/installation/single-node/yaml/pvc-check.yaml
+```
+
+Confirm that the file exists:
+
+```bash
+kubectl --context kind-kind-single wait \
+  --for=condition=Ready pod/host-data-check --timeout=120s
+
+kubectl --context kind-kind-single exec host-data-check -- cat /data/check.log
+find "${HOME}/.kind-single-node" -maxdepth 2 -type f -name check.log
+```
+
+Stop and start the node container, then read the same file again. [`restart-node.sh`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/installation/single-node/scripts/restart-node.sh) resolves the container from the cluster name and waits for the node to become Ready:
 
 ```bash
 cd zq-xu.github.io/docs/public/demos/kind
-./scripts/kind-single-node.sh
+./installation/single-node/scripts/restart-node.sh
+```
+
+Wait for the Pod and read the data:
+
+```bash
+kubectl --context kind-kind-single wait \
+  --for=condition=Ready pod/host-data-check --timeout=180s
+kubectl --context kind-kind-single exec host-data-check -- cat /data/check.log
+```
+
+`kind delete cluster` removes the node container, etcd and the PV/PVC objects. Files under `${HOME}/.kind-single-node` remain on the host, but a new cluster does not automatically recognise the old PVC. Stopping and starting the node container keeps both the cluster objects and the PVC.
+
+Do not delete the PVC unless the data is no longer needed; the default StorageClass uses the `Delete` reclaim policy.
+
+### One-shot script
+
+[`kind-single-node.sh`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/installation/single-node/scripts/kind-single-node.sh) runs the same steps:
+
+```bash
+cd zq-xu.github.io/docs/public/demos/kind
+./installation/single-node/scripts/kind-single-node.sh
 ```
 
 The script:
 
 1. checks Docker and kubectl, and exits if Docker is not running;
 2. installs `kind` v0.33.0 into `~/.local/bin` when missing;
-3. creates `kind-single` if it does not exist, otherwise reuses it;
+3. generates a cluster config with a host data directory, and creates `kind-single` if it does not exist;
 4. waits for every node to become Ready;
 5. prints nodes, StorageClasses and system Pods.
 
-It is idempotent: re-running does not delete an existing cluster. To recreate:
+The default data directory is `${HOME}/.kind-single-node`. It is idempotent: re-running does not delete an existing cluster. To recreate:
 
 ```bash
 kind delete cluster --name kind-single
@@ -268,8 +335,9 @@ Override defaults with environment variables:
 
 ```bash
 CLUSTER_NAME=kind-dev \
-NODE_IMAGE=kindest/node:v1.36.4@sha256:099e049362a1526b2db71494e1947aae99bd16290d7c895f2b7ea312e3cbfaed \
-./scripts/kind-single-node.sh
+DATA_DIR="${HOME}/.kind-single-node-test" \
+NODE_IMAGE=kindest/node:v1.36.4 \
+./installation/single-node/scripts/kind-single-node.sh
 ```
 
 ### Clean up
@@ -278,7 +346,7 @@ NODE_IMAGE=kindest/node:v1.36.4@sha256:099e049362a1526b2db71494e1947aae99bd16290
 kind delete cluster --name kind-single
 ```
 
-This removes node containers, the Docker network and the kubeconfig context. Cluster data is not preserved.
+This removes node containers, the Docker network, etcd and the kubeconfig context. Files under `${HOME}/.kind-single-node` are not deleted automatically, but a new cluster does not automatically recognise the old PVC or cluster objects.
 
 ### Troubleshooting
 

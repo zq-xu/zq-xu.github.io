@@ -40,7 +40,7 @@ Kind can be understood as four layers: the host Docker engine, the Docker networ
 | `kind` CLI | Management entry point. A single Go binary that creates, starts, inspects and deletes node containers through the Docker API. |
 | Cluster | Cluster instance. A set of node containers sharing the same kind labels, identified by `--name`. |
 | Node container | Node carrier. A Docker container running `systemd` and Kubernetes components, with a control-plane or worker role. |
-| Node image | Version carrier. `kindest/node:vX.Y.Z@sha256:...`, preloaded with a specific Kubernetes release. |
+| Node image | Version carrier. `kindest/node:vX.Y.Z`, preloaded with a specific Kubernetes release. |
 | Cluster config | Topology declaration. `kind.x-k8s.io/v1alpha4` YAML describing nodes, networking, port mappings and kubeadm patches. |
 | Docker network | Node network. The bridge network created by Kind, assigning node IPs and carrying inter-node traffic. |
 | kubeconfig | Access configuration. Host-side credentials whose context is named `kind-<cluster>`. |
@@ -106,14 +106,14 @@ By default, `kind load docker-image` imports the image into every node, so a Pod
 
 Image tags should be fixed. Kubernetes defaults to `Always` for `:latest`, which bypasses the local copy and contacts a registry. Workload manifests should also set `imagePullPolicy: IfNotPresent` so the node prefers its local image.
 
-### Storage
+### Persistent storage
 
-Kind installs `local-path-provisioner` and creates a default StorageClass named `standard`. PersistentVolumes live on the local filesystem of a node container, which is suitable for demos and tests but provides no shared storage.
+Kind installs `local-path-provisioner` and creates a default StorageClass named `standard`. PersistentVolumes live on the local filesystem of a node container by default; mounting that path to a host directory with `extraMounts` writes the data to the host, so files survive a container stop and start or a container recreation. The default storage provides no cross-node sharing.
 
 Two limitations follow:
 
 - A PersistentVolume is bound to one node. A Pod using a PVC may not see the original data after being rescheduled to another node.
-- Deleting the cluster deletes node containers and their local data. Data that must survive should be mounted from the host with `extraMounts` or stored externally.
+- Deleting the cluster deletes node containers and their local data; if the storage path is mounted to a host directory with `extraMounts`, the files remain on the host, but a new cluster does not automatically recognise the old PVC.
 
 Stateless workloads should prefer `emptyDir` or no volume at all. When testing a StatefulSet, accept that data is node-local, or pin the Pod to the same node with affinity.
 
@@ -157,7 +157,7 @@ Common pitfalls and their fixes:
 | Use the `:latest` tag | The default `Always` policy ignores the local image | Use a fixed tag and `IfNotPresent` |
 | Reach node IPs directly from macOS | Nodes sit inside a Docker VM and are not routable | Use `extraPortMappings` or `port-forward` |
 | Treat Kind as a production cluster | Single host, no failure domains, no cloud integration | Reserve it for development, tests and CI |
-| Expect data to survive cluster deletion | Node containers and local volumes are removed | Mount a host directory or use external storage |
+| Expect data to survive cluster deletion | Node containers and local volumes are removed; without a host mount the data disappears with the container | Mount a host directory with `extraMounts`, or use external storage |
 
 ## Choosing among local tools
 

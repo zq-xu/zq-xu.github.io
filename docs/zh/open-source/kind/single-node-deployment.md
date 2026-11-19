@@ -34,13 +34,13 @@ Kind 创建的单节点集群只有一个 `control-plane` 角色。Kind 默认�
 
 ### 节点镜像决定 Kubernetes 版本
 
-Kind 的 Kubernetes 版本由节点镜像决定，而不是由宿主机上的 kubectl 决定。固定节点镜像如下：
+Kind 的 Kubernetes 版本由节点镜像决定，而不是由宿主机上的 kubectl 决定。本系列使用的节点镜像为：
 
 ```text
-kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5
+kindest/node:v1.37.0
 ```
 
-固定 `@sha256` 摘要可以保证拿到的是 Kind 官方为该版本构建的镜像，不受标签漂移影响。仅指定 `v1.37.0` 通常也可行，但在 CI 中建议固定摘要。
+`v1.37.0` 是节点镜像标签，对应 Kubernetes v1.37.0。创建集群时保持同一标签，节点版本就不会变化。
 
 ### kubeconfig 与 context
 
@@ -92,6 +92,14 @@ Kind 会把 API Server 端口映射到宿主机，kubeconfig 中记录的是宿�
 - 需要固定端口时，在集群配置里写 `extraPortMappings`；
 - macOS 与 Windows 上不能直接访问节点容器 IP。
 
+### 持久化存储
+
+Kind 默认安装 `local-path-provisioner`，并创建 `standard` StorageClass。未做额外配置时，PersistentVolume 的数据写入节点容器内的 `/var/local-path-provisioner`，容器删除后数据随之消失。
+
+在集群配置中通过 `extraMounts` 把这个路径挂载到宿主机目录，PV 数据就会落到宿主机。单节点集群可以直接使用 `${HOME}/.kind-single-node`，节点容器停止再启动后，宿主目录中的文件仍然存在。
+
+这种持久化仍是节点本地存储：PVC 与节点绑定，`kind delete cluster` 会删除节点容器和 PV/PVC 对象。宿主机文件会保留，但新集群不会自动识别旧 PVC。
+
 ## 边界与常见误区
 
 | 误区 | 实际行为 | 正确做法 |
@@ -99,7 +107,7 @@ Kind 会把 API Server 端口映射到宿主机，kubeconfig 中记录的是宿�
 | 单节点可以验证高可用 | 只有一个 etcd 与一个 control-plane，没有故障转移 | 高可用验证使用 3 control-plane 配置 |
 | 创建成功就代表节点可用 | `--wait` 只等到 control plane 就绪 | 再执行 `kubectl wait --for=condition=Ready nodes` |
 | 本地镜像可以直接被 Pod 使用 | 节点内是独立的 containerd，看不到宿主机 Docker 镜像 | 先 `kind load docker-image` |
-| 删除集群后数据还在 | 节点容器被删除，容器内数据丢失 | 需要保留时挂载宿主机目录 |
+| 删除集群后数据还在 | 节点容器被删除，容器内数据随容器消失 | 创建集群时把存储路径挂载到宿主机目录 |
 | 旧版 Kind 可以运行任意新节点镜像 | Kind 与节点镜像存在兼容范围 | 按 release notes 选择匹配版本 |
 
 单节点还有两个资源边界：
@@ -198,14 +206,33 @@ kubectl version --client
 
 ### 创建单节点集群
 
+单节点配置位于 [`installation/single-node/yaml/kind-single.yaml`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/installation/single-node/yaml/kind-single.yaml)。模板中的 `${NODE_IMAGE}` 与 `${DATA_DIR}` 由同目录的 [`render-config.sh`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/installation/single-node/yaml/render-config.sh) 替换，节点镜像默认 `kindest/node:v1.37.0`，数据目录默认 `${HOME}/.kind-single-node`。
+
+生成配置：
+
+```bash
+cd zq-xu.github.io/docs/public/demos/kind
+./installation/single-node/yaml/render-config.sh
+```
+
+脚本会创建 `${HOME}/.kind-single-node`，并生成 `installation/single-node/yaml/kind-single.local.yaml`。
+
+需要自定义数据目录时：
+
+```bash
+cd zq-xu.github.io/docs/public/demos/kind
+DATA_DIR="${HOME}/.kind-single-node-test" \
+  ./installation/single-node/yaml/render-config.sh
+```
+
+创建集群：
+
 ```bash
 kind create cluster \
   --name kind-single \
-  --image kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5 \
+  --config installation/single-node/yaml/kind-single.local.yaml \
   --wait 120s
 ```
-
-创建过程会输出拉取镜像、准备节点、启动 control plane 等步骤。首次执行需要下载节点镜像，时间取决于网络。
 
 ### 验证集群
 
@@ -241,24 +268,64 @@ kubectl --context kind-kind-single run dns-test \
   -- nslookup kubernetes.default
 ```
 
-### 一键脚本
+### 数据持久化
 
-脚本 [`kind-single-node.sh`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/scripts/kind-single-node.sh)把上面的步骤串成一次执行：
+默认 StorageClass `standard` 把 PVC 数据写入节点容器的 `/var/local-path-provisioner`。上面的配置已把该路径映射到宿主机的 `${HOME}/.kind-single-node`，因此 PVC 数据实际存放在这个宿主机目录。
+
+创建一个 PVC 和写入测试 Pod。清单位于 [`installation/single-node/yaml/pvc-check.yaml`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/installation/single-node/yaml/pvc-check.yaml)：
+
+```bash
+kubectl --context kind-kind-single apply \
+  -f zq-xu.github.io/docs/public/demos/kind/installation/single-node/yaml/pvc-check.yaml
+```
+
+确认数据已写入：
+
+```bash
+kubectl --context kind-kind-single wait \
+  --for=condition=Ready pod/host-data-check --timeout=120s
+
+kubectl --context kind-kind-single exec host-data-check -- cat /data/check.log
+find "${HOME}/.kind-single-node" -maxdepth 2 -type f -name check.log
+```
+
+停止并重新启动节点容器，再读取同一个文件。使用 [`restart-node.sh`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/installation/single-node/scripts/restart-node.sh) 按实际集群名查找节点容器，并在启动后等待节点就绪：
 
 ```bash
 cd zq-xu.github.io/docs/public/demos/kind
-./scripts/kind-single-node.sh
+./installation/single-node/scripts/restart-node.sh
+```
+
+等待业务 Pod 重新就绪并读取数据：
+
+```bash
+kubectl --context kind-kind-single wait \
+  --for=condition=Ready pod/host-data-check --timeout=180s
+kubectl --context kind-kind-single exec host-data-check -- cat /data/check.log
+```
+
+`kind delete cluster` 会删除节点容器、etcd 和 PV/PVC 对象；宿主机 `${HOME}/.kind-single-node` 中的文件仍在，但新集群不会自动识别旧 PVC。只停止再启动节点容器时，集群对象和 PVC 都会保留。
+
+测试完成后不要直接删除 PVC，除非确认数据不再需要；默认 StorageClass 的回收策略是 `Delete`。
+
+### 一键脚本
+
+脚本 [`kind-single-node.sh`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/installation/single-node/scripts/kind-single-node.sh)把上面的步骤串成一次执行：
+
+```bash
+cd zq-xu.github.io/docs/public/demos/kind
+./installation/single-node/scripts/kind-single-node.sh
 ```
 
 脚本按顺序完成：
 
 1. 检查 Docker 与 kubectl，Docker 未运行时直接报错退出；
 2. 如果本机没有 `kind`，下载 `v0.33.0` 到 `~/.local/bin`；
-3. 集群不存在时创建 `kind-single`，已存在则复用；
+3. 生成带宿主机目录挂载的集群配置，集群不存在时创建 `kind-single`，已存在则复用；
 4. 等待所有节点 Ready；
 5. 打印节点、StorageClass 与系统 Pod。
 
-脚本是幂等的：重复执行不会删除已有集群。需要重建时先执行：
+默认数据目录是 `${HOME}/.kind-single-node`。脚本是幂等的：重复执行不会删除已有集群。需要重建时先执行：
 
 ```bash
 kind delete cluster --name kind-single
@@ -268,8 +335,9 @@ kind delete cluster --name kind-single
 
 ```bash
 CLUSTER_NAME=kind-dev \
-NODE_IMAGE=kindest/node:v1.36.4@sha256:099e049362a1526b2db71494e1947aae99bd16290d7c895f2b7ea312e3cbfaed \
-./scripts/kind-single-node.sh
+DATA_DIR="${HOME}/.kind-single-node-test" \
+NODE_IMAGE=kindest/node:v1.36.4 \
+./installation/single-node/scripts/kind-single-node.sh
 ```
 
 ### 清理
@@ -278,7 +346,7 @@ NODE_IMAGE=kindest/node:v1.36.4@sha256:099e049362a1526b2db71494e1947aae99bd16290
 kind delete cluster --name kind-single
 ```
 
-删除会移除节点容器、Docker 网络和 kubeconfig 中对应的 context。集群内的数据不会保留。
+删除会移除节点容器、Docker 网络、etcd 和 kubeconfig 中对应的 context。宿主机挂载目录 `${HOME}/.kind-single-node` 中的文件不会自动删除，但新集群不会自动识别旧 PVC 和旧集群对象。
 
 ### 故障排查
 

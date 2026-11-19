@@ -4,7 +4,7 @@
 # the service through a port-forward.
 #
 # Usage:
-#   ./scripts/kind-demo-deploy.sh
+#   ./installation/application/scripts/kind-demo-deploy.sh
 #
 # Environment overrides:
 #   CLUSTER_NAME=kind-multi
@@ -14,7 +14,7 @@
 #
 set -euo pipefail
 
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 CLUSTER_NAME="${CLUSTER_NAME:-kind-multi}"
 IMAGE="${IMAGE:-kind-demo:v1}"
 NAMESPACE="${NAMESPACE:-kind-demo}"
@@ -45,7 +45,7 @@ ensure_cluster() {
     return
   fi
   log "cluster ${CLUSTER_NAME} not found; creating it"
-  CLUSTER_NAME="$CLUSTER_NAME" "${ROOT_DIR}/scripts/kind-multi-node.sh"
+  CLUSTER_NAME="$CLUSTER_NAME" "${ROOT_DIR}/installation/multiple-node/scripts/kind-multi-node.sh"
 }
 
 build_and_load() {
@@ -56,8 +56,7 @@ build_and_load() {
 }
 
 deploy() {
-  kubectl --context "$CONTEXT" apply -f "${ROOT_DIR}/deploy/00-namespace.yaml"
-  kubectl --context "$CONTEXT" apply -f "${ROOT_DIR}/deploy"
+  kubectl --context "$CONTEXT" apply -f "${ROOT_DIR}/app/deploy/kind-demo.yaml"
   kubectl --context "$CONTEXT" -n "$NAMESPACE" rollout status \
     deployment/kind-demo --timeout=180s
   kubectl --context "$CONTEXT" -n "$NAMESPACE" get pods -o wide

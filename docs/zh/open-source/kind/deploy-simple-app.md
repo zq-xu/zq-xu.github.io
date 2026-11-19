@@ -160,6 +160,12 @@ securityContext:
 
 这些设置与 Dockerfile 中的 `USER 10001:10001` 配套。只改清单不改镜像，容器仍可能以 root 启动；只改镜像不改清单，则缺少 Kubernetes 侧的兜底。
 
+### 持久化数据
+
+示例服务不写本地磁盘，因此清单中没有 PVC。需要持久化数据的业务不能只依赖容器文件系统：Kind 节点容器被删除后，容器内数据随容器消失；默认 StorageClass 的 PV 位于节点本地，访问模式为 `ReadWriteOnce`，不同节点上的副本无法同时挂载。
+
+创建集群时使用 `extraMounts` 把 `/var/local-path-provisioner` 挂载到宿主机目录后，默认 StorageClass 创建的 PV 数据会写到宿主机。应用侧使用 PVC 时，单副本 Deployment 或 StatefulSet 更合适；多副本共享同一份数据需要外部共享存储。
+
 ## 常见部署问题与处理
 
 本节汇总在 Kind 中部署应用时容易出现的问题。这些问题多与本地镜像分发、宿主机访问 Service 和节点架构有关，而不是应用清单本身的写法。
@@ -194,21 +200,38 @@ securityContext:
 ```text
 docs/public/demos/kind/
 ├── app/
+│   ├── deploy/
+│   │   └── kind-demo.yaml
 │   ├── Dockerfile
 │   ├── go.mod
 │   └── main.go
-├── deploy/
-│   ├── 00-namespace.yaml
-│   ├── 10-configmap.yaml
-│   ├── 20-deployment.yaml
-│   └── 30-service.yaml
-└── scripts/
-    ├── kind-single-node.sh
-    ├── kind-multi-node.sh
-    └── kind-demo-deploy.sh
+└── installation/
+    ├── single-node/
+    │   ├── yaml/
+    │   │   ├── kind-single.yaml
+    │   │   ├── pvc-check.yaml
+    │   │   └── render-config.sh
+    │   └── scripts/
+    │       ├── kind-single-node.sh
+    │       └── restart-node.sh
+    ├── multiple-node/
+    │   ├── yaml/
+    │   │   ├── kind-multi.yaml
+    │   │   ├── kind-ha.yaml
+    │   │   ├── pvc-check.yaml
+    │   │   └── render-config.sh
+    │   └── scripts/
+    │       ├── kind-multi-node.sh
+    │       ├── control-plane-taint.sh
+    │       └── restart-nodes.sh
+    └── application/
+        └── scripts/
+            └── kind-demo-deploy.sh
 ```
 
-清单文件用数字前缀，保证 `kubectl apply -f deploy` 时 Namespace 先于其他资源创建。
+`app/` 存放示例应用代码与部署清单；`installation/single-node/` 与 `installation/multiple-node/` 分别存放对应布局的 `yaml/` 模板、渲染脚本、持久化校验清单与 `scripts/` 创建、运维脚本；应用部署脚本放在 `installation/application/scripts/`。生成的 `*.local.yaml` 与模板同目录，不纳入版本控制。
+
+全部资源写在同一个 `kind-demo.yaml` 中，用 `---` 分隔。`kubectl apply` 按文档顺序处理，因此 Namespace 放在最前面，其余资源可以一次创建。
 
 ### 构建镜像
 
@@ -225,15 +248,28 @@ Dockerfile 采用两阶段构建：
 
 ### 加载镜像并部署
 
+先把镜像导入集群所有节点。Kind 的节点使用独立 containerd，不能直接读取宿主机 Docker 镜像库：
+
 ```bash
 kind load docker-image kind-demo:v1 --name kind-multi
+```
 
-kubectl --context kind-kind-multi apply -f deploy/00-namespace.yaml
-kubectl --context kind-kind-multi apply -f deploy
+然后一次性应用全部资源。`kind-demo.yaml` 内按 Namespace、ConfigMap、Deployment、Service 的顺序排列：
 
+```bash
+kubectl --context kind-kind-multi apply -f app/deploy/kind-demo.yaml
+```
+
+等待 Deployment 完成滚动更新，确认 2 个 Pod 都进入 Ready：
+
+```bash
 kubectl --context kind-kind-multi -n kind-demo rollout status \
   deployment/kind-demo --timeout=180s
+```
 
+查看 Pod 所在节点、IP 和运行状态：
+
+```bash
 kubectl --context kind-kind-multi -n kind-demo get pods -o wide
 ```
 
@@ -276,11 +312,11 @@ version: v1
 
 ### 一键部署
 
-脚本 [`kind-demo-deploy.sh`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/scripts/kind-demo-deploy.sh)把构建、加载、部署和验证串成一次执行：
+脚本 [`kind-demo-deploy.sh`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/installation/application/scripts/kind-demo-deploy.sh)把构建、加载、部署和验证串成一次执行：
 
 ```bash
 cd zq-xu.github.io/docs/public/demos/kind
-./scripts/kind-demo-deploy.sh
+./installation/application/scripts/kind-demo-deploy.sh
 ```
 
 脚本按顺序完成：
@@ -288,7 +324,7 @@ cd zq-xu.github.io/docs/public/demos/kind
 1. 检查 Docker、kind、kubectl、curl；
 2. 集群不存在时调用 `kind-multi-node.sh` 创建；
 3. 构建 `kind-demo:v1` 并导入所有节点；
-4. 创建 Namespace 并应用全部清单；
+4. 应用 `kind-demo.yaml`，一次创建 Namespace 与全部资源；
 5. 等待 Deployment 滚动完成；
 6. 在 `127.0.0.1:18080` 启动临时 `port-forward`，请求 `/healthz` 与 `/`；
 7. 退出时关闭临时转发，并打印长期访问命令。
@@ -297,7 +333,7 @@ cd zq-xu.github.io/docs/public/demos/kind
 
 ```bash
 CLUSTER_NAME=kind-dev IMAGE=kind-demo:v1 LOCAL_PORT=18081 \
-  ./scripts/kind-demo-deploy.sh
+  ./installation/application/scripts/kind-demo-deploy.sh
 ```
 
 脚本不会自动删除命名空间，便于继续排查。

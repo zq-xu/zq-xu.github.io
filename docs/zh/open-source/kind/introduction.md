@@ -40,7 +40,7 @@ Kind 的架构可以按四层理解：宿主机的 Docker 引擎、Docker 网络
 | `kind` CLI | 管理入口。单个 Go 二进制，通过 Docker API 创建、启动、检查和删除节点容器。 |
 | Cluster | 集群实例。一组带有相同 kind 标签的节点容器，由 `--name` 区分。 |
 | Node container | 节点载体。运行 `systemd` 与 Kubernetes 组件的 Docker 容器，分为 control-plane 与 worker。 |
-| Node image | 版本载体。`kindest/node:vX.Y.Z@sha256:...`，预装指定版本的 Kubernetes 组件。 |
+| Node image | 版本载体。`kindest/node:vX.Y.Z`，预装指定版本的 Kubernetes 组件。 |
 | Cluster config | 拓扑声明。`kind.x-k8s.io/v1alpha4` YAML，描述节点、网络、端口映射与 kubeadm 补丁。 |
 | Docker network | 节点网络。Kind 创建的桥接网络，为节点容器分配 IP 并承载节点间通信。 |
 | kubeconfig | 访问配置。宿主机上的集群访问凭证，context 名为 `kind-<集群名>`。 |
@@ -106,14 +106,14 @@ kind load docker-image kind-demo:v1 --name kind-multi
 
 镜像标签应保持固定。Kubernetes 对 `:latest` 默认采用 `Always` 拉取策略，会绕过本地镜像访问镜像仓库。工作负载清单中应同时声明 `imagePullPolicy: IfNotPresent`，使节点优先使用本地副本。
 
-### 存储
+### 持久化存储
 
-Kind 默认安装 `local-path-provisioner`，并创建名为 `standard` 的默认 StorageClass。PersistentVolume 落在节点容器内部的本地路径上，适用于演示与测试，但不提供共享存储能力。
+Kind 默认安装 `local-path-provisioner`，并创建名为 `standard` 的默认 StorageClass。PersistentVolume 默认落在节点容器内部的本地路径；通过 `extraMounts` 把该路径挂载到宿主机目录后，数据会写入宿主机，节点容器停止再启动或重新创建时文件仍然存在。默认存储不提供跨节点共享能力。
 
 这一实现带来两个限制：
 
 - PersistentVolume 与节点绑定。使用 PVC 的 Pod 被重新调度到其他节点后，未必能访问原有数据。
-- 删除集群会删除节点容器及其本地数据。需要保留的数据应通过 `extraMounts` 挂载到宿主机目录，或使用外部存储。
+- 删除集群会删除节点容器及其本地数据；如果存储路径已通过 `extraMounts` 挂载到宿主机目录，宿主机上的文件会保留，但新集群不会自动识别旧 PVC。
 
 无状态工作负载应优先使用 `emptyDir` 或不声明卷。验证 StatefulSet 时，应接受数据仅存在于单节点本地，或通过亲和性将 Pod 固定在相同节点。
 
@@ -157,7 +157,7 @@ Kind 的定位是本地测试与开发环境。以下限制来自其实现方式
 | 使用 `:latest` 标签 | 默认 `Always` 拉取，本地镜像被忽略 | 使用固定标签并设置 `IfNotPresent` |
 | 在 macOS 上直接访问节点 IP | 节点位于 Docker 虚拟机内，宿主机不可路由 | 使用 `extraPortMappings` 或 `port-forward` |
 | 将 Kind 用作生产集群 | 单主机、无故障域、无云集成 | 仅用于开发、测试与 CI |
-| 删除集群后仍期望保留数据 | 节点容器与本地卷一并删除 | 挂载宿主机目录或使用外部存储 |
+| 删除集群后仍期望保留数据 | 节点容器与本地卷一并删除；未挂载宿主机目录时数据随容器消失 | 用 `extraMounts` 挂载宿主机目录，或使用外部存储 |
 
 ## 与同类工具的选型
 

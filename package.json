@@ -3,6 +3,7 @@
   "version": "v1.0.0",
   "private": true,
   "type": "module",
+  "packageManager": "pnpm@10.18.2",
   "scripts": {
     "dev": "vitepress dev docs --clean-cache",
     "build": "vitepress build docs",

@@ -55,15 +55,11 @@ nodes:
 
 Kind 默认移除 control-plane 的 `NoSchedule` 污点，因此多节点集群中的业务 Pod 也可能调度到 control-plane。这一行为在本地验证中较为便利，但与生产环境的常见约定不同。
 
-如果希望模拟“control-plane 只承担管理职责、不运行工作负载”，需要手动恢复污点：
+如果希望模拟“control-plane 只承担管理职责、不运行工作负载”，需要手动恢复污点。使用 [`control-plane-taint.sh`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/installation/multiple-node/scripts/control-plane-taint.sh) 为所有 control-plane 加回污点：
 
 ```bash
-for node in $(kubectl --context kind-kind-multi get nodes \
-  -l node-role.kubernetes.io/control-plane \
-  -o jsonpath='{.items[*].metadata.name}'); do
-  kubectl --context kind-kind-multi taint node "$node" \
-    node-role.kubernetes.io/control-plane:NoSchedule --overwrite
-done
+cd zq-xu.github.io/docs/public/demos/kind
+./installation/multiple-node/scripts/control-plane-taint.sh apply
 ```
 
 加回污点后，只有带对应 toleration 的系统组件（例如 Ingress Controller）还能调度到 control-plane。
@@ -117,6 +113,14 @@ extraPortMappings:
 
 如果只想导入部分节点，可以使用 `--nodes`，但必须配合节点亲和性或固定调度，否则 Pod 可能落到没有镜像的节点。
 
+### 节点本地存储与持久化
+
+每个节点都运行独立的 `local-path-provisioner`，由它创建的 PersistentVolume 只存在于本节点，默认数据路径是节点容器内的 `/var/local-path-provisioner`。节点容器被删除后，该路径中的数据也会消失。
+
+通过 `extraMounts` 按节点把该路径挂载到不同的宿主机目录，PV 数据就会分别落到宿主机。多节点场景使用 `${HOME}/.kind-multiple-node/<集群名>` 作为根目录，再为每个节点建立子目录，例如 `kind-multi/control-plane`、`kind-multi/worker-1`。
+
+节点之间的存储互不共享。Pod 迁移到其他节点后，不能假定还能访问原节点的数据；需要固定数据位置时，使用节点亲和、StatefulSet 或外部共享存储。
+
 ## 边界与常见误区
 
 | 误区 | 实际行为 | 正确做法 |
@@ -134,7 +138,7 @@ extraPortMappings:
 | 参数 | 含义 |
 | --- | --- |
 | `nodes[].role` | `control-plane` 或 `worker` |
-| `nodes[].image` | 该节点的节点镜像，建议固定 `@sha256` |
+| `nodes[].image` | 该节点的节点镜像，指定与原集群一致的标签 |
 | `nodes[].kubeadmConfigPatches` | 传给 kubeadm 的补丁，用于标签、kubelet 参数等 |
 | `nodes[].extraPortMappings` | 宿主机端口到该节点容器端口的映射 |
 | `networking.podSubnet` | Pod CIDR，默认 `10.244.0.0/16` |
@@ -219,37 +223,24 @@ kubectl version --client
 
 ### 创建 1 control-plane + 2 worker
 
-保存为 `kind-multi.yaml`：
+普通布局模板位于 [`installation/multiple-node/yaml/kind-multi.yaml`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/installation/multiple-node/yaml/kind-multi.yaml)。同目录的 [`render-config.sh`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/installation/multiple-node/yaml/render-config.sh) 默认使用该模板，数据根目录为 `${HOME}/.kind-multiple-node/kind-multi`，并在其下为 `control-plane`、`worker-1`、`worker-2` 各建一个子目录。
 
-```yaml
-kind: Cluster
-apiVersion: kind.x-k8s.io/v1alpha4
-nodes:
-  - role: control-plane
-    image: kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5
-    kubeadmConfigPatches:
-      - |
-        kind: InitConfiguration
-        nodeRegistration:
-          kubeletExtraArgs:
-            node-labels: "ingress-ready=true"
-    extraPortMappings:
-      - containerPort: 80
-        hostPort: 8080
-        protocol: TCP
-      - containerPort: 443
-        hostPort: 8443
-        protocol: TCP
-  - role: worker
-    image: kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5
-  - role: worker
-    image: kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5
-```
-
-创建：
+生成配置：
 
 ```bash
-kind create cluster --name kind-multi --config kind-multi.yaml --wait 180s
+cd zq-xu.github.io/docs/public/demos/kind
+./installation/multiple-node/yaml/render-config.sh
+```
+
+脚本会生成 `installation/multiple-node/yaml/kind-multi.local.yaml`。
+
+创建集群：
+
+```bash
+kind create cluster \
+  --name kind-multi \
+  --config installation/multiple-node/yaml/kind-multi.local.yaml \
+  --wait 180s
 ```
 
 `--name` 与配置文件同时使用时，集群名以 `--name` 为准；配置里不写 `name` 可以避免歧义。
@@ -267,26 +258,31 @@ kubectl --context kind-kind-multi get pods -A -o wide
 
 ### 恢复 control-plane 污点
 
-```bash
-for node in $(kubectl --context kind-kind-multi get nodes \
-  -l node-role.kubernetes.io/control-plane \
-  -o jsonpath='{.items[*].metadata.name}'); do
-  kubectl --context kind-kind-multi taint node "$node" \
-    node-role.kubernetes.io/control-plane:NoSchedule --overwrite
-done
+使用脚本为 `kind-multi` 的所有 control-plane 加回污点：
 
+```bash
+cd zq-xu.github.io/docs/public/demos/kind
+./installation/multiple-node/scripts/control-plane-taint.sh apply
+```
+
+查看节点与污点结果：
+
+```bash
 kubectl --context kind-kind-multi get nodes -o wide
 ```
 
-之后业务 Pod 只会调度到 worker。若想恢复 Kind 的默认行为：
+之后业务 Pod 只会调度到 worker。若想恢复 Kind 的默认行为，移除该污点：
 
 ```bash
-for node in $(kubectl --context kind-kind-multi get nodes \
-  -l node-role.kubernetes.io/control-plane \
-  -o jsonpath='{.items[*].metadata.name}'); do
-  kubectl --context kind-kind-multi taint node "$node" \
-    node-role.kubernetes.io/control-plane:NoSchedule-
-done
+cd zq-xu.github.io/docs/public/demos/kind
+./installation/multiple-node/scripts/control-plane-taint.sh remove
+```
+
+高可用集群通过 `CONTEXT` 指定对应的 context：
+
+```bash
+cd zq-xu.github.io/docs/public/demos/kind
+CONTEXT=kind-kind-ha ./installation/multiple-node/scripts/control-plane-taint.sh apply
 ```
 
 ### 验证跨节点调度
@@ -315,37 +311,24 @@ kubectl --context kind-kind-multi delete deployment spread-demo
 
 ### 创建高可用布局
 
-保存为 `kind-ha.yaml`：
+高可用模板位于 [`installation/multiple-node/yaml/kind-ha.yaml`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/installation/multiple-node/yaml/kind-ha.yaml)。数据根目录为 `${HOME}/.kind-multiple-node/kind-ha`，三个 control-plane 与三个 worker 各用一个子目录。
 
-```yaml
-kind: Cluster
-apiVersion: kind.x-k8s.io/v1alpha4
-nodes:
-  - role: control-plane
-    image: kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5
-    extraPortMappings:
-      - containerPort: 80
-        hostPort: 8080
-        protocol: TCP
-      - containerPort: 443
-        hostPort: 8443
-        protocol: TCP
-  - role: control-plane
-    image: kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5
-  - role: control-plane
-    image: kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5
-  - role: worker
-    image: kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5
-  - role: worker
-    image: kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5
-  - role: worker
-    image: kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5
-```
-
-创建：
+生成配置：
 
 ```bash
-kind create cluster --name kind-ha --config kind-ha.yaml --wait 240s
+cd zq-xu.github.io/docs/public/demos/kind
+LAYOUT=ha ./installation/multiple-node/yaml/render-config.sh
+```
+
+脚本会生成 `installation/multiple-node/yaml/kind-ha.local.yaml`。
+
+创建集群：
+
+```bash
+kind create cluster \
+  --name kind-ha \
+  --config installation/multiple-node/yaml/kind-ha.local.yaml \
+  --wait 240s
 ```
 
 ### 验证高可用
@@ -359,33 +342,82 @@ kubectl --context kind-kind-ha get nodes
 
 高可用验证不应通过“删除一个 control-plane 容器”来做破坏性测试，除非明确知道自己在做什么。需要验证故障转移时，先确认 kubeconfig 指向的是负载均衡地址，再停一个 control-plane 容器并观察 API 是否仍可用。
 
+## 数据持久化
+
+普通部署和高可用部署的配置都已在每个节点挂载独立宿主机目录到 `/var/local-path-provisioner`。默认 StorageClass `standard` 创建的 PV 数据因此落到宿主机。普通集群的根目录是 `${HOME}/.kind-multiple-node/kind-multi`，高可用集群是 `${HOME}/.kind-multiple-node/kind-ha`；每个节点在各自根目录下使用独立子目录。
+
+每个节点的目录彼此独立，PV 仍与节点绑定：Pod 被调度到其他节点后不会自动获得原节点上的数据。需要固定数据位置时，使用 StatefulSet、节点亲和或外部共享存储。
+
+以下命令以 `kind-multi` 为例，高可用集群把集群名和 context 换成 `kind-ha` 与 `kind-kind-ha`。
+
+创建 PVC 和写入测试 Pod。清单位于 [`installation/multiple-node/yaml/pvc-check.yaml`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/installation/multiple-node/yaml/pvc-check.yaml)：
+
+```bash
+kubectl --context kind-kind-multi apply \
+  -f zq-xu.github.io/docs/public/demos/kind/installation/multiple-node/yaml/pvc-check.yaml
+```
+
+确认数据已写入：
+
+```bash
+kubectl --context kind-kind-multi wait \
+  --for=condition=Ready pod/host-data-check --timeout=120s
+
+kubectl --context kind-kind-multi exec host-data-check -- cat /data/check.log
+find "${HOME}/.kind-multiple-node/kind-multi" -maxdepth 3 -type f -name check.log
+```
+
+停止并重新启动所有节点容器，再读取同一个文件。使用 [`restart-nodes.sh`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/installation/multiple-node/scripts/restart-nodes.sh) 查询该集群的全部节点容器，依次停止和启动，并等待节点就绪：
+
+```bash
+cd zq-xu.github.io/docs/public/demos/kind
+./installation/multiple-node/scripts/restart-nodes.sh
+```
+
+等待业务 Pod 重新就绪并读取数据：
+
+```bash
+kubectl --context kind-kind-multi wait \
+  --for=condition=Ready pod/host-data-check --timeout=300s
+kubectl --context kind-kind-multi exec host-data-check -- cat /data/check.log
+```
+
+`kind delete cluster` 会删除节点容器、etcd 和 PV/PVC 对象；宿主机目录中的文件仍在，但新集群不会自动识别旧 PVC。只停止再启动节点容器时，集群对象和 PVC 都会保留。
+
+测试完成后不要直接删除 PVC，除非确认数据不再需要；默认 StorageClass 的回收策略是 `Delete`。
+
 ## 一键脚本
 
-脚本 [`kind-multi-node.sh`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/scripts/kind-multi-node.sh)负责生成配置、创建集群、等待 Ready，并按需加污点：
+脚本 [`kind-multi-node.sh`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/installation/multiple-node/scripts/kind-multi-node.sh)负责生成配置、创建集群、等待 Ready，并按需加污点：
 
 ```bash
 cd zq-xu.github.io/docs/public/demos/kind
 
 # default: 1 control-plane + 2 workers
-./scripts/kind-multi-node.sh
+./installation/multiple-node/scripts/kind-multi-node.sh
 
 # HA: 3 control-planes + 3 workers
-HA=true ./scripts/kind-multi-node.sh
+HA=true ./installation/multiple-node/scripts/kind-multi-node.sh
 ```
 
 脚本行为：
 
 1. 检查 Docker、kind、kubectl；
-2. 在临时目录生成集群配置，退出时自动删除；
+2. 创建宿主机数据目录，并在临时目录生成带 `extraMounts` 的集群配置，退出时自动删除配置；
 3. 集群不存在时创建；已存在时直接复用；
 4. 等待所有节点 Ready；
 5. 默认给 control-plane 加回 `NoSchedule` 污点，`TAINT_CONTROL_PLANE=false` 可关闭；
 6. 打印节点与系统 Pod 分布。
 
+默认为每个节点创建 `${HOME}/.kind-multiple-node/<集群名>/<节点名>` 数据目录。
+
 可通过环境变量覆盖默认值：
 
 ```bash
-CLUSTER_NAME=kind-dev HA=true ./scripts/kind-multi-node.sh
+CLUSTER_NAME=kind-dev \
+DATA_DIR="${HOME}/.kind-multiple-node/kind-dev" \
+HA=true \
+./installation/multiple-node/scripts/kind-multi-node.sh
 ```
 
 脚本不会修改已有集群的配置。更换布局时需先删除现有集群，再重新创建。
@@ -396,6 +428,8 @@ CLUSTER_NAME=kind-dev HA=true ./scripts/kind-multi-node.sh
 kind delete cluster --name kind-multi
 kind delete cluster --name kind-ha
 ```
+
+删除集群会移除节点容器、Docker 网络、etcd 和 kubeconfig 中对应的 context。宿主机数据目录中的文件不会自动删除，但新集群不会自动识别旧 PVC。
 
 ## 故障排查
 

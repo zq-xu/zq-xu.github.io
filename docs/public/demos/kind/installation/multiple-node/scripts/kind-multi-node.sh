@@ -6,21 +6,24 @@
 # HA=true layout: 3 control-planes + 3 workers.
 #
 # Usage:
-#   ./scripts/kind-multi-node.sh
-#   HA=true ./scripts/kind-multi-node.sh
+#   ./installation/multiple-node/scripts/kind-multi-node.sh
+#   HA=true ./installation/multiple-node/scripts/kind-multi-node.sh
 #
 # Environment overrides:
 #   CLUSTER_NAME=kind-multi
-#   NODE_IMAGE=kindest/node:v1.37.0@sha256:<digest>
+#   NODE_IMAGE=kindest/node:v1.37.0
 #   TAINT_CONTROL_PLANE=true
+#   DATA_DIR=${HOME}/.kind-multiple-node/${CLUSTER_NAME}
 #
 set -euo pipefail
 
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 CLUSTER_NAME="${CLUSTER_NAME:-kind-multi}"
 KIND_VERSION="${KIND_VERSION:-v0.33.0}"
-NODE_IMAGE="${NODE_IMAGE:-kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5}"
+NODE_IMAGE="${NODE_IMAGE:-kindest/node:v1.37.0}"
 HA="${HA:-false}"
 TAINT_CONTROL_PLANE="${TAINT_CONTROL_PLANE:-true}"
+DATA_DIR="${DATA_DIR:-${HOME}/.kind-multiple-node/${CLUSTER_NAME}}"
 CONTEXT="kind-${CLUSTER_NAME}"
 
 CONFIG_FILE="$(mktemp "${TMPDIR:-/tmp}/kind-multi.XXXXXX.yaml")"
@@ -37,43 +40,17 @@ require_tools() {
   command -v kubectl >/dev/null 2>&1 || die "kubectl is required"
 }
 
-node_entry() {
-  local role="$1"
-  printf -- "- role: %s\n  image: %s\n" "$role" "$NODE_IMAGE"
-}
-
 write_config() {
-  {
-    printf 'kind: Cluster\napiVersion: kind.x-k8s.io/v1alpha4\nnodes:\n'
-    cat <<EOF
-- role: control-plane
-  image: ${NODE_IMAGE}
-  kubeadmConfigPatches:
-  - |
-    kind: InitConfiguration
-    nodeRegistration:
-      kubeletExtraArgs:
-        node-labels: "ingress-ready=true"
-  extraPortMappings:
-  - containerPort: 80
-    hostPort: 8080
-    protocol: TCP
-  - containerPort: 443
-    hostPort: 8443
-    protocol: TCP
-EOF
-    if [[ "$HA" == "true" ]]; then
-      node_entry control-plane
-      node_entry control-plane
-      node_entry worker
-      node_entry worker
-      node_entry worker
-    else
-      node_entry worker
-      node_entry worker
-    fi
-  } > "$CONFIG_FILE"
-  log "generated cluster configuration: ${CONFIG_FILE}"
+  local layout="standard"
+  if [[ "$HA" == "true" ]]; then
+    layout="ha"
+  fi
+
+  LAYOUT="$layout" \
+  DATA_DIR="$DATA_DIR" \
+  NODE_IMAGE="$NODE_IMAGE" \
+  OUTPUT="$CONFIG_FILE" \
+  "${ROOT_DIR}/installation/multiple-node/yaml/render-config.sh"
 }
 
 create_cluster() {

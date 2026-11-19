@@ -158,6 +158,12 @@ securityContext:
 
 These settings match `USER 10001:10001` in the Dockerfile. Changing only the manifest can still leave a root process; changing only the image loses the Kubernetes-side guardrails.
 
+### Persistent data
+
+The sample service does not write to local disk, so its manifests contain no PVC. A workload that needs durable data cannot rely on the container filesystem alone: data inside a Kind node container disappears when that container is removed, and a PV from the default StorageClass is node-local and `ReadWriteOnce`, so it cannot be mounted by replicas on different nodes.
+
+Use `extraMounts` to mount `/var/local-path-provisioner` to a host directory when creating the cluster, and PV data from the default StorageClass is written to the host. On the application side, a single-replica Deployment or a StatefulSet fits a PVC better; sharing one dataset across replicas requires external shared storage.
+
 ## Common deployment issues and fixes
 
 The issues below are common when deploying workloads on Kind. Most stem from local image distribution, host access to Services, or node architecture rather than from the Kubernetes manifests themselves.
@@ -192,21 +198,38 @@ Ingress is another common issue: Kind does not install an Ingress controller. Th
 ```text
 docs/public/demos/kind/
 ├── app/
+│   ├── deploy/
+│   │   └── kind-demo.yaml
 │   ├── Dockerfile
 │   ├── go.mod
 │   └── main.go
-├── deploy/
-│   ├── 00-namespace.yaml
-│   ├── 10-configmap.yaml
-│   ├── 20-deployment.yaml
-│   └── 30-service.yaml
-└── scripts/
-    ├── kind-single-node.sh
-    ├── kind-multi-node.sh
-    └── kind-demo-deploy.sh
+└── installation/
+    ├── single-node/
+    │   ├── yaml/
+    │   │   ├── kind-single.yaml
+    │   │   ├── pvc-check.yaml
+    │   │   └── render-config.sh
+    │   └── scripts/
+    │       ├── kind-single-node.sh
+    │       └── restart-node.sh
+    ├── multiple-node/
+    │   ├── yaml/
+    │   │   ├── kind-multi.yaml
+    │   │   ├── kind-ha.yaml
+    │   │   ├── pvc-check.yaml
+    │   │   └── render-config.sh
+    │   └── scripts/
+    │       ├── kind-multi-node.sh
+    │       ├── control-plane-taint.sh
+    │       └── restart-nodes.sh
+    └── application/
+        └── scripts/
+            └── kind-demo-deploy.sh
 ```
 
-The numeric prefixes make `kubectl apply -f deploy` create the Namespace before namespaced resources.
+`app/` holds the sample application and its deploy manifest. `installation/single-node/` and `installation/multiple-node/` each keep layout-specific `yaml/` templates, rendering scripts and persistence check manifests plus `scripts/` create and operational scripts. The application deployment script lives in `installation/application/scripts/`. Generated `*.local.yaml` files stay next to their templates and are not versioned.
+
+All resources live in one `kind-demo.yaml`, separated by `---`. `kubectl apply` processes documents in order, so the Namespace comes first and the remaining resources are created in the same pass.
 
 ### Build the image
 
@@ -223,15 +246,28 @@ The Dockerfile is a two-stage build:
 
 ### Load and deploy
 
+First load the image into every node. Kind nodes run their own containerd and cannot read the host Docker image store directly:
+
 ```bash
 kind load docker-image kind-demo:v1 --name kind-multi
+```
 
-kubectl --context kind-kind-multi apply -f deploy/00-namespace.yaml
-kubectl --context kind-kind-multi apply -f deploy
+Apply all resources in one pass. `kind-demo.yaml` orders them as Namespace, ConfigMap, Deployment and Service:
 
+```bash
+kubectl --context kind-kind-multi apply -f app/deploy/kind-demo.yaml
+```
+
+Wait for the Deployment rollout and confirm that both Pods become Ready:
+
+```bash
 kubectl --context kind-kind-multi -n kind-demo rollout status \
   deployment/kind-demo --timeout=180s
+```
 
+Show the node, IP and status of each Pod:
+
+```bash
 kubectl --context kind-kind-multi -n kind-demo get pods -o wide
 ```
 
@@ -274,11 +310,11 @@ Calling `/` repeatedly shows the `host` alternating between the two Pods, which 
 
 ### One-shot deployment
 
-[`kind-demo-deploy.sh`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/scripts/kind-demo-deploy.sh) chains build, load, deploy and verify:
+[`kind-demo-deploy.sh`](https://github.com/zq-xu/zq-xu.github.io/blob/master/docs/public/demos/kind/installation/application/scripts/kind-demo-deploy.sh) chains build, load, deploy and verify:
 
 ```bash
 cd zq-xu.github.io/docs/public/demos/kind
-./scripts/kind-demo-deploy.sh
+./installation/application/scripts/kind-demo-deploy.sh
 ```
 
 The script:
@@ -286,7 +322,7 @@ The script:
 1. checks Docker, kind, kubectl and curl;
 2. creates `kind-multi` through `kind-multi-node.sh` when missing;
 3. builds `kind-demo:v1` and loads it into all nodes;
-4. creates the Namespace and applies all manifests;
+4. applies `kind-demo.yaml`, creating the Namespace and all resources in one pass;
 5. waits for the Deployment rollout;
 6. starts a temporary `port-forward` on `127.0.0.1:18080` and calls `/healthz` and `/`;
 7. closes the temporary forward and prints the long-lived access command.
@@ -295,7 +331,7 @@ Override defaults:
 
 ```bash
 CLUSTER_NAME=kind-dev IMAGE=kind-demo:v1 LOCAL_PORT=18081 \
-  ./scripts/kind-demo-deploy.sh
+  ./installation/application/scripts/kind-demo-deploy.sh
 ```
 
 The script does not delete the namespace, so you can keep investigating.
