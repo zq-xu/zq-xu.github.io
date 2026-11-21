@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 620" width="960" height="620" role="img" aria-label="Kind 总体架构：kind CLI 通过 Docker API 驱动 Docker，每个 Kubernetes 节点都是一个运行在 Docker 桥接网络上的容器">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L10,5 L0,10 z" fill="#334155"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="960" height="620" fill="#FFFFFF"/>
+
+  <!-- 宿主机 -->
+  <rect x="30" y="20" width="900" height="122" rx="12" fill="#F8FAFC" stroke="#CBD5E1"/>
+  <text x="50" y="48" font-size="16" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">宿主机</text>
+  <text x="50" y="70" font-size="12" fill="#64748B" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">kind 是单个二进制，通过 Docker API 创建、删除和检查集群</text>
+
+  <rect x="60" y="84" width="300" height="42" rx="8" fill="#EFF6FF" stroke="#3B82F6"/>
+  <text x="78" y="110" font-size="14" font-weight="700" fill="#1E3A8A" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">kind CLI</text>
+
+  <rect x="600" y="84" width="300" height="42" rx="8" fill="#ECFDF5" stroke="#10B981"/>
+  <text x="618" y="110" font-size="14" font-weight="700" fill="#065F46" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">Docker 引擎</text>
+
+  <line x1="360" y1="105" x2="592" y2="105" stroke="#334155" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="476" y="96" font-size="11" fill="#475569" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">Docker API</text>
+
+  <!-- Docker 网络 -->
+  <rect x="30" y="164" width="900" height="386" rx="12" fill="#FFFFFF" stroke="#94A3B8" stroke-dasharray="6 4"/>
+  <text x="50" y="194" font-size="14" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">Docker 网络</text>
+  <text x="150" y="194" font-size="11" fill="#64748B" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">kind 桥接网络：节点通过容器 IP 互通；Pod 使用集群 Pod CIDR</text>
+
+  <!-- control-plane 节点 -->
+  <rect x="50" y="214" width="390" height="316" rx="10" fill="#F8FAFC" stroke="#3B82F6"/>
+  <text x="68" y="242" font-size="14" font-weight="700" fill="#1E3A8A" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">control-plane 节点容器</text>
+  <text x="68" y="262" font-size="11" fill="#64748B" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">systemd + kubeadm init</text>
+
+  <rect x="68" y="278" width="166" height="46" rx="6" fill="#FFFFFF" stroke="#C7D2E3"/>
+  <text x="80" y="306" font-size="12" fill="#1F2937" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">kube-apiserver</text>
+  <rect x="246" y="278" width="166" height="46" rx="6" fill="#FFFFFF" stroke="#C7D2E3"/>
+  <text x="258" y="306" font-size="12" fill="#1F2937" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">etcd</text>
+
+  <rect x="68" y="338" width="166" height="46" rx="6" fill="#FFFFFF" stroke="#C7D2E3"/>
+  <text x="80" y="366" font-size="12" fill="#1F2937" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">kube-scheduler</text>
+  <rect x="246" y="338" width="166" height="46" rx="6" fill="#FFFFFF" stroke="#C7D2E3"/>
+  <text x="258" y="366" font-size="11" fill="#1F2937" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">controller-manager</text>
+
+  <rect x="68" y="398" width="166" height="46" rx="6" fill="#FFFFFF" stroke="#C7D2E3"/>
+  <text x="80" y="426" font-size="12" fill="#1F2937" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">kubelet</text>
+  <rect x="246" y="398" width="166" height="46" rx="6" fill="#FFFFFF" stroke="#C7D2E3"/>
+  <text x="258" y="426" font-size="12" fill="#1F2937" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">containerd</text>
+
+  <rect x="68" y="458" width="166" height="46" rx="6" fill="#FFFFFF" stroke="#C7D2E3"/>
+  <text x="80" y="486" font-size="12" fill="#1F2937" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">kindnetd（CNI）</text>
+  <rect x="246" y="458" width="166" height="46" rx="6" fill="#FFFFFF" stroke="#C7D2E3"/>
+  <text x="258" y="486" font-size="12" fill="#1F2937" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">kube-proxy</text>
+
+  <text x="68" y="523" font-size="10" fill="#475569" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">Kubernetes 组件作为普通进程运行在节点容器内。</text>
+
+  <!-- worker 节点 -->
+  <rect x="460" y="214" width="210" height="316" rx="10" fill="#F8FAFC" stroke="#10B981"/>
+  <text x="478" y="242" font-size="13" font-weight="700" fill="#065F46" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">worker 节点 1</text>
+  <text x="478" y="262" font-size="11" fill="#64748B" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">systemd + kubeadm join</text>
+  <rect x="478" y="278" width="174" height="44" rx="6" fill="#FFFFFF" stroke="#C7D2E3"/>
+  <text x="490" y="305" font-size="12" fill="#1F2937" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">kubelet</text>
+  <rect x="478" y="336" width="174" height="44" rx="6" fill="#FFFFFF" stroke="#C7D2E3"/>
+  <text x="490" y="363" font-size="12" fill="#1F2937" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">containerd</text>
+  <rect x="478" y="394" width="174" height="44" rx="6" fill="#FFFFFF" stroke="#C7D2E3"/>
+  <text x="490" y="421" font-size="12" fill="#1F2937" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">kube-proxy</text>
+  <rect x="478" y="452" width="174" height="52" rx="6" fill="#ECFDF5" stroke="#10B981"/>
+  <text x="490" y="472" font-size="11" font-weight="700" fill="#065F46" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">Pod / 工作负载</text>
+  <text x="490" y="492" font-size="10" fill="#475569" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">由 control-plane 调度</text>
+
+  <rect x="690" y="214" width="210" height="316" rx="10" fill="#F8FAFC" stroke="#10B981"/>
+  <text x="708" y="242" font-size="13" font-weight="700" fill="#065F46" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">worker 节点 2</text>
+  <text x="708" y="262" font-size="11" fill="#64748B" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">systemd + kubeadm join</text>
+  <rect x="708" y="278" width="174" height="44" rx="6" fill="#FFFFFF" stroke="#C7D2E3"/>
+  <text x="720" y="305" font-size="12" fill="#1F2937" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">kubelet</text>
+  <rect x="708" y="336" width="174" height="44" rx="6" fill="#FFFFFF" stroke="#C7D2E3"/>
+  <text x="720" y="363" font-size="12" fill="#1F2937" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">containerd</text>
+  <rect x="708" y="394" width="174" height="44" rx="6" fill="#FFFFFF" stroke="#C7D2E3"/>
+  <text x="720" y="421" font-size="12" fill="#1F2937" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">kube-proxy</text>
+  <rect x="708" y="452" width="174" height="52" rx="6" fill="#ECFDF5" stroke="#10B981"/>
+  <text x="720" y="472" font-size="11" font-weight="700" fill="#065F46" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">Pod / 工作负载</text>
+  <text x="720" y="492" font-size="10" fill="#475569" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">由 control-plane 调度</text>
+
+  <!-- Pod 网络连接 -->
+  <line x1="440" y1="360" x2="456" y2="360" stroke="#334155" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="670" y1="360" x2="686" y2="360" stroke="#334155" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- 端口映射 -->
+  <rect x="230" y="566" width="500" height="40" rx="8" fill="#FFFBEB" stroke="#F59E0B"/>
+  <text x="248" y="591" font-size="12" fill="#92400E" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">extraPortMappings：宿主机 8080 → 节点 80，宿主机 8443 → 节点 443</text>
+  <line x1="480" y1="564" x2="480" y2="536" stroke="#F59E0B" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <text x="30" y="612" font-size="10" fill="#64748B" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif">每个“节点”都是普通 Docker 容器；集群是带有同一 kind 集群名称标签的容器集合。</text>
+</svg>

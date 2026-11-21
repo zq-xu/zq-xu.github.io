@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1020 300" width="1020" height="300" role="img" aria-label="Demo flow: build a local image, load it into kind, deploy two pods, expose the service">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L10,5 L0,10 z" fill="#334155"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1020" height="300" fill="#FFFFFF"/>
+  <text x="30" y="38" font-size="16" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">From source code to a running Pod on kind</text>
+  <text x="30" y="60" font-size="12" fill="#64748B" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">No registry is required: build locally, import the image into the nodes, then let Kubernetes schedule it.</text>
+
+  <rect x="30" y="90" width="160" height="94" rx="10" fill="#EFF6FF" stroke="#3B82F6"/>
+  <text x="46" y="118" font-size="13" font-weight="700" fill="#1E3A8A" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">1. Source + Dockerfile</text>
+  <text x="46" y="142" font-size="11" fill="#334155" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">app/main.go</text>
+  <text x="46" y="160" font-size="11" fill="#334155" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">app/Dockerfile</text>
+
+  <line x1="190" y1="137" x2="224" y2="137" stroke="#334155" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="226" y="90" width="160" height="94" rx="10" fill="#F8FAFC" stroke="#CBD5E1"/>
+  <text x="242" y="118" font-size="13" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">2. docker build</text>
+  <text x="242" y="142" font-size="11" fill="#334155" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">tag: kind-demo:v1</text>
+  <text x="242" y="160" font-size="11" fill="#334155" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">multi-stage, non-root</text>
+
+  <line x1="386" y1="137" x2="420" y2="137" stroke="#334155" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="422" y="90" width="170" height="94" rx="10" fill="#F8FAFC" stroke="#CBD5E1"/>
+  <text x="438" y="118" font-size="13" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">3. kind load</text>
+  <text x="438" y="142" font-size="11" fill="#334155" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">import into every node</text>
+  <text x="438" y="160" font-size="11" fill="#334155" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">containerd image store</text>
+
+  <line x1="592" y1="137" x2="626" y2="137" stroke="#334155" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="628" y="90" width="160" height="94" rx="10" fill="#F8FAFC" stroke="#CBD5E1"/>
+  <text x="644" y="118" font-size="13" font-weight="700" fill="#0F172A" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">4. Deployment</text>
+  <text x="644" y="142" font-size="11" fill="#334155" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">2 replicas, probes</text>
+  <text x="644" y="160" font-size="11" fill="#334155" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">requests / limits</text>
+
+  <line x1="788" y1="137" x2="822" y2="137" stroke="#334155" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="824" y="90" width="166" height="94" rx="10" fill="#ECFDF5" stroke="#10B981"/>
+  <text x="840" y="118" font-size="13" font-weight="700" fill="#065F46" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">5. Service + access</text>
+  <text x="840" y="142" font-size="11" fill="#334155" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">ClusterIP :80</text>
+  <text x="840" y="160" font-size="11" fill="#334155" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">port-forward 18080</text>
+
+  <rect x="30" y="216" width="960" height="58" rx="8" fill="#FFFBEB" stroke="#F59E0B"/>
+  <text x="46" y="240" font-size="11" font-weight="700" fill="#92400E" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">Verification</text>
+  <text x="46" y="260" font-size="11" fill="#475569" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">kubectl rollout status → kubectl get pods -o wide (two different nodes) → curl 127.0.0.1:18080/healthz and /</text>
+
+  <text x="30" y="292" font-size="10" fill="#64748B" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">The same image is visible to every node, so a Pod can start on any worker without contacting a registry.</text>
+</svg>
